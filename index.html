@@ -135,6 +135,48 @@
     </div>
   </dialog>
 
+  <!-- FLYBORO PASSENGER INFORMATION MODAL -->
+  <div id="flyboro-passenger-modal" class="flyboro-modal-overlay" aria-hidden="true">
+    <div class="flyboro-modal-container">
+      <div class="flyboro-modal-header">
+        <h3 class="flyboro-modal-title">Passenger & Traveler Information</h3>
+        <button type="button" id="close-passenger-modal" class="flyboro-modal-close" aria-label="Close Modal">&times;</button>
+      </div>
+
+      <form id="flyboro-passenger-form" class="flyboro-modal-form">
+        <!-- Hidden field to hold selected travel item data -->
+        <input type="hidden" id="selected-booking-item" value="" />
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="passenger-first-name" class="form-label">First Name *</label>
+            <input type="text" id="passenger-first-name" class="form-input" placeholder="e.g. Himanshu" required />
+          </div>
+
+          <div class="form-group">
+            <label for="passenger-last-name" class="form-label">Last Name *</label>
+            <input type="text" id="passenger-last-name" class="form-input" placeholder="e.g. Singh" required />
+          </div>
+
+          <div class="form-group">
+            <label for="passenger-email" class="form-label">Email Address *</label>
+            <input type="email" id="passenger-email" class="form-input" placeholder="e.g. passenger@flyboro.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="passenger-phone" class="form-label">Phone Number *</label>
+            <input type="tel" id="passenger-phone" class="form-input" placeholder="e.g. +1-555-0199" required />
+          </div>
+        </div>
+
+        <div class="flyboro-modal-footer">
+          <button type="button" id="cancel-passenger-modal" class="btn-secondary">Cancel</button>
+          <button type="submit" id="submit-booking-btn" class="global-cta-button" style="min-width: 180px; height: 44px; font-size: 0.95rem;">Confirm & Proceed</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Localized Configuration (Simulates WordPress wp_localize_script) -->
   <script>
     window.flyboroConfig = {

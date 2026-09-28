@@ -866,3 +866,83 @@ body {
     min-width: 130px;
   }
 }
+
+/* ==========================================================================
+   11. FLYBORO PASSENGER MODAL STYLES
+   ========================================================================== */
+.flyboro-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(9, 13, 20, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease-in-out;
+}
+
+.flyboro-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.flyboro-modal-container {
+  background: var(--theme-surface, #ffffff);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-lg, 16px);
+  width: 90%;
+  max-width: 520px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  transform: translateY(20px);
+  transition: transform 0.25s ease-in-out;
+}
+
+.flyboro-modal-overlay.active .flyboro-modal-container {
+  transform: translateY(0);
+}
+
+.flyboro-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--theme-border);
+  background-color: var(--theme-header-text, #0f2a4a);
+  color: #ffffff;
+}
+
+.flyboro-modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+}
+
+.flyboro-modal-close {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.flyboro-modal-form {
+  padding: 1.5rem;
+}
+
+.flyboro-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--theme-border);
+}

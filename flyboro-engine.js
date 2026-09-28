@@ -718,35 +718,118 @@
         DOM.modal.setAttribute('data-target-sku', sku);
         DOM.modal.setAttribute('data-target-price', price);
         DOM.modal.setAttribute('data-target-title', title);
+        DOM.modal.setAttribute('data-target-provider', provider);
 
         if (typeof DOM.modal.showModal === 'function') {
           DOM.modal.showModal();
         } else {
-          // Fallback if dialog not supported
-          executeWooCommerceCheckout(sku, price, title);
+          openPassengerModal({ id: sku, price: parseFloat(price) || 0, title: title, provider: provider });
         }
       });
     });
+  }
+
+  /**
+   * Opens the Passenger Details Modal for a given travel item.
+   */
+  function openPassengerModal(itemData) {
+    const modal = document.getElementById('flyboro-passenger-modal');
+    const hiddenInput = document.getElementById('selected-booking-item');
+
+    if (modal && hiddenInput) {
+      hiddenInput.value = JSON.stringify(itemData);
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+
+      // Focus first input for immediate typing
+      const firstInput = document.getElementById('passenger-first-name');
+      if (firstInput) setTimeout(() => firstInput.focus(), 60);
+    }
+  }
+
+  /**
+   * Closes the Passenger Details Modal.
+   */
+  function closePassengerModal() {
+    const modal = document.getElementById('flyboro-passenger-modal');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+    }
   }
 
   function setupModalEvents() {
     DOM.modalCloseBtn.addEventListener('click', () => DOM.modal.close());
     DOM.modalCancelBtn.addEventListener('click', () => DOM.modal.close());
 
+    // From review modal -> Transition to Passenger Information Modal
     DOM.modalCheckoutBtn.addEventListener('click', function () {
       const sku = DOM.modal.getAttribute('data-target-sku');
       const price = parseFloat(DOM.modal.getAttribute('data-target-price')) || 0;
       const title = DOM.modal.getAttribute('data-target-title');
-      initiateBooking({
+      const provider = DOM.modal.getAttribute('data-target-provider') || 'Flyboro Partner';
+
+      DOM.modal.close();
+
+      openPassengerModal({
         id: sku,
         price: price,
-        title: title
+        title: title,
+        provider: provider
       });
     });
 
     DOM.modal.addEventListener('click', (e) => {
       if (e.target === DOM.modal) DOM.modal.close();
     });
+
+    // Passenger Modal Bindings
+    const passengerModal = document.getElementById('flyboro-passenger-modal');
+    const passengerForm = document.getElementById('flyboro-passenger-form');
+    const closePassengerBtn = document.getElementById('close-passenger-modal');
+    const cancelPassengerBtn = document.getElementById('cancel-passenger-modal');
+
+    if (closePassengerBtn) closePassengerBtn.addEventListener('click', closePassengerModal);
+    if (cancelPassengerBtn) cancelPassengerBtn.addEventListener('click', closePassengerModal);
+
+    if (passengerModal) {
+      passengerModal.addEventListener('click', (e) => {
+        if (e.target === passengerModal) closePassengerModal();
+      });
+    }
+
+    if (passengerForm) {
+      passengerForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submit-booking-btn');
+        const origSubmitText = submitBtn ? submitBtn.textContent : '';
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Processing...';
+        }
+
+        const itemJSON = document.getElementById('selected-booking-item').value;
+        const itemData = itemJSON ? JSON.parse(itemJSON) : {};
+
+        const passengerData = {
+          firstName: document.getElementById('passenger-first-name').value.trim(),
+          lastName: document.getElementById('passenger-last-name').value.trim(),
+          email: document.getElementById('passenger-email').value.trim(),
+          phone: document.getElementById('passenger-phone').value.trim()
+        };
+
+        closePassengerModal();
+
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = origSubmitText;
+        }
+
+        // Trigger checkout call with user-provided dynamic passenger details
+        await initiateBooking(itemData, { passenger: passengerData });
+      });
+    }
   }
 
   /**
@@ -785,8 +868,11 @@
           return;
         }
 
-        // Render confirmation view inside modal if open
-        if (DOM.modal && DOM.modal.open) {
+        // Render confirmation view inside modal
+        if (DOM.modal) {
+          if (!DOM.modal.open && typeof DOM.modal.showModal === 'function') {
+            DOM.modal.showModal();
+          }
           renderBookingConfirmedView(result);
         } else {
           // Display confirmation alert fallback
@@ -806,8 +892,10 @@
     }
   }
 
-  // Expose initiateBooking on window for external / script access
+  // Expose triggers on window for external / script access
   window.initiateBooking = initiateBooking;
+  window.openPassengerModal = openPassengerModal;
+  window.closePassengerModal = closePassengerModal;
 
   function renderBookingConfirmedView(data) {
     const modalBody = DOM.modal.querySelector('.modal-body');
