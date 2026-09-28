@@ -735,9 +735,13 @@
 
     DOM.modalCheckoutBtn.addEventListener('click', function () {
       const sku = DOM.modal.getAttribute('data-target-sku');
-      const price = DOM.modal.getAttribute('data-target-price');
+      const price = parseFloat(DOM.modal.getAttribute('data-target-price')) || 0;
       const title = DOM.modal.getAttribute('data-target-title');
-      executeCheckoutFlow(sku, price, title);
+      initiateBooking({
+        id: sku,
+        price: price,
+        title: title
+      });
     });
 
     DOM.modal.addEventListener('click', (e) => {
@@ -745,55 +749,65 @@
     });
   }
 
-  async function executeCheckoutFlow(sku, price, title) {
+  /**
+   * Programmatic and UI booking trigger
+   */
+  async function initiateBooking(itemData, options = {}) {
     const btn = DOM.modalCheckoutBtn;
-    const originalText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = 'Processing Reservation...';
+    let originalText = '';
+    if (btn) {
+      originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Processing Reservation...';
+    }
 
     try {
-      const res = await fetch('/api/checkout', {
+      const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          item: {
-            id: sku,
-            price: parseFloat(price) || 0,
-            title: title
+          item: itemData,
+          passenger: options.passenger || {
+            firstName: 'Himanshu',
+            lastName: 'Singh',
+            email: 'user@flyboro.com'
           },
-          passenger: {
-            firstName: 'Demo',
-            lastName: 'Traveler',
-            email: 'traveler@flyboro.com'
-          }
+          paymentMethod: options.paymentMethod || 'demo' // Change to 'stripe' or 'woocommerce' when configured
         })
       });
 
-      if (!res.ok) throw new Error('Checkout service unreachable');
-      const data = await res.json();
+      const result = await response.json();
 
-      if (data.mode === 'stripe_checkout' && data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-        return;
+      if (result.success) {
+        if (result.checkoutUrl) {
+          // Redirect to Stripe Checkout page
+          window.location.href = result.checkoutUrl;
+          return;
+        }
+
+        // Render confirmation view inside modal if open
+        if (DOM.modal && DOM.modal.open) {
+          renderBookingConfirmedView(result);
+        } else {
+          // Display confirmation alert fallback
+          alert(`Booking Confirmed!\n\nPNR: ${result.pnr}\nBooking ID: ${result.bookingId}\nTotal: $${result.paymentSummary.totalAmount}`);
+        }
+      } else {
+        alert('Booking error: ' + (result.error || 'Failed to complete checkout'));
       }
-
-      if (data.mode === 'woocommerce_cart' && data.cartData) {
-        window.location.href = CONFIG.wcCartUrl || '/cart';
-        return;
-      }
-
-      // Render instant confirmation view inside modal
-      renderBookingConfirmedView(data);
-
-    } catch (err) {
-      // Fallback to legacy WooCommerce redirect if /api/checkout isn't available
-      const targetUrl = `${CONFIG.wcCartUrl}?add-to-cart=travel_booking&item_id=${encodeURIComponent(sku)}&price=${encodeURIComponent(price)}&title=${encodeURIComponent(title)}`;
-      window.location.href = targetUrl;
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Network error while processing booking. Please try again.');
     } finally {
-      btn.disabled = false;
-      btn.textContent = originalText;
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
     }
   }
+
+  // Expose initiateBooking on window for external / script access
+  window.initiateBooking = initiateBooking;
 
   function renderBookingConfirmedView(data) {
     const modalBody = DOM.modal.querySelector('.modal-body');
