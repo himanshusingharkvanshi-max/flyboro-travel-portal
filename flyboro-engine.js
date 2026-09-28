@@ -737,7 +737,7 @@
       const sku = DOM.modal.getAttribute('data-target-sku');
       const price = DOM.modal.getAttribute('data-target-price');
       const title = DOM.modal.getAttribute('data-target-title');
-      executeWooCommerceCheckout(sku, price, title);
+      executeCheckoutFlow(sku, price, title);
     });
 
     DOM.modal.addEventListener('click', (e) => {
@@ -745,9 +745,113 @@
     });
   }
 
-  function executeWooCommerceCheckout(sku, price, title) {
-    const targetUrl = `${CONFIG.wcCartUrl}?add-to-cart=travel_booking&item_id=${encodeURIComponent(sku)}&price=${encodeURIComponent(price)}&title=${encodeURIComponent(title)}`;
-    window.location.href = targetUrl;
+  async function executeCheckoutFlow(sku, price, title) {
+    const btn = DOM.modalCheckoutBtn;
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Processing Reservation...';
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          item: {
+            id: sku,
+            price: parseFloat(price) || 0,
+            title: title
+          },
+          passenger: {
+            firstName: 'Demo',
+            lastName: 'Traveler',
+            email: 'traveler@flyboro.com'
+          }
+        })
+      });
+
+      if (!res.ok) throw new Error('Checkout service unreachable');
+      const data = await res.json();
+
+      if (data.mode === 'stripe_checkout' && data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+
+      if (data.mode === 'woocommerce_cart' && data.cartData) {
+        window.location.href = CONFIG.wcCartUrl || '/cart';
+        return;
+      }
+
+      // Render instant confirmation view inside modal
+      renderBookingConfirmedView(data);
+
+    } catch (err) {
+      // Fallback to legacy WooCommerce redirect if /api/checkout isn't available
+      const targetUrl = `${CONFIG.wcCartUrl}?add-to-cart=travel_booking&item_id=${encodeURIComponent(sku)}&price=${encodeURIComponent(price)}&title=${encodeURIComponent(title)}`;
+      window.location.href = targetUrl;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  }
+
+  function renderBookingConfirmedView(data) {
+    const modalBody = DOM.modal.querySelector('.modal-body');
+    const modalFooter = DOM.modal.querySelector('.modal-footer');
+    const modalTitle = DOM.modal.querySelector('#modal-item-title');
+
+    modalTitle.textContent = 'Booking Confirmed!';
+    modalBody.innerHTML = `
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; background: #DCFCE7; color: #16A34A; font-size: 28px; margin-bottom: 0.75rem;">✓</div>
+        <h4 style="font-size: 1.25rem; color: var(--theme-header-text); margin-bottom: 4px;">Reservation Successfully Issued</h4>
+        <p style="font-size: 0.85rem; color: var(--theme-muted-text);">Your e-ticket and itinerary receipt have been generated.</p>
+      </div>
+
+      <div style="background: var(--theme-bg); border: 1px solid var(--theme-border); border-radius: var(--radius-md); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem;">
+        <div class="summary-row">
+          <span>Booking Reference (PNR):</span>
+          <strong style="font-size: 1.15rem; color: var(--cta-primary); letter-spacing: 1px;">${escapeHtml(data.pnr)}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Itinerary:</span>
+          <strong>${escapeHtml(data.itemDetails.title)}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Route:</span>
+          <span>${escapeHtml(data.itemDetails.route)}</span>
+        </div>
+        <div class="summary-row">
+          <span>Passenger:</span>
+          <span>${escapeHtml(data.passenger.firstName)} ${escapeHtml(data.passenger.lastName)}</span>
+        </div>
+        <hr style="border: none; border-top: 1px solid var(--theme-border); margin: 4px 0;">
+        <div class="summary-row">
+          <span>Base Fare:</span>
+          <span>$${Number(data.paymentSummary.basePrice).toFixed(2)}</span>
+        </div>
+        <div class="summary-row">
+          <span>Taxes & GST (12%):</span>
+          <span>$${Number(data.paymentSummary.taxAmount).toFixed(2)}</span>
+        </div>
+        <div class="summary-row">
+          <span>Convenience Fee:</span>
+          <span>$${Number(data.paymentSummary.convenienceFee).toFixed(2)}</span>
+        </div>
+        <div class="summary-row" style="font-size: 1.05rem; font-weight: 800; color: var(--theme-header-text); margin-top: 4px;">
+          <span>Total Paid:</span>
+          <span style="color: var(--cta-primary);">$${Number(data.paymentSummary.totalAmount).toFixed(2)} USD</span>
+        </div>
+      </div>
+    `;
+
+    modalFooter.innerHTML = `
+      <button type="button" class="btn-modal-cancel" id="btn-confirmed-close">Close</button>
+      <button type="button" class="global-cta-button" onclick="window.print()">Print Itinerary Receipt</button>
+    `;
+
+    const closeBtn = document.getElementById('btn-confirmed-close');
+    if (closeBtn) closeBtn.addEventListener('click', () => DOM.modal.close());
   }
 
   function renderErrorMessage(msg) {
