@@ -402,23 +402,57 @@
       state.abortController = new AbortController();
 
       try {
-        const response = await fetch(`${CONFIG.rootApi}/search`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-WP-Nonce': CONFIG.nonce
-          },
-          body: JSON.stringify(payload),
-          signal: state.abortController.signal
-        });
+        // Determine whether to use Vercel Serverless Function (/api/search) or WordPress proxy
+        const isVercelHost = window.location.hostname.includes('vercel.app') || window.location.port !== '';
+        const endpoint = isVercelHost ? '/api/search' : `${CONFIG.rootApi}/search`;
+
+        let response;
+        try {
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-WP-Nonce': CONFIG.nonce
+            },
+            body: JSON.stringify(payload),
+            signal: state.abortController.signal
+          });
+        } catch (fetchErr) {
+          // If /api/search was attempted and failed, try WordPress proxy fallback
+          if (endpoint !== `${CONFIG.rootApi}/search`) {
+            response = await fetch(`${CONFIG.rootApi}/search`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': CONFIG.nonce
+              },
+              body: JSON.stringify(payload),
+              signal: state.abortController.signal
+            });
+          } else {
+            throw fetchErr;
+          }
+        }
 
         if (!response.ok) {
           throw new Error(`Proxy responded with status ${response.status}`);
         }
 
         const data = await response.json();
-        const cacheHit = response.headers.get('X-Flyboro-Cache') === 'HIT';
-        DOM.resultsMetaSource.textContent = cacheHit ? 'Cached Query (Transient 15m HIT)' : 'Live Upstream API Response';
+        const vercelCache = response.headers.get('x-vercel-cache');
+        const wpCache = response.headers.get('X-Flyboro-Cache');
+        const providerHeader = response.headers.get('x-proxy-provider') || (data && data.provider) || 'Proxy Service';
+
+        let badgeText = `${providerHeader}`;
+        if (vercelCache) {
+          badgeText += ` (Vercel CDN: ${vercelCache})`;
+        } else if (wpCache === 'HIT') {
+          badgeText += ` (WP Transient HIT)`;
+        } else {
+          badgeText += ` (Direct Upstream)`;
+        }
+
+        DOM.resultsMetaSource.textContent = badgeText;
         renderLiveResults(data);
 
       } catch (err) {
