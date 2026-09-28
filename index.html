@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Flyboro - Luxury and Efficient Unified Travel Booking Portal: Cars, Flights, Hotels, Vacations, and Private Jets.">
+  <title>Flyboro | Unified Travel Booking Portal</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://images.unsplash.com">
+</head>
+<body class="theme-car-rental">
+
+  <!-- Main Navigation Header -->
+  <header class="site-header" role="banner">
+    <div class="header-container">
+      <a href="#" class="brand-logo" aria-label="Flyboro Home">
+        <span class="logo-mark">FLY</span>BORO
+      </a>
+
+      <!-- Theme/Mode Indicator Pill -->
+      <div class="header-theme-badge" id="theme-indicator" aria-live="polite">
+        Current Mode: <span class="theme-name">Car Rentals (Trust & Efficiency)</span>
+      </div>
+
+      <nav class="user-nav" aria-label="Account and Currency Navigation">
+        <button class="currency-selector" aria-label="Select Currency">USD ($)</button>
+        <a href="#signin" class="btn-secondary">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero & Multi-Product Engine Section -->
+  <main class="main-content" id="main-content">
+    <section class="hero-portal-section">
+      <div class="portal-wrapper">
+        
+        <!-- Touch-Friendly, Horizontal-Scroller Product Line Tabs -->
+        <nav class="product-tabs-nav" aria-label="Product Lines">
+          <div class="product-tabs-scroller" role="tablist">
+            <button class="tab-pill active" role="tab" id="tab-cars" aria-selected="true" aria-controls="panel-cars" data-theme="theme-car-rental" data-product="cars" data-desc="Car Rentals (Trust & Efficiency)">
+              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+              <span>Car Rentals</span>
+            </button>
+            <button class="tab-pill" role="tab" id="tab-flights" aria-selected="false" aria-controls="panel-flights" data-theme="theme-flights" data-product="flights" data-desc="Commercial Flights (Trust & Efficiency)">
+              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+              <span>Flights</span>
+            </button>
+            <button class="tab-pill" role="tab" id="tab-hotels" aria-selected="false" aria-controls="panel-hotels" data-theme="theme-hotels" data-product="hotels" data-desc="Hotels & Resorts (Luxury & Relaxation)">
+              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg>
+              <span>Hotels</span>
+            </button>
+            <button class="tab-pill" role="tab" id="tab-vacations" aria-selected="false" aria-controls="panel-vacations" data-theme="theme-vacations" data-product="vacations" data-desc="Vacation Packages (Action & Adventure)">
+              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 12v7"/></svg>
+              <span>Vacations</span>
+            </button>
+            <button class="tab-pill" role="tab" id="tab-jets" aria-selected="false" aria-controls="panel-jets" data-theme="theme-private-jets" data-product="jets" data-desc="Private Jets (Exclusive Dark Mode)">
+              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>
+              <span>Private Jets</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Search Engine Box -->
+        <div class="search-engine-card" id="search-card">
+          <div class="engine-header">
+            <h1 class="engine-title" id="engine-headline">Reserve Premium Car Rentals Worldwide</h1>
+            <p class="engine-subtitle" id="engine-subheadline">Partnered with Carnect for direct fleet availability, zero hidden fees, and instant vouchers.</p>
+          </div>
+
+          <form id="flyboro-search-form" class="booking-form" novalidate>
+            <input type="hidden" name="product_type" id="field-product-type" value="cars">
+
+            <div class="form-grid" id="dynamic-form-fields">
+              <!-- Injected by flyboro-engine.js (Default: Car Rentals) -->
+            </div>
+
+            <!-- Global Uniform CTA Button: Strictly Sunset Orange across all themes -->
+            <div class="form-cta-container">
+              <button type="submit" class="global-cta-button" id="btn-submit-search">
+                <span class="btn-text">Search Availability</span>
+                <span class="btn-spinner" aria-hidden="true"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Search Results / Skeleton Shimmer Mount Point -->
+    <section class="results-viewport" aria-live="polite" aria-busy="false" id="results-section">
+      <div class="results-header" id="results-header" style="display: none;">
+        <h2 class="results-title">Available Options</h2>
+        <span class="results-meta-badge" id="results-meta-source">Direct Proxy Feed</span>
+      </div>
+      <div class="results-container" id="results-container">
+        <!-- Injected dynamically via flyboro-engine.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Checkout / Confirmation Modal Mock -->
+  <dialog id="booking-modal" class="booking-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-item-title">Booking Confirmation</h3>
+        <button id="modal-close-btn" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro">Your selected itinerary is ready for immediate reservation through our secure WooCommerce backend:</p>
+        <div class="modal-summary">
+          <div class="summary-row">
+            <span>Item Reference:</span>
+            <strong id="modal-sku">--</strong>
+          </div>
+          <div class="summary-row">
+            <span>Rate per Day/Flight:</span>
+            <strong id="modal-price" class="modal-highlight-price">--</strong>
+          </div>
+          <div class="summary-row">
+            <span>Provider Routing:</span>
+            <span id="modal-provider" class="provider-pill">Carnect Gateway</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-cancel" id="modal-cancel-btn">Cancel</button>
+        <button type="button" class="global-cta-button modal-cta-btn" id="modal-checkout-btn">Proceed to Secure Checkout</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Localized Configuration (Simulates WordPress wp_localize_script) -->
+  <script>
+    window.flyboroConfig = {
+      rootApi: '/wp-json/flyboro/v1',
+      nonce: 'wp_rest_nonce_live_token',
+      wcCartUrl: '/cart',
+      // Set to true to automatically fallback to rich client-side mock data when testing outside a live WordPress server
+      enableClientMockFallback: true
+    };
+  </script>
+  <script src="flyboro-engine.js" defer></script>
+</body>
+</html>

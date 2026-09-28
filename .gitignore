@@ -1,0 +1,17 @@
+# System / OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node
+node_modules/
+
+# Vercel
+.vercel/
+
+# Local Environment
+.env.local
+.env.*.local

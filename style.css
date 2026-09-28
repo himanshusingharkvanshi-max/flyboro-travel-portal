@@ -1,0 +1,760 @@
+/* ==========================================================================
+   FLYBORO UNIFIED TRAVEL PORTAL - DESIGN SYSTEM & THEMING ENGINE
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. GLOBAL DESIGN TOKENS & DEFAULT THEME (Car Rentals & Flights)
+   -------------------------------------------------------------------------- */
+:root {
+  /* STRICT GLOBAL CONVERSION CTA: Uniform Sunset Orange across ALL themes */
+  --cta-primary: #FF6D00;
+  --cta-hover: #E65100;
+  --cta-active: #BF360C;
+  --cta-contrast: #FFFFFF;
+  --cta-shadow: 0 4px 14px rgba(255, 109, 0, 0.35);
+
+  /* Shared Geometry & Touch Parameters */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --min-touch-target: 48px;
+
+  /* DEFAULT THEME TOKENS: Car Rentals & Flights (Trust & Corporate Efficiency) */
+  --theme-bg: #F4F7FA;
+  --theme-surface: #FFFFFF;
+  --theme-surface-subtle: #F8FAFC;
+  --theme-header-text: #0F2A4A;   /* Deep Corporate Navy */
+  --theme-body-text: #2C3E50;
+  --theme-muted-text: #64748B;
+  --theme-border: #D8E2EC;
+  --theme-accent: #0052CC;
+  --theme-card-shadow: 0 10px 30px rgba(15, 42, 74, 0.08);
+
+  /* Dynamic Shimmer Gradient Tokens */
+  --shimmer-base: #E2E8F0;
+  --shimmer-highlight: #F8FAFC;
+}
+
+/* --------------------------------------------------------------------------
+   2. BODY CLASS THEME OVERRIDES (0ms PHP Latency Instant CSS Switches)
+   -------------------------------------------------------------------------- */
+
+/* Flights (Shares Trust & Efficiency with subtle distinct sky accent) */
+body.theme-flights {
+  --theme-bg: #F0F4F8;
+  --theme-surface: #FFFFFF;
+  --theme-surface-subtle: #F8FAFC;
+  --theme-header-text: #0B2545;
+  --theme-body-text: #1E293B;
+  --theme-muted-text: #64748B;
+  --theme-border: #CFDBE8;
+  --theme-accent: #0284C7;
+  --theme-card-shadow: 0 10px 30px rgba(11, 37, 69, 0.07);
+  --shimmer-base: #E2E8F0;
+  --shimmer-highlight: #FFFFFF;
+}
+
+/* Hotels (Luxury & Relaxation) */
+body.theme-hotels {
+  --theme-bg: #F7F6F2;           /* Soft off-white / Alabaster */
+  --theme-surface: #FFFFFF;
+  --theme-surface-subtle: #FAF9F6;
+  --theme-header-text: #004D40;   /* Deep Teal Primary */
+  --theme-body-text: #1C2826;
+  --theme-muted-text: #59706C;
+  --theme-border: #D7DCD9;
+  --theme-accent: #D4AF37;       /* Subtle Gold */
+  --theme-card-shadow: 0 12px 32px rgba(0, 77, 64, 0.08);
+  --shimmer-base: #E8E7E2;
+  --shimmer-highlight: #FBFBF9;
+}
+
+/* Vacations (Action & Adventure) */
+body.theme-vacations {
+  --theme-bg: #FAFAF7;
+  --theme-surface: #FFFFFF;
+  --theme-surface-subtle: #FFF9F5;
+  --theme-header-text: #263238;   /* Dark Gray Text */
+  --theme-body-text: #37474F;
+  --theme-muted-text: #78909C;
+  --theme-border: #E0E0E0;
+  --theme-accent: #FF7043;       /* Sunset Orange Highlights */
+  --theme-card-shadow: 0 10px 30px rgba(216, 67, 21, 0.08);
+  --shimmer-base: #ECEFF1;
+  --shimmer-highlight: #FFFFFF;
+}
+
+/* Private Jets (Exclusive Dark Mode Base) */
+body.theme-private-jets {
+  --theme-bg: #090D14;           /* Deep Midnight Navy */
+  --theme-surface: #121824;      /* Charcoal Card Surface */
+  --theme-surface-subtle: #182030;
+  --theme-header-text: #F8FAFC;
+  --theme-body-text: #CBD5E1;
+  --theme-muted-text: #8191A6;
+  --theme-border: #1E293B;
+  --theme-accent: #D4AF37;       /* Champagne Gold / Platinum */
+  --theme-card-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+  --shimmer-base: #1E293B;
+  --shimmer-highlight: #334155;
+}
+
+/* --------------------------------------------------------------------------
+   3. BASE STYLES & RESET
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--theme-bg);
+  color: var(--theme-body-text);
+  line-height: 1.5;
+  min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --------------------------------------------------------------------------
+   4. SITE HEADER & STATUS
+   -------------------------------------------------------------------------- */
+.site-header {
+  height: 72px;
+  background-color: var(--theme-surface);
+  border-bottom: 1px solid var(--theme-border);
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 50;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.header-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand-logo {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-decoration: none;
+  color: var(--theme-header-text);
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.logo-mark {
+  color: var(--cta-primary);
+}
+
+.header-theme-badge {
+  font-size: 0.8125rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background-color: var(--theme-surface-subtle);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-muted-text);
+}
+
+.header-theme-badge .theme-name {
+  font-weight: 700;
+  color: var(--theme-header-text);
+}
+
+.user-nav {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.currency-selector, .btn-secondary {
+  height: var(--min-touch-target);
+  padding: 0 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--theme-border);
+  background: transparent;
+  color: var(--theme-header-text);
+  text-decoration: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.currency-selector:hover, .btn-secondary:hover {
+  border-color: var(--theme-accent);
+}
+
+/* --------------------------------------------------------------------------
+   5. PRODUCT NAVIGATION: HORIZONTAL TOUCH-SNAP SCROLLER
+   -------------------------------------------------------------------------- */
+.portal-wrapper {
+  max-width: 1100px;
+  margin: 2.5rem auto 1.5rem;
+  padding: 0 1.25rem;
+}
+
+.product-tabs-nav {
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 2;
+}
+
+.product-tabs-scroller {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.product-tabs-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-pill {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  height: var(--min-touch-target);
+  padding: 0 1.25rem;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background-color: transparent;
+  color: var(--theme-muted-text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.tab-pill:hover {
+  color: var(--theme-header-text);
+}
+
+.tab-pill.active {
+  background-color: var(--theme-surface);
+  color: var(--theme-header-text);
+  border-color: var(--theme-border);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.tab-pill.active .tab-icon {
+  stroke: var(--theme-accent);
+}
+
+/* --------------------------------------------------------------------------
+   6. SEARCH CARD & INPUT SYSTEM
+   -------------------------------------------------------------------------- */
+.search-engine-card {
+  background-color: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
+  padding: 2.25rem;
+  box-shadow: var(--theme-card-shadow);
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.engine-header {
+  margin-bottom: 1.75rem;
+}
+
+.engine-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--theme-header-text);
+  letter-spacing: -0.3px;
+  line-height: 1.25;
+}
+
+.engine-subtitle {
+  font-size: 0.925rem;
+  color: var(--theme-muted-text);
+  margin-top: 0.35rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--theme-muted-text);
+}
+
+.form-input {
+  width: 100%;
+  height: var(--min-touch-target);
+  padding: 0 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background-color: var(--theme-bg);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-sm);
+  color: var(--theme-body-text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 3px rgba(255, 109, 0, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   7. UNIFORM GLOBAL CONVERSION BUTTON (Strict Sunset Orange Rule)
+   -------------------------------------------------------------------------- */
+.form-cta-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.global-cta-button {
+  background-color: var(--cta-primary) !important;
+  color: var(--cta-contrast) !important;
+  height: var(--min-touch-target);
+  min-width: 220px;
+  padding: 0 1.75rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  box-shadow: var(--cta-shadow);
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  user-select: none;
+  text-decoration: none;
+}
+
+.global-cta-button:hover {
+  background-color: var(--cta-hover) !important;
+  box-shadow: 0 6px 18px rgba(255, 109, 0, 0.45);
+  transform: translateY(-1px);
+}
+
+.global-cta-button:active {
+  background-color: var(--cta-active) !important;
+  transform: translateY(0);
+}
+
+.global-cta-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Spinner inside button */
+.btn-spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  border-top-color: #FFFFFF;
+  animation: spin 0.7s linear infinite;
+}
+
+.is-loading .btn-spinner {
+  display: inline-block;
+}
+
+.is-loading .btn-text {
+  opacity: 0.8;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------------------------
+   8. SKELETON SHIMMER LOADERS & RESULT CARDS
+   -------------------------------------------------------------------------- */
+.results-viewport {
+  max-width: 1100px;
+  margin: 0 auto 4rem;
+  padding: 0 1.25rem;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.results-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--theme-header-text);
+}
+
+.results-meta-badge {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-muted-text);
+}
+
+.results-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+/* Skeleton Container */
+.skeleton-card {
+  background-color: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--shimmer-base) 0%,
+    var(--shimmer-highlight) 50%,
+    var(--shimmer-base) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-anim 1.5s infinite linear;
+  border-radius: var(--radius-xs);
+}
+
+@keyframes shimmer-anim {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-thumb {
+  width: 180px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.skeleton-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.skeleton-title {
+  height: 22px;
+  width: 45%;
+}
+
+.skeleton-text {
+  height: 15px;
+  width: 75%;
+}
+
+.skeleton-cta {
+  width: 140px;
+  height: 44px;
+  margin-left: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* Live Result Cards */
+.travel-card {
+  background-color: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  box-shadow: var(--theme-card-shadow);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.travel-card:hover {
+  border-color: var(--theme-accent);
+}
+
+.travel-card-media {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.travel-card-media img {
+  width: 180px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+.travel-card-details {
+  flex: 1;
+}
+
+.travel-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--theme-header-text);
+  margin-bottom: 0.35rem;
+}
+
+.travel-card-meta {
+  color: var(--theme-muted-text);
+  font-size: 0.9rem;
+}
+
+.travel-card-tags {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.badge-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  background-color: var(--theme-bg);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-muted-text);
+}
+
+.travel-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-left: auto;
+}
+
+.travel-card-price {
+  text-align: right;
+}
+
+.price-sub {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--theme-muted-text);
+  font-weight: 600;
+}
+
+.price-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--theme-header-text);
+}
+
+/* --------------------------------------------------------------------------
+   9. MODAL & DIALOG ARCHITECTURE
+   -------------------------------------------------------------------------- */
+.booking-modal {
+  margin: auto;
+  border: none;
+  background: transparent;
+  padding: 1rem;
+  max-width: 520px;
+  width: 100%;
+}
+
+.booking-modal::backdrop {
+  background: rgba(10, 15, 25, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+.modal-card {
+  background-color: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.modal-header h3 {
+  font-size: 1.35rem;
+  color: var(--theme-header-text);
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--theme-muted-text);
+}
+
+.modal-summary {
+  background: var(--theme-bg);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin: 1.25rem 0 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.modal-highlight-price {
+  font-size: 1.35rem;
+  color: var(--cta-primary);
+}
+
+.provider-pill {
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-header-text);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn-modal-cancel {
+  height: var(--min-touch-target);
+  padding: 0 1.25rem;
+  border: 1px solid var(--theme-border);
+  background: transparent;
+  color: var(--theme-body-text);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   10. STRICT MOBILE-FIRST OVERRIDES & BATTERY SAVER (@media max-width: 768px)
+   Disables 3D transforms, blur filters, heavy transitions, and heavy shadows.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  /* Eliminate performance throttles */
+  *, *::before, *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: none !important;
+    transition-duration: 0.05s !important;
+  }
+
+  .site-header {
+    height: 64px;
+  }
+
+  .header-theme-badge {
+    display: none; /* Conserve horizontal header estate on mobile */
+  }
+
+  .portal-wrapper {
+    margin-top: 1rem;
+    padding: 0 0.75rem;
+  }
+
+  .product-tabs-scroller {
+    padding-bottom: 2px;
+  }
+
+  .tab-pill {
+    padding: 0 1rem;
+    font-size: 0.875rem;
+  }
+
+  .search-engine-card {
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    padding: 1.25rem;
+  }
+
+  .engine-title {
+    font-size: 1.25rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .form-cta-container, .global-cta-button {
+    width: 100%;
+  }
+
+  .travel-card, .skeleton-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .skeleton-thumb, .travel-card-media img {
+    width: 100%;
+    height: 160px;
+  }
+
+  .travel-card-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .travel-card-actions .global-cta-button {
+    width: auto;
+    min-width: 130px;
+  }
+}
