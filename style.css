@@ -361,6 +361,86 @@ body {
 }
 
 /* --------------------------------------------------------------------------
+   7. AUTOCOMPLETE DROPDOWN
+   -------------------------------------------------------------------------- */
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  z-index: 1000;
+  max-height: 280px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 4px 0;
+  display: none;
+}
+
+.autocomplete-dropdown.is-active {
+  display: block;
+}
+
+.autocomplete-item {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.is-selected {
+  background-color: var(--theme-surface-subtle);
+}
+
+.autocomplete-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.autocomplete-city {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--theme-header-text);
+}
+
+.autocomplete-airport {
+  font-size: 0.775rem;
+  color: var(--theme-muted-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+}
+
+.autocomplete-code-pill {
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  background-color: var(--theme-bg);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-accent);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
    7. UNIFORM GLOBAL CONVERSION BUTTON (Strict Sunset Orange Rule)
    -------------------------------------------------------------------------- */
 .form-cta-container {

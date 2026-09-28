@@ -63,7 +63,10 @@
     cars: `
       <div class="form-group">
         <label for="input-pickup-location" class="form-label">Pick-up Location</label>
-        <input type="text" id="input-pickup-location" name="location" class="form-input" placeholder="Airport code or city (e.g. MIA)" value="Miami Intl (MIA)" required>
+        <div class="input-wrapper">
+          <input type="text" id="input-pickup-location" name="location" class="form-input location-autocomplete" placeholder="City or airport (e.g. DEL, MIA, JFK)" value="Miami (MIA)" required autocomplete="off">
+          <ul class="autocomplete-dropdown" role="listbox"></ul>
+        </div>
       </div>
       <div class="form-group">
         <label for="input-pickup-date" class="form-label">Pick-up Date</label>
@@ -85,11 +88,17 @@
     flights: `
       <div class="form-group">
         <label for="input-origin" class="form-label">Flying From</label>
-        <input type="text" id="input-origin" name="origin" class="form-input" placeholder="Origin (e.g. JFK)" value="New York (JFK)" required>
+        <div class="input-wrapper">
+          <input type="text" id="input-origin" name="origin" class="form-input location-autocomplete" placeholder="Origin (e.g. DEL, JFK)" value="New Delhi (DEL)" required autocomplete="off">
+          <ul class="autocomplete-dropdown" role="listbox"></ul>
+        </div>
       </div>
       <div class="form-group">
         <label for="input-destination" class="form-label">Flying To</label>
-        <input type="text" id="input-destination" name="destination" class="form-input" placeholder="Destination (e.g. LHR)" value="London (LHR)" required>
+        <div class="input-wrapper">
+          <input type="text" id="input-destination" name="destination" class="form-input location-autocomplete" placeholder="Destination (e.g. LHR, DXB)" value="London (LHR)" required autocomplete="off">
+          <ul class="autocomplete-dropdown" role="listbox"></ul>
+        </div>
       </div>
       <div class="form-group">
         <label for="input-flight-dep" class="form-label">Departure Date</label>
@@ -108,7 +117,10 @@
     hotels: `
       <div class="form-group">
         <label for="input-hotel-dest" class="form-label">Destination / Resort</label>
-        <input type="text" id="input-hotel-dest" name="location" class="form-input" placeholder="City or Resort Name" value="Santorini, Greece" required>
+        <div class="input-wrapper">
+          <input type="text" id="input-hotel-dest" name="location" class="form-input location-autocomplete" placeholder="City or airport (e.g. Dubai, Paris)" value="Paris (CDG)" required autocomplete="off">
+          <ul class="autocomplete-dropdown" role="listbox"></ul>
+        </div>
       </div>
       <div class="form-group">
         <label for="input-hotel-in" class="form-label">Check-in Date</label>
@@ -130,7 +142,10 @@
     vacations: `
       <div class="form-group">
         <label for="input-vacation-dest" class="form-label">Package Experience</label>
-        <input type="text" id="input-vacation-dest" name="location" class="form-input" placeholder="Destination Region" value="Costa Rica Rainforest" required>
+        <div class="input-wrapper">
+          <input type="text" id="input-vacation-dest" name="location" class="form-input location-autocomplete" placeholder="Destination Region" value="Singapore (SIN)" required autocomplete="off">
+          <ul class="autocomplete-dropdown" role="listbox"></ul>
+        </div>
       </div>
       <div class="form-group">
         <label for="input-vacation-start" class="form-label">Target Date</label>
@@ -148,11 +163,17 @@
     jets: `
       <div class="form-group">
         <label for="input-jet-origin" class="form-label">Departure FBO</label>
-        <input type="text" id="input-jet-origin" name="origin" class="form-input" placeholder="Airport FBO (e.g. TEB)" value="Teterboro (TEB)" required>
+        <div class="input-wrapper">
+          <input type="text" id="input-jet-origin" name="origin" class="form-input location-autocomplete" placeholder="Airport FBO (e.g. DEL, TEB)" value="New Delhi (DEL)" required autocomplete="off">
+          <ul class="autocomplete-dropdown" role="listbox"></ul>
+        </div>
       </div>
       <div class="form-group">
         <label for="input-jet-dest" class="form-label">Destination FBO</label>
-        <input type="text" id="input-jet-dest" name="destination" class="form-input" placeholder="Airport FBO (e.g. VNY)" value="Van Nuys (VNY)" required>
+        <div class="input-wrapper">
+          <input type="text" id="input-jet-dest" name="destination" class="form-input location-autocomplete" placeholder="Airport FBO (e.g. DXB, VNY)" value="Dubai (DXB)" required autocomplete="off">
+          <ul class="autocomplete-dropdown" role="listbox"></ul>
+        </div>
       </div>
       <div class="form-group">
         <label for="input-jet-date" class="form-label">Charter Departure</label>
@@ -354,9 +375,145 @@
     });
   }
 
+  // Primary fallback database for instant offline/static lookups
+  const FALLBACK_LOCATIONS = [
+    { code: 'DEL', name: 'Indira Gandhi International Airport', city: 'New Delhi', country: 'India' },
+    { code: 'BOM', name: 'Chhatrapati Shivaji Maharaj International Airport', city: 'Mumbai', country: 'India' },
+    { code: 'BLR', name: 'Kempegowda International Airport', city: 'Bengaluru', country: 'India' },
+    { code: 'MAA', name: 'Chennai International Airport', city: 'Chennai', country: 'India' },
+    { code: 'CCU', name: 'Netaji Subhash Chandra Bose International Airport', city: 'Kolkata', country: 'India' },
+    { code: 'HYD', name: 'Rajiv Gandhi International Airport', city: 'Hyderabad', country: 'India' },
+    { code: 'JFK', name: 'John F. Kennedy International Airport', city: 'New York', country: 'United States' },
+    { code: 'EWR', name: 'Newark Liberty International Airport', city: 'New York', country: 'United States' },
+    { code: 'LHR', name: 'Heathrow Airport', city: 'London', country: 'United Kingdom' },
+    { code: 'DXB', name: 'Dubai International Airport', city: 'Dubai', country: 'United Arab Emirates' },
+    { code: 'SIN', name: 'Singapore Changi Airport', city: 'Singapore', country: 'Singapore' },
+    { code: 'CDG', name: 'Charles de Gaulle Airport', city: 'Paris', country: 'France' },
+    { code: 'MIA', name: 'Miami International Airport', city: 'Miami', country: 'United States' },
+    { code: 'ORD', name: "O'Hare International Airport", city: 'Chicago', country: 'United States' },
+    { code: 'LAX', name: 'Los Angeles International Airport', city: 'Los Angeles', country: 'United States' },
+    { code: 'SFO', name: 'San Francisco International Airport', city: 'San Francisco', country: 'United States' },
+    { code: 'SAT', name: 'San Antonio International Airport', city: 'San Antonio', country: 'United States' },
+    { code: 'FLL', name: 'Fort Lauderdale-Hollywood International Airport', city: 'Fort Lauderdale', country: 'United States' },
+    { code: 'MCO', name: 'Orlando International Airport', city: 'Orlando', country: 'United States' }
+  ];
+
+  function setupAutocomplete() {
+    const inputs = DOM.dynamicFields.querySelectorAll('.location-autocomplete');
+    inputs.forEach(input => {
+      const wrapper = input.closest('.input-wrapper');
+      if (!wrapper) return;
+      const dropdown = wrapper.querySelector('.autocomplete-dropdown');
+      if (!dropdown) return;
+
+      let debounceTimer = null;
+      let selectedIdx = -1;
+      let currentItems = [];
+
+      input.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        const q = this.value.trim();
+        if (q.length < 2) {
+          dropdown.classList.remove('is-active');
+          dropdown.innerHTML = '';
+          return;
+        }
+
+        debounceTimer = setTimeout(async () => {
+          try {
+            const res = await fetch(`/api/autocomplete?q=${encodeURIComponent(q)}`);
+            if (res.ok) {
+              const json = await res.json();
+              if (json && json.data && json.data.length > 0) {
+                renderDropdown(json.data);
+                return;
+              }
+            }
+            throw new Error('Fallback needed');
+          } catch {
+            const filtered = FALLBACK_LOCATIONS.filter(item =>
+              item.code.toLowerCase().includes(q.toLowerCase()) ||
+              item.city.toLowerCase().includes(q.toLowerCase()) ||
+              item.name.toLowerCase().includes(q.toLowerCase()) ||
+              item.country.toLowerCase().includes(q.toLowerCase())
+            ).slice(0, 8);
+            renderDropdown(filtered);
+          }
+        }, 150);
+      });
+
+      function renderDropdown(items) {
+        currentItems = items;
+        selectedIdx = -1;
+        if (!items || items.length === 0) {
+          dropdown.classList.remove('is-active');
+          dropdown.innerHTML = '';
+          return;
+        }
+
+        dropdown.innerHTML = items.map((item, idx) => `
+          <li class="autocomplete-item" data-index="${idx}" data-val="${escapeHtml(item.city)} (${escapeHtml(item.code)})">
+            <div class="autocomplete-main">
+              <span class="autocomplete-city">${escapeHtml(item.city)}, ${escapeHtml(item.country)}</span>
+              <span class="autocomplete-airport">${escapeHtml(item.name)}</span>
+            </div>
+            <span class="autocomplete-code-pill">${escapeHtml(item.code)}</span>
+          </li>
+        `).join('');
+
+        dropdown.classList.add('is-active');
+
+        dropdown.querySelectorAll('.autocomplete-item').forEach(li => {
+          li.addEventListener('mousedown', function (e) {
+            e.preventDefault();
+            const val = this.getAttribute('data-val');
+            input.value = val;
+            dropdown.classList.remove('is-active');
+            input.dispatchEvent(new Event('change'));
+          });
+        });
+      }
+
+      input.addEventListener('keydown', function (e) {
+        if (!dropdown.classList.contains('is-active') || currentItems.length === 0) return;
+
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIdx = (selectedIdx + 1) % items.length;
+          updateHighlight(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIdx = (selectedIdx - 1 + items.length) % items.length;
+          updateHighlight(items);
+        } else if (e.key === 'Enter') {
+          if (selectedIdx >= 0 && selectedIdx < items.length) {
+            e.preventDefault();
+            input.value = items[selectedIdx].getAttribute('data-val');
+            dropdown.classList.remove('is-active');
+          }
+        } else if (e.key === 'Escape') {
+          dropdown.classList.remove('is-active');
+        }
+      });
+
+      function updateHighlight(items) {
+        items.forEach((item, idx) => {
+          item.classList.toggle('is-selected', idx === selectedIdx);
+          if (idx === selectedIdx) item.scrollIntoView({ block: 'nearest' });
+        });
+      }
+
+      input.addEventListener('blur', function () {
+        setTimeout(() => dropdown.classList.remove('is-active'), 200);
+      });
+    });
+  }
+
   function renderProductFields(productKey) {
     DOM.dynamicFields.innerHTML = FORM_TEMPLATES[productKey] || FORM_TEMPLATES.cars;
     setSmartDefaultDates();
+    setupAutocomplete();
   }
 
   function setSmartDefaultDates() {
