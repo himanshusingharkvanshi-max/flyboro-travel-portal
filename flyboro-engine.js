@@ -598,15 +598,13 @@
         const data = await response.json();
         const vercelCache = response.headers.get('x-vercel-cache');
         const wpCache = response.headers.get('X-Flyboro-Cache');
-        const providerHeader = response.headers.get('x-proxy-provider') || (data && data.provider) || 'Proxy Service';
+        const providerHeader = (data && data.meta && data.meta.providerSource) || response.headers.get('x-proxy-provider') || (data && data.provider) || 'Proxy Service';
 
         let badgeText = `${providerHeader}`;
         if (vercelCache) {
           badgeText += ` (Vercel CDN: ${vercelCache})`;
         } else if (wpCache === 'HIT') {
           badgeText += ` (WP Transient HIT)`;
-        } else {
-          badgeText += ` (Direct Upstream)`;
         }
 
         DOM.resultsMetaSource.textContent = badgeText;
@@ -657,7 +655,7 @@
    * Render Actual Data Results
    */
   function renderLiveResults(res) {
-    const list = res.data;
+    const list = res.results || res.data;
     if (!list || list.length === 0) {
       DOM.resultsContainer.innerHTML = `
         <div style="background: var(--theme-surface); border: 1px solid var(--theme-border); border-radius: var(--radius-md); padding: 3rem; text-align: center;">
