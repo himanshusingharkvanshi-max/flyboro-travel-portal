@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   try {
     // Optional Admin Secret Check
     const adminSecret = process.env.ADMIN_SECRET_KEY;
-    const providedKey = req.headers['x-admin-key'] || req.query.key;
+    const providedKey = req.headers?.['x-admin-key'] || req.query?.key;
 
     if (adminSecret && providedKey !== adminSecret) {
       return res.status(401).json({ success: false, error: 'Unauthorized back-office access. Invalid or missing admin key.' });
@@ -67,6 +67,7 @@ export default async function handler(req, res) {
     // Calculate KPIs
     let totalGrossVolume = 0;
     let totalConvenienceFees = 0;
+    let totalOtaMargin = 0;
     let activeCount = 0;
     let cancelledCount = 0;
 
@@ -74,6 +75,7 @@ export default async function handler(req, res) {
       const summary = b.paymentSummary || {};
       const paid = parseFloat(summary.totalAmount || summary.totalPaid || 0);
       const fee = parseFloat(summary.convenienceFee || 15);
+      const markup = parseFloat(summary.otaMarkup || 0);
 
       if (b.status === 'CANCELLED') {
         cancelledCount += 1;
@@ -81,6 +83,7 @@ export default async function handler(req, res) {
         activeCount += 1;
         totalGrossVolume += paid;
         totalConvenienceFees += fee;
+        totalOtaMargin += (fee + markup);
       }
     });
 
@@ -95,6 +98,7 @@ export default async function handler(req, res) {
         cancellationRate: `${cancellationRate}%`,
         grossVolume: parseFloat(totalGrossVolume.toFixed(2)),
         netOtaRevenue: parseFloat(totalConvenienceFees.toFixed(2)),
+        totalOtaMargin: parseFloat(totalOtaMargin.toFixed(2)),
         currency: 'USD'
       },
       bookings

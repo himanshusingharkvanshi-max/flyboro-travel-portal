@@ -194,6 +194,9 @@ export default async function handler(req, res) {
         taxesAndFees: taxAmount + convenienceFee,
         totalPaid: totalAmount,
         currency: item.currency || 'USD',
+        supplierPrice: item.supplierPrice || basePrice,
+        otaMarkup: item.otaMargin ? item.otaMargin.markupAmount : 0,
+        otaMarginProfit: (item.otaMargin ? item.otaMargin.markupAmount : 0) + convenienceFee,
         paymentMethod: paymentMethod === 'stripe' ? 'Stripe Checkout' : (paymentMethod === 'woocommerce' ? 'WooCommerce Cart' : 'Instant Demo Gateway'),
         status: 'PAID'
       }

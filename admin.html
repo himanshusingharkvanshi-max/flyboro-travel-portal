@@ -526,6 +526,77 @@
       justify-content: flex-end;
       gap: 8px;
     }
+
+    /* Markup Management Styles */
+    .markup-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      transition: border-color 0.2s;
+    }
+
+    .markup-card:hover {
+      border-color: var(--primary-navy);
+    }
+
+    .markup-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .markup-product-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .markup-icon {
+      font-size: 1.5rem;
+    }
+
+    .markup-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary-navy);
+    }
+
+    .markup-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.825rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .markup-input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .markup-sim-box {
+      background: #F8FAFC;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .markup-sim-highlight {
+      font-weight: 700;
+      color: var(--primary-navy);
+    }
   </style>
 </head>
 <body>
@@ -560,6 +631,9 @@
       </button>
       <button type="button" class="admin-tab-btn" id="tab-btn-promos">
         🏷️ Promo Campaigns
+      </button>
+      <button type="button" class="admin-tab-btn" id="tab-btn-markups">
+        📈 Markup & Commission Rules
       </button>
     </div>
 
@@ -702,6 +776,27 @@
             </tbody>
           </table>
         </div>
+    </div>
+
+    <!-- PANEL 3: OTA MARKUP & COMMISSION RULES -->
+    <div id="panel-markups" style="display: none;">
+      <!-- Overview Banner -->
+      <section class="table-card" style="margin-bottom: 2rem; padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 0.35rem;">Dynamic OTA Commission & Markup Rules</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Configure automatic markup margins applied server-side to wholesale supplier rates before search inventory renders to travelers.</p>
+          </div>
+          <button type="button" class="btn-nav btn-refresh" id="btn-save-markups" style="font-size: 0.9rem; padding: 10px 20px;">
+            💾 Save All Markup Rules
+          </button>
+        </div>
+        <div id="markup-feedback" style="display: none; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.85rem; margin-top: 1rem; font-weight: 600;"></div>
+      </section>
+
+      <!-- Grid of 5 Product Line Markup Cards -->
+      <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;" id="markup-cards-container">
+        <!-- Rendered dynamically via JavaScript -->
       </section>
     </div>
   </main>
@@ -725,6 +820,7 @@
 
       let allBookings = [];
       let allPromos = [];
+      let currentMarkupRules = {};
       let activeTab = 'bookings';
 
       const DOM = {
@@ -732,8 +828,10 @@
         mainSubheading: document.getElementById('admin-main-subheading'),
         tabBookings: document.getElementById('tab-btn-bookings'),
         tabPromos: document.getElementById('tab-btn-promos'),
+        tabMarkups: document.getElementById('tab-btn-markups'),
         panelBookings: document.getElementById('panel-bookings'),
         panelPromos: document.getElementById('panel-promos'),
+        panelMarkups: document.getElementById('panel-markups'),
 
         // Bookings
         grossVolume: document.getElementById('kpi-gross-volume'),
@@ -753,6 +851,11 @@
         promoFeedback: document.getElementById('promo-create-feedback'),
         promosTbody: document.getElementById('promos-tbody'),
         promoCountBadge: document.getElementById('promo-count-badge'),
+
+        // Markups
+        markupCardsContainer: document.getElementById('markup-cards-container'),
+        btnSaveMarkups: document.getElementById('btn-save-markups'),
+        markupFeedback: document.getElementById('markup-feedback'),
 
         // Auth
         authModal: document.getElementById('auth-modal'),
@@ -776,22 +879,26 @@
 
       function switchTab(tab) {
         activeTab = tab;
+        DOM.tabBookings.classList.toggle('active', tab === 'bookings');
+        DOM.tabPromos.classList.toggle('active', tab === 'promos');
+        DOM.tabMarkups.classList.toggle('active', tab === 'markups');
+
+        DOM.panelBookings.style.display = tab === 'bookings' ? 'block' : 'none';
+        DOM.panelPromos.style.display = tab === 'promos' ? 'block' : 'none';
+        DOM.panelMarkups.style.display = tab === 'markups' ? 'block' : 'none';
+
         if (tab === 'bookings') {
-          DOM.tabBookings.classList.add('active');
-          DOM.tabPromos.classList.remove('active');
-          DOM.panelBookings.style.display = 'block';
-          DOM.panelPromos.style.display = 'none';
           DOM.mainHeading.textContent = 'Operational Analytics & Bookings';
           DOM.mainSubheading.textContent = 'Real-time telemetry and reservation index powered by Vercel KV / Upstash Redis.';
           fetchAdminData();
-        } else {
-          DOM.tabPromos.classList.add('active');
-          DOM.tabBookings.classList.remove('active');
-          DOM.panelPromos.style.display = 'block';
-          DOM.panelBookings.style.display = 'none';
+        } else if (tab === 'promos') {
           DOM.mainHeading.textContent = 'Promotional Campaigns & Discounts';
           DOM.mainSubheading.textContent = 'Create, manage, and deploy dynamic discount rules stored in Vercel KV.';
           fetchPromoData();
+        } else if (tab === 'markups') {
+          DOM.mainHeading.textContent = 'OTA Markup & Commission Rules';
+          DOM.mainSubheading.textContent = 'Control server-side margins, supplier markups, and customer pricing across inventory channels.';
+          fetchMarkupData();
         }
       }
 
@@ -1070,8 +1177,174 @@
         }
       }
 
+      const PRODUCT_METAS = {
+        flights: { icon: '✈️', label: 'Commercial Flights', sample: 450 },
+        hotels: { icon: '🏨', label: 'Hotels & Resorts', sample: 220 },
+        cars: { icon: '🚗', label: 'Car Rentals', sample: 65 },
+        jets: { icon: '🛩️', label: 'Private Charter Jets', sample: 3800 },
+        vacations: { icon: '🌴', label: 'Vacation Packages', sample: 1450 }
+      };
+
+      async function fetchMarkupData() {
+        DOM.markupCardsContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2.5rem; color: var(--text-muted);">Loading active markup configuration from Vercel KV...</div>';
+
+        const headers = {};
+        const key = getAdminKey();
+        if (key) headers['x-admin-key'] = key;
+
+        try {
+          const res = await fetch('/api/markup', { headers });
+          if (!res.ok) throw new Error('Failed to load markup rules');
+          const data = await res.json();
+          currentMarkupRules = data.rules || {};
+          renderMarkupCards();
+        } catch (err) {
+          DOM.markupCardsContainer.innerHTML = `<div style="grid-column: 1 / -1; color: #DC2626; padding: 2rem; text-align: center;">Error loading markup rules: ${escapeHtml(err.message)}</div>`;
+        }
+      }
+
+      function renderMarkupCards() {
+        const products = ['flights', 'hotels', 'cars', 'jets', 'vacations'];
+        
+        DOM.markupCardsContainer.innerHTML = products.map(prod => {
+          const rule = currentMarkupRules[prod] || { active: true, type: 'percentage', value: 5, description: '' };
+          const meta = PRODUCT_METAS[prod] || { icon: '🏷️', label: prod, sample: 100 };
+          const isActive = rule.active !== false;
+
+          return `
+            <div class="markup-card" data-product="${prod}">
+              <div class="markup-card-header">
+                <div class="markup-product-info">
+                  <span class="markup-icon">${meta.icon}</span>
+                  <div>
+                    <h3 class="markup-title">${escapeHtml(meta.label)}</h3>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(rule.description || '')}</span>
+                  </div>
+                </div>
+                <label class="markup-toggle">
+                  <input type="checkbox" class="markup-active-toggle" ${isActive ? 'checked' : ''} onchange="updateMarkupSimulator('${prod}')">
+                  <span class="status-text">${isActive ? 'Active' : 'Disabled'}</span>
+                </label>
+              </div>
+
+              <div class="markup-input-row">
+                <div class="form-group-admin">
+                  <label>Commission Type</label>
+                  <select class="markup-type-select" onchange="updateMarkupSimulator('${prod}')">
+                    <option value="percentage" ${rule.type === 'percentage' ? 'selected' : ''}>Percentage (%)</option>
+                    <option value="flat" ${rule.type === 'flat' ? 'selected' : ''}>Flat Amount ($)</option>
+                  </select>
+                </div>
+                <div class="form-group-admin">
+                  <label>Markup Value</label>
+                  <input type="number" class="markup-val-input" min="0" max="5000" step="0.5" value="${rule.value ?? 5}" oninput="updateMarkupSimulator('${prod}')">
+                </div>
+              </div>
+
+              <div class="markup-sim-box" id="sim-box-${prod}">
+                <!-- Injected by simulator -->
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        products.forEach(p => updateMarkupSimulator(p));
+      }
+
+      function updateMarkupSimulator(prod) {
+        const card = document.querySelector(`.markup-card[data-product="${prod}"]`);
+        if (!card) return;
+
+        const activeToggle = card.querySelector('.markup-active-toggle');
+        const typeSelect = card.querySelector('.markup-type-select');
+        const valInput = card.querySelector('.markup-val-input');
+        const statusText = card.querySelector('.status-text');
+        const simBox = document.getElementById(`sim-box-${prod}`);
+
+        const isActive = activeToggle.checked;
+        statusText.textContent = isActive ? 'Active' : 'Disabled';
+        statusText.style.color = isActive ? '#10B981' : '#64748B';
+
+        const type = typeSelect.value;
+        const val = parseFloat(valInput.value) || 0;
+        const meta = PRODUCT_METAS[prod] || { sample: 200 };
+        const supplierNet = meta.sample;
+
+        let markupAmt = 0;
+        if (isActive) {
+          markupAmt = type === 'percentage' ? (supplierNet * val) / 100 : val;
+        }
+        const travelerPays = supplierNet + markupAmt;
+        const marginPct = travelerPays > 0 ? ((markupAmt / travelerPays) * 100).toFixed(1) : '0.0';
+
+        simBox.innerHTML = `
+          <div><strong>Live Margin Preview (Sample Wholesale Fare: $${supplierNet})</strong></div>
+          <div style="margin-top: 4px;">
+            Traveler Retail Fare: <span class="markup-sim-highlight">$${travelerPays.toFixed(2)}</span>
+            ${isActive ? ` (OTA Profit: <span style="color: #10B981; font-weight: 700;">+$${markupAmt.toFixed(2)}</span> / ${marginPct}%)` : ' <span style="color: #64748B;">(Zero markup applied)</span>'}
+          </div>
+        `;
+      }
+
+      async function saveMarkupRules() {
+        const cards = document.querySelectorAll('.markup-card');
+        const updated = {};
+
+        cards.forEach(card => {
+          const prod = card.getAttribute('data-product');
+          const isActive = card.querySelector('.markup-active-toggle').checked;
+          const type = card.querySelector('.markup-type-select').value;
+          const val = parseFloat(card.querySelector('.markup-val-input').value) || 0;
+
+          updated[prod] = {
+            ...(currentMarkupRules[prod] || {}),
+            active: isActive,
+            type,
+            value: val,
+            updatedAt: new Date().toISOString()
+          };
+        });
+
+        DOM.btnSaveMarkups.disabled = true;
+        DOM.btnSaveMarkups.textContent = 'Saving...';
+        DOM.markupFeedback.style.display = 'none';
+
+        const headers = { 'Content-Type': 'application/json' };
+        const key = getAdminKey();
+        if (key) headers['x-admin-key'] = key;
+
+        try {
+          const res = await fetch('/api/markup', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ rules: updated })
+          });
+
+          const data = await res.json();
+          if (!res.ok || !data.success) {
+            throw new Error(data.error || 'Failed to save markup rules');
+          }
+
+          currentMarkupRules = data.rules;
+          DOM.markupFeedback.style.display = 'block';
+          DOM.markupFeedback.style.background = '#DCFCE7';
+          DOM.markupFeedback.style.color = '#15803D';
+          DOM.markupFeedback.textContent = '✓ OTA commission markup rules updated successfully in Vercel KV! Search inventory now reflects new prices.';
+          
+        } catch (err) {
+          DOM.markupFeedback.style.display = 'block';
+          DOM.markupFeedback.style.background = '#FEE2E2';
+          DOM.markupFeedback.style.color = '#DC2626';
+          DOM.markupFeedback.textContent = `✕ ${err.message}`;
+        } finally {
+          DOM.btnSaveMarkups.disabled = false;
+          DOM.btnSaveMarkups.textContent = '💾 Save All Markup Rules';
+        }
+      }
+
       window.cancelReservation = cancelReservation;
       window.deletePromo = deletePromo;
+      window.updateMarkupSimulator = updateMarkupSimulator;
 
       function escapeHtml(str) {
         if (!str) return '';
@@ -1086,15 +1359,18 @@
       // Event Listeners
       DOM.tabBookings.addEventListener('click', () => switchTab('bookings'));
       DOM.tabPromos.addEventListener('click', () => switchTab('promos'));
+      DOM.tabMarkups.addEventListener('click', () => switchTab('markups'));
 
       DOM.searchInput.addEventListener('input', filterAndRenderTable);
       DOM.statusFilter.addEventListener('change', filterAndRenderTable);
       DOM.refreshBtn.addEventListener('click', () => {
         if (activeTab === 'bookings') fetchAdminData();
-        else fetchPromoData();
+        else if (activeTab === 'promos') fetchPromoData();
+        else fetchMarkupData();
       });
 
       DOM.promoForm.addEventListener('submit', createPromo);
+      DOM.btnSaveMarkups.addEventListener('click', saveMarkupRules);
 
       DOM.authBtn.addEventListener('click', () => {
         DOM.adminKeyInput.value = getAdminKey();
@@ -1109,7 +1385,8 @@
         setAdminKey(DOM.adminKeyInput.value);
         DOM.authModal.style.display = 'none';
         if (activeTab === 'bookings') fetchAdminData();
-        else fetchPromoData();
+        else if (activeTab === 'promos') fetchPromoData();
+        else fetchMarkupData();
       });
 
       // Initial Load

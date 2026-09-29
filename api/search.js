@@ -6,6 +6,8 @@
  * Aggregates results from supplier APIs (Duffel, HotelBeds) or generates dynamic fallback inventory.
  */
 
+import { getMarkupRules, applyMarkup } from '../lib/markup.js';
+
 export default async function handler(req, res) {
   // 1. CORS & Security Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -78,6 +80,22 @@ export default async function handler(req, res) {
       searchResults = generateMockVacations(destination.toUpperCase(), departDate);
     }
 
+    // 4b. Apply Configurable OTA Margin & Markup Rules
+    const markupRules = await getMarkupRules();
+    const finalResults = searchResults.map(item => {
+      const calculation = applyMarkup(item.price, type, markupRules);
+      return {
+        ...item,
+        supplierPrice: calculation.supplierPrice,
+        price: calculation.customerPrice,
+        otaMargin: {
+          markupAmount: calculation.markupAmount,
+          marginPercent: calculation.marginPercent,
+          rule: calculation.ruleApplied
+        }
+      };
+    });
+
     // 5. Send Unified JSON Payload Response (Provides both results and data keys for full client compatibility)
     return res.status(200).json({
       success: true,
@@ -85,10 +103,11 @@ export default async function handler(req, res) {
       meta: {
         providerSource,
         cachedAt: new Date().toISOString(),
-        totalResults: searchResults.length
+        totalResults: finalResults.length,
+        markupApplied: markupRules[type]?.active ? `${markupRules[type].value}${markupRules[type].type === 'percentage' ? '%' : '$'}` : 'None'
       },
-      results: searchResults,
-      data: searchResults
+      results: finalResults,
+      data: finalResults
     });
 
   } catch (error) {
