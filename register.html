@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Create your Flyboro account to unlock wholesale GDS rates, flexible booking policies, and luxury travel itineraries worldwide.">
+  <title>Create Account | Flyboro Travel Portal</title>
+  <link rel="stylesheet" href="auth.css">
+  <link rel="preconnect" href="https://images.unsplash.com">
+</head>
+<body>
+
+  <main class="auth-split-layout">
+    
+    <!-- LEFT SIDE: CONVERSION-OPTIMIZED REGISTRATION FORM -->
+    <section class="auth-form-side">
+      <header class="auth-nav-top">
+        <a href="/" class="auth-brand-logo" aria-label="Flyboro Home">
+          <span class="logo-mark">FLY</span>BORO
+        </a>
+        <a href="/" class="auth-nav-link">← Back to Portal</a>
+      </header>
+
+      <div class="auth-form-card">
+        <div class="auth-header">
+          <span class="auth-eyebrow">NEW MEMBERSHIP</span>
+          <h1 class="auth-title">Create Account</h1>
+          <p class="auth-subtitle">Join 45,000+ travelers accessing direct GDS rates and zero booking fees worldwide.</p>
+        </div>
+
+        <!-- Social Auth Buttons -->
+        <div class="auth-social-row">
+          <button type="button" class="btn-social" id="btn-google-register">
+            <svg viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span>Google</span>
+          </button>
+
+          <button type="button" class="btn-social" id="btn-apple-register">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.76 1.04-1.81.93-2.87-.9.04-2 .6-2.64 1.36-.56.65-.96 1.7-1.05 2.76 1.02.08 2.05-.51 2.76-1.25z"/>
+            </svg>
+            <span>Apple</span>
+          </button>
+        </div>
+
+        <div class="auth-divider">
+          <span>Or register with email</span>
+        </div>
+
+        <!-- Registration Form -->
+        <form class="auth-form" id="register-form">
+          <div class="auth-field-group">
+            <label for="reg-name" class="auth-label">Full Name</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                id="reg-name" 
+                name="name" 
+                class="auth-input has-icon" 
+                placeholder="e.g. Himanshu Singh" 
+                required 
+                autocomplete="name" 
+              />
+            </div>
+          </div>
+
+          <div class="auth-field-group">
+            <label for="reg-email" class="auth-label">Email Address</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </svg>
+              </span>
+              <input 
+                type="email" 
+                id="reg-email" 
+                name="email" 
+                class="auth-input has-icon" 
+                placeholder="name@example.com" 
+                required 
+                autocomplete="email" 
+              />
+            </div>
+          </div>
+
+          <div class="auth-field-group">
+            <label for="reg-password" class="auth-label">Password</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </span>
+              <input 
+                type="password" 
+                id="reg-password" 
+                name="password" 
+                class="auth-input has-icon has-toggle" 
+                placeholder="At least 8 characters" 
+                minlength="8"
+                required 
+                autocomplete="new-password" 
+              />
+              <button type="button" class="btn-toggle-password" id="toggle-reg-pass" aria-label="Toggle password visibility">
+                <svg class="eye-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="auth-field-group">
+            <label class="auth-checkbox-label" style="align-items: flex-start; margin-top: 4px;">
+              <input type="checkbox" id="reg-terms" required style="margin-top: 3px;" />
+              <span style="font-size: 0.825rem; line-height: 1.4;">
+                I agree to Flyboro's <a href="/terms" class="auth-link" target="_blank">Terms &amp; Conditions</a>, <a href="/privacy" class="auth-link" target="_blank">Privacy Policy</a>, and booking fee disclosure.
+              </span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-auth-submit" id="btn-submit-reg">
+            <span>Create Account</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </form>
+
+        <p class="auth-switch-prompt">
+          Already have an account? <a href="/login" class="auth-link">Sign in</a>
+        </p>
+      </div>
+
+      <footer class="auth-footer-bottom">
+        &copy; 2026 Flyboro Global Travel Inc. Protected by SSL encryption &amp; Vercel Edge.
+      </footer>
+    </section>
+
+    <!-- RIGHT SIDE: ASPIRATIONAL TRAVEL SHOWCASE -->
+    <aside class="auth-visual-side" aria-label="Flyboro Global Network Showcase">
+      <div class="visual-top-badge">
+        <span>★ 500+ AIRLINES &amp; 1.2M HOTELS</span>
+      </div>
+
+      <div class="visual-testimonial-wrap">
+        <div class="visual-stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote class="visual-quote">
+          "Joining Flyboro gave our executive travel team direct wholesale access to private charters and five-star resorts without the typical 20% platform markup."
+        </blockquote>
+        <div class="visual-reviewer">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80" alt="Marcus Vance" class="visual-avatar" />
+          <div class="visual-meta">
+            <h5>Marcus Vance</h5>
+            <span>Managing Partner • Zurich Aviation Club</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <script>
+    // Password visibility toggle
+    const toggleBtn = document.getElementById('toggle-reg-pass');
+    const passInput = document.getElementById('reg-password');
+
+    if (toggleBtn && passInput) {
+      toggleBtn.addEventListener('click', () => {
+        const isPass = passInput.type === 'password';
+        passInput.type = isPass ? 'text' : 'password';
+        toggleBtn.querySelector('.eye-svg').innerHTML = isPass 
+          ? '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line>'
+          : '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle>';
+      });
+    }
+
+    // Interactive Demo Registration Submission
+    const regForm = document.getElementById('register-form');
+    if (regForm) {
+      regForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('btn-submit-reg');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Creating Account...</span>';
+
+        setTimeout(() => {
+          alert('Account Created Successfully! Welcome to Flyboro Rewards.');
+          window.location.href = '/';
+        }, 800);
+      });
+    }
+  </script>
+</body>
+</html>

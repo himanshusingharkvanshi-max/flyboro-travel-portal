@@ -1,7 +1,27 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" }
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/register", "destination": "/register.html" },
+    { "source": "/hotels", "destination": "/hotels.html" },
+    { "source": "/flights", "destination": "/flights.html" },
+    { "source": "/vacations", "destination": "/vacations.html" },
+    { "source": "/private-jets", "destination": "/private-jets.html" },
+    { "source": "/car-rental", "destination": "/car-rental.html" },
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/luxury-packages", "destination": "/luxury-packages.html" },
+    { "source": "/partners", "destination": "/partners.html" },
+    { "source": "/reviews", "destination": "/reviews.html" },
+    { "source": "/disclaimer", "destination": "/disclaimer.html" },
+    { "source": "/impression", "destination": "/impression.html" },
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/return", "destination": "/return.html" },
+    { "source": "/accessibility", "destination": "/accessibility.html" },
+    { "source": "/cookie", "destination": "/cookie.html" },
+    { "source": "/acceptable-use", "destination": "/acceptable-use.html" },
+    { "source": "/blog", "destination": "/blog.html" }
   ],
   "headers": [
     {
