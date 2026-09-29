@@ -142,6 +142,20 @@ export default async function handler(req, res) {
       })
     }).catch(err => console.warn('Non-blocking notify error:', err.message));
 
+    // Asynchronous SMS/WhatsApp dispatch (non-blocking)
+    const targetPhone = passenger.phone || '+15550199';
+    fetch(`${protocol}://${host}/api/sms`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phone: targetPhone,
+        pnr,
+        passengerName: passengerFullName,
+        type: 'confirmation',
+        channel: 'sms'
+      })
+    }).catch(err => console.warn('Non-blocking sms error:', err.message));
+
     // 7. Persist Booking Record to Vercel KV / Redis
     const bookingRecord = {
       bookingId,

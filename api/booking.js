@@ -96,6 +96,20 @@ export default async function handler(req, res) {
           })
         }).catch(err => console.warn('Non-blocking cancel notify error:', err.message));
 
+        // Asynchronous cancellation SMS trigger (non-blocking)
+        const targetPhone = body.phone || existing?.passenger?.phone || '+15550199';
+        fetch(`${protocol}://${host}/api/sms`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: targetPhone,
+            pnr: formattedPNR,
+            passengerName: body.passengerName || (existing ? `${existing.passenger?.firstName} ${existing.passenger?.lastName}` : 'Valued Passenger'),
+            type: 'cancellation',
+            channel: 'sms'
+          })
+        }).catch(err => console.warn('Non-blocking cancel sms error:', err.message));
+
         return res.status(200).json({
           success: true,
           action: 'cancel',
