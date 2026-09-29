@@ -6,6 +6,8 @@
  * and payment session dispatch (Stripe / WooCommerce / Demo).
  */
 
+import { saveBooking } from '../lib/kv.js';
+
 export default async function handler(req, res) {
   // 1. CORS & Security Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -112,24 +114,58 @@ export default async function handler(req, res) {
       })
     }).catch(err => console.warn('Non-blocking notify error:', err.message));
 
-    // 7. Fallback Demo / Simulated Booking Response
-    return res.status(200).json({
-      success: true,
-      mode: 'instant_confirmation_demo',
+    // 7. Persist Booking Record to Vercel KV / Redis
+    const bookingRecord = {
       bookingId,
       pnr,
       status: 'CONFIRMED',
+      issuedDate: new Date().toISOString(),
       passenger: {
         firstName: passenger.firstName || 'John',
         lastName: passenger.lastName || 'Doe',
         email: passenger.email || 'passenger@flyboro.com',
         phone: passenger.phone || '+1-555-0199'
       },
+      itinerary: {
+        id: item.id || `ITIN-${Date.now()}`,
+        type: item.type || 'flight',
+        title: item.title || (item.airline ? `${item.airline} (${item.flightNumber})` : (item.name || 'Travel Reservation')),
+        origin: item.origin || 'DEL (New Delhi)',
+        destination: item.destination || 'LHR (London Heathrow)',
+        departureTime: item.departureTime || item.dates || new Date().toISOString(),
+        arrivalTime: item.arrivalTime || '2026-10-15T16:30:00Z',
+        seat: item.seat || '12A (Window)',
+        cabinClass: item.cabinClass || 'Economy'
+      },
+      paymentSummary: {
+        basePrice,
+        taxAmount,
+        convenienceFee,
+        totalAmount,
+        baseFare: basePrice,
+        taxesAndFees: taxAmount + convenienceFee,
+        totalPaid: totalAmount,
+        currency: item.currency || 'USD',
+        paymentMethod: paymentMethod === 'stripe' ? 'Stripe Checkout' : (paymentMethod === 'woocommerce' ? 'WooCommerce Cart' : 'Instant Demo Gateway'),
+        status: 'PAID'
+      }
+    };
+
+    await saveBooking(pnr, bookingRecord);
+
+    // 8. Fallback Demo / Simulated Booking Response
+    return res.status(200).json({
+      success: true,
+      mode: 'instant_confirmation_demo',
+      bookingId,
+      pnr,
+      status: 'CONFIRMED',
+      passenger: bookingRecord.passenger,
       itemDetails: {
         id: item.id,
-        title: item.title || (item.airline ? `${item.airline} (${item.flightNumber})` : (item.name || 'Travel Reservation')),
+        title: bookingRecord.itinerary.title,
         route: item.origin && item.destination ? `${item.origin} ➔ ${item.destination}` : (item.subtitle || 'Standard Booking'),
-        dates: item.departureTime || item.dates || new Date().toISOString()
+        dates: bookingRecord.itinerary.departureTime
       },
       paymentSummary: {
         basePrice,
@@ -139,7 +175,7 @@ export default async function handler(req, res) {
         currency: item.currency || 'USD',
         status: 'PAID'
       },
-      issuedAt: new Date().toISOString()
+      issuedAt: bookingRecord.issuedDate
     });
 
   } catch (error) {

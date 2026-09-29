@@ -1,0 +1,9 @@
+{
+  "name": "flyboro-travel-portal",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Flyboro Full-Stack OTA Travel Portal",
+  "scripts": {
+    "test": "node --check api/*.js lib/*.js"
+  }
+}

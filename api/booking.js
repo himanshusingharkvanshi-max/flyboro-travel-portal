@@ -6,6 +6,8 @@
  * Fetches, manages, and cancels travel reservations by PNR code.
  */
 
+import { getBooking, updateBooking } from '../lib/kv.js';
+
 export default async function handler(req, res) {
   // 1. CORS & Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,7 +32,12 @@ export default async function handler(req, res) {
       }
 
       const formattedPNR = pnr.trim().toUpperCase();
-      const bookingData = findBookingByPNR(formattedPNR);
+      let bookingData = await getBooking(formattedPNR);
+
+      if (!bookingData) {
+        // Fallback to dynamic generator if not found in persistent DB
+        bookingData = findBookingByPNR(formattedPNR);
+      }
 
       return res.status(200).json({
         success: true,
@@ -49,14 +56,27 @@ export default async function handler(req, res) {
       }
 
       if (action === 'cancel') {
+        const formattedPNR = pnr.toUpperCase();
+        const existing = await getBooking(formattedPNR);
+
+        const totalPaid = Number(existing?.paymentSummary?.totalPaid || existing?.paymentSummary?.totalAmount || 519.00);
+        const penaltyFee = 50.00;
+        const refundAmount = Math.max(0, totalPaid - penaltyFee);
+
         const cancellationDetails = {
-          pnr: pnr.toUpperCase(),
+          pnr: formattedPNR,
           status: 'CANCELLED',
           cancelledAt: new Date().toISOString(),
-          refundAmount: '$469.00',
-          penaltyFee: '$50.00',
+          refundAmount: `$${refundAmount.toFixed(2)}`,
+          penaltyFee: `$${penaltyFee.toFixed(2)}`,
           message: 'Your reservation has been cancelled. Refund processing takes 3-5 business days.'
         };
+
+        // Persist cancellation status in KV / Redis
+        await updateBooking(formattedPNR, {
+          status: 'CANCELLED',
+          cancellation: cancellationDetails
+        });
 
         // Asynchronous cancellation notification trigger (non-blocking)
         const host = req.headers['host'] || 'localhost:3000';
@@ -65,12 +85,12 @@ export default async function handler(req, res) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            email: body.email || 'passenger@flyboro.com',
-            passengerName: body.passengerName || 'Valued Passenger',
-            pnr: pnr.toUpperCase(),
+            email: body.email || existing?.passenger?.email || 'passenger@flyboro.com',
+            passengerName: body.passengerName || (existing ? `${existing.passenger?.firstName} ${existing.passenger?.lastName}` : 'Valued Passenger'),
+            pnr: formattedPNR,
             bookingDetails: {
-              title: 'Cancelled Reservation',
-              totalPaid: '$469.00 Refunded (after $50 penalty fee)'
+              title: existing?.itinerary?.title || 'Cancelled Reservation',
+              totalPaid: `$${refundAmount.toFixed(2)} Refunded (after $50 penalty fee)`
             },
             type: 'cancellation'
           })

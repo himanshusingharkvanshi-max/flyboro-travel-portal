@@ -5,6 +5,8 @@
  * Generates a clean, print-ready PDF boarding pass and receipt layout.
  */
 
+import { getBooking } from '../lib/kv.js';
+
 export default async function handler(req, res) {
   // 1. CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,23 +33,24 @@ export default async function handler(req, res) {
     } = req.query;
 
     const formattedPNR = pnr.toUpperCase();
+    const stored = await getBooking(formattedPNR);
 
-    // 2. Mock or Fetch Booking Record
+    // 2. Fetch from Persistent KV or Fallback
     const booking = {
       pnr: formattedPNR,
-      bookingId: `FLY-BK-${Math.floor(100000 + Math.random() * 900000)}`,
-      passengerName: name || 'Himanshu Singh',
-      email: email || 'user@flyboro.com',
-      airline: airline || 'Air India',
-      flightNumber: flight || 'AI-101',
-      origin: origin || 'DEL (New Delhi)',
-      destination: destination || 'LHR (London Heathrow)',
-      departureTime: departureTime || '2026-10-15 08:00 AM',
+      bookingId: stored?.bookingId || `FLY-BK-${Math.floor(100000 + Math.random() * 900000)}`,
+      passengerName: name || (stored?.passenger ? `${stored.passenger.firstName} ${stored.passenger.lastName}` : 'Himanshu Singh'),
+      email: email || stored?.passenger?.email || 'user@flyboro.com',
+      airline: airline || stored?.itinerary?.title?.split('•')[0]?.trim() || 'Air India',
+      flightNumber: flight || stored?.itinerary?.title?.split('•')[1]?.trim() || 'AI-101',
+      origin: origin || stored?.itinerary?.origin || 'DEL (New Delhi)',
+      destination: destination || stored?.itinerary?.destination || 'LHR (London Heathrow)',
+      departureTime: departureTime || (stored?.itinerary?.departureTime ? new Date(stored.itinerary.departureTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '2026-10-15 08:00 AM'),
       arrivalTime: '2026-10-15 04:30 PM',
-      seat: seat || '12A',
-      cabinClass: cabin || 'Economy',
-      status: 'CONFIRMED',
-      totalPaid: total || '$519.00'
+      seat: seat || stored?.itinerary?.seat || '12A',
+      cabinClass: cabin || stored?.itinerary?.cabinClass || 'Economy',
+      status: stored?.status || 'CONFIRMED',
+      totalPaid: total || (stored?.paymentSummary ? `$${Number(stored.paymentSummary.totalPaid || stored.paymentSummary.totalAmount).toFixed(2)}` : '$519.00')
     };
 
     // 3. Render Printable PDF Document
