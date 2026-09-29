@@ -632,6 +632,7 @@
     setupManageBooking();
     setupCurrencySelector();
     setupMobileErgonomics();
+    setupFooterAccordions();
 
     // Render initial form fields for default Car Rentals
     renderProductFields('cars');
@@ -1160,6 +1161,70 @@
     }
 
     renderCardsList(list);
+  }
+
+  /**
+   * Mobile-Only Collapsible Accordions for Global Footer (Quick Links & Our Policies)
+   */
+  function setupFooterAccordions() {
+    const accordions = document.querySelectorAll('.footer-accordion-toggle');
+    if (!accordions.length) return;
+
+    accordions.forEach(toggle => {
+      toggle.addEventListener('click', function (e) {
+        // Enforce Mobile-Only execution (max-width: 768px)
+        if (window.innerWidth > 768) return;
+
+        e.preventDefault();
+        const col = this.closest('.footer-accordion-col');
+        const content = col ? col.querySelector('.footer-accordion-content') : this.nextElementSibling;
+        const isOpen = col ? col.classList.contains('is-open') : this.classList.contains('is-open');
+
+        // Toggle Open / Closed state with smooth dynamic height transition
+        if (isOpen) {
+          if (col) col.classList.remove('is-open');
+          this.classList.remove('is-open');
+          this.setAttribute('aria-expanded', 'false');
+          if (content) {
+            content.classList.remove('is-open');
+            content.style.maxHeight = '0px';
+          }
+        } else {
+          if (col) col.classList.add('is-open');
+          this.classList.add('is-open');
+          this.setAttribute('aria-expanded', 'true');
+          if (content) {
+            content.classList.add('is-open');
+            content.style.maxHeight = content.scrollHeight + 'px';
+          }
+        }
+      });
+
+      // Keyboard accessibility (Enter / Spacebar support)
+      toggle.addEventListener('keydown', function (e) {
+        if (window.innerWidth <= 768 && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          this.click();
+        }
+      });
+    });
+
+    // Ensure desktop view reverts cleanly if browser viewport is resized
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        accordions.forEach(toggle => {
+          const col = toggle.closest('.footer-accordion-col');
+          const content = col ? col.querySelector('.footer-accordion-content') : toggle.nextElementSibling;
+          if (col) col.classList.remove('is-open');
+          toggle.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          if (content) {
+            content.classList.remove('is-open');
+            content.style.maxHeight = '';
+          }
+        });
+      }
+    });
   }
 
   /**

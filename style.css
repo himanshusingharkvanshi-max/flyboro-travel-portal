@@ -1918,6 +1918,19 @@ a.contact-item:focus {
   color: var(--footer-text-muted);
 }
 
+/* Desktop Defaults: Ensure accordion icons are hidden and lists are fully visible */
+@media (min-width: 769px) {
+  .footer-accordion-icon {
+    display: none !important;
+  }
+
+  .footer-accordion-content {
+    max-height: none !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+  }
+}
+
 /* Mobile Responsiveness (Under 768px) */
 @media (max-width: 768px) {
   .flyboro-global-footer {
@@ -1931,7 +1944,61 @@ a.contact-item:focus {
 
   .footer-grid {
     grid-template-columns: 1fr;
-    gap: 2.25rem;
+    gap: 1.75rem;
+  }
+
+  /* Mobile Collapsible Accordion Toggle Headings */
+  .footer-accordion-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 44px;
+    cursor: pointer;
+    margin-bottom: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    padding: 0 4px 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .footer-accordion-icon {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--footer-surface-accent);
+    color: var(--footer-gold);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, color 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .footer-accordion-col.is-open .footer-accordion-icon,
+  .footer-accordion-toggle.is-open .footer-accordion-icon {
+    transform: rotate(180deg);
+    background: var(--footer-gold);
+    color: var(--footer-bg);
+  }
+
+  /* Mobile Collapsible List Transitions */
+  .footer-accordion-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease, margin 0.3s ease;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .footer-accordion-col.is-open .footer-accordion-content,
+  .footer-accordion-content.is-open {
+    max-height: 520px;
+    opacity: 1;
+    overflow: visible;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
   /* 44px Minimum Touch Target Rule for Mobile UX */
