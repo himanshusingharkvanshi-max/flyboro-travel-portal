@@ -1068,3 +1068,640 @@ select.currency-selector option {
   padding-top: 1rem;
   border-top: 1px solid var(--theme-border);
 }
+
+/* ==========================================================================
+   12. NON-DESTRUCTIVE INLINE FIELD ERRORS
+   ========================================================================== */
+.form-input.has-error, select.form-input.has-error {
+  border-color: #DC2626 !important;
+  background-color: #FEF2F2 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+}
+
+.inline-field-error {
+  display: block;
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #DC2626;
+  margin-top: 4px;
+  animation: inlineErrorFadeIn 0.18s ease-out;
+}
+
+@keyframes inlineErrorFadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   13. MOBILE ERGONOMICS: BOTTOM ACTION BAR & BOTTOM SHEETS
+   ========================================================================== */
+.mobile-sticky-action-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-sticky-action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--theme-surface);
+    border-top: 1px solid var(--theme-border);
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    gap: 10px;
+    z-index: 95;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-sticky-action-bar button {
+    flex: 1;
+    height: 44px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  .btn-mobile-filter {
+    background: var(--theme-surface-subtle);
+    border: 1px solid var(--theme-border);
+    color: var(--theme-header-text);
+  }
+
+  .btn-mobile-sort {
+    background: var(--cta-primary);
+    border: none;
+    color: #FFFFFF;
+  }
+}
+
+/* Bottom Sheet Overlay & Drawer */
+.bottom-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 42, 74, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.bottom-sheet-overlay.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sheet-content {
+  width: 100%;
+  max-height: 85vh;
+  background: var(--theme-surface);
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.bottom-sheet-overlay.is-active .sheet-content {
+  transform: translateY(0);
+}
+
+.sheet-handle {
+  width: 44px;
+  height: 5px;
+  background: var(--theme-border);
+  border-radius: 99px;
+  margin: 12px auto 8px;
+  cursor: grab;
+}
+
+.sheet-header {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--theme-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sheet-header h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--theme-header-text);
+  margin: 0;
+}
+
+.sheet-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--theme-muted-text);
+}
+
+.sheet-body {
+  padding: 1.25rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sheet-footer {
+  padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--theme-border);
+  display: flex;
+  gap: 10px;
+}
+
+.sheet-footer button {
+  flex: 1;
+}
+
+/* ==========================================================================
+   14. FLIGHT 7-DAY FARE MATRIX & TIMELINE
+   ========================================================================== */
+.fare-matrix-container {
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--theme-card-shadow);
+}
+
+.matrix-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.matrix-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--theme-header-text);
+}
+
+.matrix-hint {
+  font-size: 0.75rem;
+  color: var(--theme-muted-text);
+}
+
+.matrix-scroll-track {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.matrix-cell {
+  background: var(--theme-surface-subtle);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.matrix-cell:hover {
+  border-color: var(--cta-primary);
+}
+
+.matrix-cell.is-selected {
+  background: var(--theme-surface);
+  border: 2px solid var(--cta-primary);
+  box-shadow: 0 2px 8px rgba(255, 109, 0, 0.2);
+}
+
+.matrix-cell .date {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--theme-muted-text);
+}
+
+.matrix-cell .price {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--theme-header-text);
+}
+
+.matrix-cell.cheapest {
+  border-color: #10B981;
+}
+
+.badge-cheapest {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #10B981;
+  text-transform: uppercase;
+}
+
+/* Flight Transit Timeline */
+.itinerary-timeline {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.75rem 0;
+  padding: 0.6rem 0.85rem;
+  background: var(--theme-surface-subtle);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--theme-border);
+}
+
+.time-point {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-point .time {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--theme-header-text);
+}
+
+.time-point .code {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--theme-muted-text);
+}
+
+.timeline-visual {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timeline-visual .duration {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--theme-muted-text);
+}
+
+.timeline-track {
+  position: relative;
+  height: 2px;
+  background: var(--theme-border);
+  margin: 2px 10px;
+}
+
+.stop-node {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #FF6D00;
+  border: 2px solid #FFFFFF;
+}
+
+.transit-warning {
+  font-size: 0.725rem;
+  color: #FF6D00;
+  font-weight: 700;
+}
+
+/* Inclusions Strip */
+.inclusions-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0.5rem;
+}
+
+.inc-pill {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.inc-pill.positive {
+  background: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+}
+
+.inc-pill.negative {
+  background: #FFF1F2;
+  color: #9F1239;
+  border: 1px solid #FECDD3;
+}
+
+/* ==========================================================================
+   15. HOTEL TOUCH SNAP GALLERY & MAP VIEWPORT
+   ========================================================================== */
+.hotel-touch-gallery {
+  position: relative;
+  width: 180px;
+  height: 120px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .hotel-touch-gallery {
+    width: 100%;
+    height: 180px;
+  }
+}
+
+.gallery-snap-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.gallery-snap-track::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+}
+
+.gallery-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mobile-floating-map-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0F2A4A;
+  color: #FFFFFF;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 90;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.mobile-floating-map-btn:hover {
+  background: #1B3F6B;
+}
+
+/* Split-Screen Map Container */
+.map-split-viewport {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 960px) {
+  .map-split-viewport {
+    grid-template-columns: 1fr;
+  }
+  .interactive-hotel-map {
+    display: none;
+  }
+  .interactive-hotel-map.mobile-visible {
+    display: block;
+    height: 350px;
+    margin-bottom: 1rem;
+  }
+}
+
+.interactive-hotel-map {
+  background: #E2E8F0;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-md);
+  position: sticky;
+  top: 90px;
+  height: 580px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   16. VACATIONS FLEXIBLE DATES & TICKET STEPPERS
+   ========================================================================== */
+.date-flexibility-toggle {
+  display: inline-flex;
+  gap: 6px;
+  background: var(--theme-surface-subtle);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--theme-border);
+  margin-bottom: 0.5rem;
+}
+
+.btn-toggle {
+  background: transparent;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: var(--theme-muted-text);
+  cursor: pointer;
+}
+
+.btn-toggle.active {
+  background: var(--theme-surface);
+  color: var(--theme-header-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stepper-controls {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-sm);
+  background: var(--theme-surface);
+  overflow: hidden;
+}
+
+.btn-step {
+  width: 34px;
+  height: 34px;
+  background: var(--theme-surface-subtle);
+  border: none;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--theme-header-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-step:hover {
+  background: var(--theme-border);
+}
+
+.step-count {
+  width: 36px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--theme-header-text);
+}
+
+/* ==========================================================================
+   17. PRIVATE JET 3-STEP CONCIERGE WIZARD
+   ========================================================================== */
+.jet-concierge-wizard {
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.wizard-progress-bar {
+  position: relative;
+  margin-bottom: 1.75rem;
+}
+
+.wizard-progress-track {
+  width: 100%;
+  height: 4px;
+  background: var(--theme-border);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-indicator {
+  height: 100%;
+  background: var(--cta-primary);
+  transition: width 0.3s ease;
+}
+
+.step-nodes {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.775rem;
+  font-weight: 700;
+  color: var(--theme-muted-text);
+}
+
+.step-nodes .node.active {
+  color: var(--cta-primary);
+}
+
+.wizard-step-slide {
+  display: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  animation: slideFadeIn 0.25s ease-out;
+}
+
+.wizard-step-slide.is-active {
+  display: block;
+}
+
+@keyframes slideFadeIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.step-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--theme-header-text);
+  margin-bottom: 1.25rem;
+}
+
+.wizard-nav-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+/* ==========================================================================
+   18. DISTRACTION-FREE CHECKOUT & TRANSPARENT ACCORDION
+   ========================================================================== */
+.price-accordion {
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-sm);
+  background: var(--theme-surface-subtle);
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.price-accordion summary {
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+}
+
+.price-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.price-accordion[open] summary {
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.price-accordion-content {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.825rem;
+  color: var(--theme-muted-text);
+}
+
+.accordion-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion-row.highlight {
+  font-weight: 700;
+  color: var(--theme-header-text);
+}
+

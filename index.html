@@ -108,7 +108,64 @@
       <div class="results-container" id="results-container">
         <!-- Injected dynamically via flyboro-engine.js -->
       </div>
+
+      <!-- Interactive Map Viewport for Hotels (Split-screen on desktop, toggle on mobile) -->
+      <div class="interactive-hotel-map" id="hotel-map-viewport" style="display: none;">
+        <div style="text-align: center; color: var(--theme-muted-text); padding: 2rem;">
+          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🗺️</div>
+          <strong style="color: var(--theme-header-text); font-size: 1.1rem; display: block;">Interactive Spatial Map</strong>
+          <span style="font-size: 0.85rem;">Displaying localized verified properties with transparent pricing pins</span>
+          <div id="hotel-map-pins-list" style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;"></div>
+        </div>
+      </div>
     </section>
+
+    <!-- Mobile Floating Map Pill Toggle -->
+    <button type="button" class="mobile-floating-map-btn" id="btn-toggle-map" style="display: none;" aria-label="Toggle map view">
+      <span>🗺️</span> <span id="map-btn-text">View Map</span>
+    </button>
+
+    <!-- Mobile Ergonomics: Bottom Sticky Action Bar (Natural Thumb Zone) -->
+    <div class="mobile-sticky-action-bar" id="mobile-action-bar" style="display: none;">
+      <button type="button" class="btn-mobile-filter" id="btn-open-filter-sheet">⚡ Filter Options</button>
+      <button type="button" class="btn-mobile-sort" id="btn-open-sort-sheet">⇅ Sort Pricing</button>
+    </div>
+
+    <!-- Mobile Bottom-Sheet Filter Modal -->
+    <div class="bottom-sheet-overlay" id="mobile-filter-sheet" aria-hidden="true">
+      <div class="sheet-content">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3>Filter & Refine Inventory</h3>
+          <button type="button" class="sheet-close" id="close-filter-sheet" aria-label="Close filters">&times;</button>
+        </div>
+        <div class="sheet-body" id="sheet-filter-body">
+          <div>
+            <label class="form-label" for="mobile-sort-select">Sort Priority</label>
+            <select id="mobile-sort-select" class="form-input">
+              <option value="recommended">Recommended & Best Value</option>
+              <option value="price-asc">Price: Lowest to Highest</option>
+              <option value="price-desc">Price: Highest to Lowest</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Preferences & Perks</label>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                <input type="checkbox" id="filter-nonstop" style="accent-color: var(--cta-primary);"> Nonstop / Direct Only
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                <input type="checkbox" id="filter-free-cancel" style="accent-color: var(--cta-primary);"> Free Cancellation Included
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="sheet-footer">
+          <button type="button" class="btn-secondary" id="btn-reset-mobile-filters">Reset</button>
+          <button type="button" class="global-cta-button" id="btn-apply-mobile-filters">Apply Filters</button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- Checkout / Confirmation Modal Mock -->
@@ -142,37 +199,37 @@
     </div>
   </dialog>
 
-  <!-- FLYBORO PASSENGER INFORMATION MODAL -->
+  <!-- FLYBORO PASSENGER INFORMATION MODAL (Distraction-Free Enclosed Checkout Mode) -->
   <div id="flyboro-passenger-modal" class="flyboro-modal-overlay" aria-hidden="true">
-    <div class="flyboro-modal-container">
+    <div class="flyboro-modal-container" style="max-width: 560px;">
       <div class="flyboro-modal-header">
         <h3 class="flyboro-modal-title">Passenger & Traveler Information</h3>
         <button type="button" id="close-passenger-modal" class="flyboro-modal-close" aria-label="Close Modal">&times;</button>
       </div>
 
-      <form id="flyboro-passenger-form" class="flyboro-modal-form">
+      <form id="flyboro-passenger-form" class="flyboro-modal-form" novalidate>
         <!-- Hidden field to hold selected travel item data -->
         <input type="hidden" id="selected-booking-item" value="" />
 
         <div class="form-grid">
           <div class="form-group">
             <label for="passenger-first-name" class="form-label">First Name *</label>
-            <input type="text" id="passenger-first-name" class="form-input" placeholder="e.g. Himanshu" required />
+            <input type="text" id="passenger-first-name" name="firstName" class="form-input" placeholder="e.g. Himanshu" required data-label="First Name" />
           </div>
 
           <div class="form-group">
             <label for="passenger-last-name" class="form-label">Last Name *</label>
-            <input type="text" id="passenger-last-name" class="form-input" placeholder="e.g. Singh" required />
+            <input type="text" id="passenger-last-name" name="lastName" class="form-input" placeholder="e.g. Singh" required data-label="Last Name" />
           </div>
 
           <div class="form-group">
             <label for="passenger-email" class="form-label">Email Address *</label>
-            <input type="email" id="passenger-email" class="form-input" placeholder="e.g. passenger@flyboro.com" required />
+            <input type="email" id="passenger-email" name="email" class="form-input" placeholder="e.g. passenger@flyboro.com" required data-label="Email Address" />
           </div>
 
           <div class="form-group">
             <label for="passenger-phone" class="form-label">Phone Number *</label>
-            <input type="tel" id="passenger-phone" class="form-input" placeholder="e.g. +1-555-0199" required />
+            <input type="tel" id="passenger-phone" name="phone" class="form-input" placeholder="e.g. +1-555-0199" required data-label="Phone Number" />
           </div>
         </div>
 
@@ -189,25 +246,39 @@
           <div id="promo-feedback-msg" style="display: none; margin-top: 8px; font-size: 0.825rem; font-weight: 600;"></div>
         </div>
 
-        <!-- Fare Preview & Discount Summary -->
-        <div id="passenger-modal-fare-summary" style="margin-top: 1rem; padding: 0.75rem 1rem; background: var(--theme-surface); border: 1px solid var(--theme-border); border-radius: var(--radius-sm); font-size: 0.875rem;">
-          <div style="display: flex; justify-content: space-between; color: var(--theme-muted-text);">
-            <span>Base Fare:</span>
-            <span id="modal-fare-base">$0.00</span>
+        <!-- Zero Hidden Cost Transparent Accordion Breakdown -->
+        <details class="price-accordion" id="checkout-price-accordion" open>
+          <summary>
+            <span>Fare Breakdown (Zero Hidden Costs)</span>
+            <span id="accordion-summary-total">$0.00</span>
+          </summary>
+          <div class="price-accordion-content">
+            <div class="accordion-row">
+              <span>Base Wholesale Fare:</span>
+              <span id="accordion-base-price">$0.00</span>
+            </div>
+            <div class="accordion-row" id="accordion-discount-row" style="display: none; color: #16A34A; font-weight: 600;">
+              <span id="accordion-discount-label">Promotion Discount:</span>
+              <span id="accordion-discount-val">-$0.00</span>
+            </div>
+            <div class="accordion-row">
+              <span>Mandatory Taxes & Fees (12%):</span>
+              <span id="accordion-taxes-val">$0.00</span>
+            </div>
+            <div class="accordion-row">
+              <span>OTA Platform Convenience Fee:</span>
+              <span id="accordion-fee-val">$15.00</span>
+            </div>
+            <div class="accordion-row highlight" style="border-top: 1px solid var(--theme-border); padding-top: 6px; margin-top: 4px;">
+              <span>Total Guaranteed Due:</span>
+              <span id="accordion-final-total" style="color: var(--cta-primary); font-size: 1.05rem;">$0.00</span>
+            </div>
           </div>
-          <div id="modal-fare-discount-row" style="display: none; justify-content: space-between; color: #16A34A; font-weight: 600; margin-top: 4px;">
-            <span id="modal-fare-discount-label">Discount:</span>
-            <span id="modal-fare-discount-val">-$0.00</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-weight: 800; color: var(--theme-header-text); margin-top: 6px; border-top: 1px solid var(--theme-border); padding-top: 6px;">
-            <span>Estimated Total:</span>
-            <span id="modal-fare-total" style="color: var(--cta-primary);">$0.00</span>
-          </div>
-        </div>
+        </details>
 
         <div class="flyboro-modal-footer">
           <button type="button" id="cancel-passenger-modal" class="btn-secondary">Cancel</button>
-          <button type="submit" id="submit-booking-btn" class="global-cta-button" style="min-width: 180px; height: 44px; font-size: 0.95rem;">Confirm & Proceed</button>
+          <button type="submit" id="submit-booking-btn" class="global-cta-button" style="min-width: 200px; height: 46px; font-size: 0.95rem;">Confirm & Issue PNR</button>
         </div>
       </form>
     </div>
