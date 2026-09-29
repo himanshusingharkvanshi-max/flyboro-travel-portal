@@ -99,6 +99,43 @@
       </div>
     </section>
 
+    <!-- ==========================================================================
+         1. PARTNERS SECTION (Trust & Authority Marquee)
+         ========================================================================== -->
+    <section class="partners-marquee-section" aria-label="Global Travel Partners">
+      <div class="marquee-header">
+        <span class="marquee-eyebrow">TRUSTED GLOBAL ECOSYSTEM</span>
+        <h3 class="marquee-title">Official Suppliers &amp; Global Integration Partners</h3>
+      </div>
+      <div class="marquee-viewport">
+        <div class="marquee-track">
+          <!-- Set 1 -->
+          <div class="partner-card"><span class="partner-icon">✈️</span><span class="partner-name">RateHawk GDS</span></div>
+          <div class="partner-card"><span class="partner-icon">🚗</span><span class="partner-name">Carnect Fleet</span></div>
+          <div class="partner-card"><span class="partner-icon">🏨</span><span class="partner-name">Hotelbeds Luxury</span></div>
+          <div class="partner-card"><span class="partner-icon">🇦🇪</span><span class="partner-name">Emirates Airlines</span></div>
+          <div class="partner-card"><span class="partner-icon">🇬🇧</span><span class="partner-name">British Airways</span></div>
+          <div class="partner-card"><span class="partner-icon">🗝️</span><span class="partner-name">Marriott Bonvoy</span></div>
+          <div class="partner-card"><span class="partner-icon">👑</span><span class="partner-name">Four Seasons</span></div>
+          <div class="partner-card"><span class="partner-icon">🇶🇦</span><span class="partner-name">Qatar Airways</span></div>
+          <div class="partner-card"><span class="partner-icon">🛩️</span><span class="partner-name">NetJets Aviation</span></div>
+          <div class="partner-card"><span class="partner-icon">🚘</span><span class="partner-name">Hertz Prestige</span></div>
+
+          <!-- Set 2 (Duplicate for infinite seamless scroll) -->
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">✈️</span><span class="partner-name">RateHawk GDS</span></div>
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">🚗</span><span class="partner-name">Carnect Fleet</span></div>
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">🏨</span><span class="partner-name">Hotelbeds Luxury</span></div>
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">🇦🇪</span><span class="partner-name">Emirates Airlines</span></div>
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">🇬🇧</span><span class="partner-name">British Airways</span></div>
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">🗝️</span><span class="partner-name">Marriott Bonvoy</span></div>
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">👑</span><span class="partner-name">Four Seasons</span></div>
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">🇶🇦</span><span class="partner-name">Qatar Airways</span></div>
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">🛩️</span><span class="partner-name">NetJets Aviation</span></div>
+          <div class="partner-card" aria-hidden="true"><span class="partner-icon">🚘</span><span class="partner-name">Hertz Prestige</span></div>
+        </div>
+      </div>
+    </section>
+
     <!-- Search Results / Skeleton Shimmer Mount Point -->
     <section class="results-viewport" aria-live="polite" aria-busy="false" id="results-section">
       <div class="results-header" id="results-header" style="display: none;">
@@ -117,6 +154,107 @@
           <span style="font-size: 0.85rem;">Displaying localized verified properties with transparent pricing pins</span>
           <div id="hotel-map-pins-list" style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;"></div>
         </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         2. DYNAMIC "POPULAR DESTINATIONS" (Contextual Inspiration)
+         ========================================================================== -->
+    <section class="popular-destinations-section" id="popular-destinations-section" aria-labelledby="destinations-heading">
+      <div class="section-title-wrap">
+        <div>
+          <span class="section-eyebrow-badge" id="destinations-eyebrow">TOP ROAD TRIPS</span>
+          <h2 class="section-main-heading" id="destinations-heading">Curated Driving Itineraries &amp; Scenic Highways</h2>
+        </div>
+        <p class="section-subtitle" id="destinations-subheading">
+          Explore iconic coastal routes and scenic passes with guaranteed direct fleet car rentals.
+        </p>
+      </div>
+
+      <div class="destinations-scroll-track" id="destinations-container">
+        <!-- Injected dynamically via flyboro-engine.js based on active product -->
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         3. REVIEWS & TESTIMONIALS SECTION (Social Proof)
+         ========================================================================== -->
+    <section class="reviews-section" id="reviews-section" aria-labelledby="reviews-heading">
+      <div class="section-title-wrap text-center">
+        <span class="section-eyebrow-badge">VERIFIED PASSENGER FEEDBACK</span>
+        <h2 class="section-main-heading" id="reviews-heading">Trusted by 45,000+ Global Travelers</h2>
+        <p class="section-subtitle">Real experiences and verified bookings across flights, luxury resorts, private jets, and car rentals.</p>
+      </div>
+
+      <div class="reviews-grid">
+        <!-- Review 1 -->
+        <article class="review-card">
+          <div class="review-header">
+            <div class="reviewer-avatar-wrap">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" alt="Sophia Chen" class="reviewer-avatar" loading="lazy" />
+            </div>
+            <div class="reviewer-meta">
+              <h4 class="reviewer-name">Sophia Chen</h4>
+              <span class="reviewer-role">San Francisco, CA • Business Class Traveler</span>
+            </div>
+          </div>
+          <div class="review-stars" aria-label="5 out of 5 stars">
+            ★★★★★
+          </div>
+          <p class="review-quote">
+            "Booked our transatlantic business class flight from New York to London via RateHawk GDS through Flyboro. Instant PNR issuance, transparent baggage breakdowns, and zero hidden platform fees. A breath of fresh air!"
+          </p>
+          <div class="review-footer">
+            <span class="verified-tag">✓ Verified Booking • RateHawk GDS</span>
+            <span class="review-date">September 2026</span>
+          </div>
+        </article>
+
+        <!-- Review 2 -->
+        <article class="review-card highlight-card">
+          <div class="review-header">
+            <div class="reviewer-avatar-wrap">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80" alt="Marcus Vance" class="reviewer-avatar" loading="lazy" />
+            </div>
+            <div class="reviewer-meta">
+              <h4 class="reviewer-name">Marcus Vance</h4>
+              <span class="reviewer-role">Zurich, Switzerland • VIP Jet Client</span>
+            </div>
+          </div>
+          <div class="review-stars" aria-label="5 out of 5 stars">
+            ★★★★★
+          </div>
+          <p class="review-quote">
+            "The 3-step concierge wizard made booking our Challenger 650 charter from Teterboro to Van Nuys effortless. VIP tarmac clearance and in-flight catering was executed with impeccable precision."
+          </p>
+          <div class="review-footer">
+            <span class="verified-tag">✓ Verified Booking • RateHawk Air Charter VIP</span>
+            <span class="review-date">September 2026</span>
+          </div>
+        </article>
+
+        <!-- Review 3 -->
+        <article class="review-card">
+          <div class="review-header">
+            <div class="reviewer-avatar-wrap">
+              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&auto=format&fit=crop&q=80" alt="Elena Rostova" class="reviewer-avatar" loading="lazy" />
+            </div>
+            <div class="reviewer-meta">
+              <h4 class="reviewer-name">Elena Rostova</h4>
+              <span class="reviewer-role">Milan, Italy • Luxury Resort Guest</span>
+            </div>
+          </div>
+          <div class="review-stars" aria-label="5 out of 5 stars">
+            ★★★★★
+          </div>
+          <p class="review-quote">
+            "We reserved the caldera cliffside villa in Santorini through Flyboro's Hotelbeds luxury inventory. The touch-snap gallery gave an exact preview of the infinity pool before checkout. Exemplary booking experience!"
+          </p>
+          <div class="review-footer">
+            <span class="verified-tag">✓ Verified Booking • Hotelbeds Luxury</span>
+            <span class="review-date">August 2026</span>
+          </div>
+        </article>
       </div>
     </section>
 

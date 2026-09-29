@@ -636,6 +636,7 @@
 
     // Render initial form fields for default Car Rentals
     renderProductFields('cars');
+    renderPopularDestinations('cars');
   }
 
   function setupCurrencySelector() {
@@ -694,6 +695,7 @@
         DOM.engineSubheadline.textContent = meta.subtitle;
 
         renderProductFields(targetProduct);
+        renderPopularDestinations(targetProduct);
 
         // Reset results and map viewports
         DOM.resultsContainer.innerHTML = '';
@@ -1224,6 +1226,274 @@
           }
         });
       }
+    });
+  }
+
+  /* ==========================================================================
+     DYNAMIC POPULAR DESTINATIONS CATALOG & CONTROLLER
+     ========================================================================== */
+  const DESTINATIONS_DATA = {
+    cars: {
+      eyebrow: 'TOP ROAD TRIPS',
+      title: 'Curated Driving Itineraries & Scenic Highways',
+      subtitle: 'Explore iconic coastal routes and scenic passes with guaranteed direct fleet car rentals.',
+      cards: [
+        {
+          title: 'Pacific Coast Highway, USA',
+          desc: 'Iconic coastal cliffs from Monterey through Big Sur down to Santa Barbara.',
+          pill: 'Convertible & SUV',
+          price: 'From $45/day',
+          query: 'San Francisco (SFO)',
+          image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Amalfi Coast Route, Italy',
+          desc: 'Dramatic winding cliffside roads passing Sorrento, Positano, and Ravello.',
+          pill: 'Compact Luxury',
+          price: 'From €55/day',
+          query: 'Rome (FCO)',
+          image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Route 66 Red Rocks, Arizona',
+          desc: 'The quintessential open American highway stretching through red canyons.',
+          pill: 'Full Size AWD',
+          price: 'From $52/day',
+          query: 'Phoenix (PHX)',
+          image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Scottish Highlands (NC500), UK',
+          desc: 'Ancient castles, dramatic sea lochs, and sweeping rugged mountain passes.',
+          pill: 'Executive Sedan',
+          price: 'From £60/day',
+          query: 'Edinburgh (EDI)',
+          image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&auto=format&fit=crop&q=80'
+        }
+      ]
+    },
+    flights: {
+      eyebrow: 'POPULAR FLIGHT ROUTES',
+      title: 'Trending Global Flight Corridors',
+      subtitle: 'Direct GDS-connected routes with real-time baggage inclusions and zero platform markups.',
+      cards: [
+        {
+          title: 'New York (JFK) ➔ London (LHR)',
+          desc: 'Flagship daily transatlantic service with flat-bed suites and lounge access.',
+          pill: 'Virgin Atlantic / BA',
+          price: 'From $420 return',
+          query: 'London (LHR)',
+          image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Los Angeles (LAX) ➔ Tokyo (HND)',
+          desc: 'Premium transpacific direct connection featuring authentic Japanese hospitality.',
+          pill: 'ANA / Japan Airlines',
+          price: 'From $890 return',
+          query: 'Tokyo (HND)',
+          image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Dubai (DXB) ➔ Paris (CDG)',
+          desc: 'Non-stop widebody Airbus A380 flights with multi-course Michelin catering.',
+          pill: 'Emirates A380 Direct',
+          price: 'From $610 return',
+          query: 'Paris (CDG)',
+          image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Singapore (SIN) ➔ Sydney (SYD)',
+          desc: 'Seamless Oceania corridor with ergonomic lie-flat seating and high-speed Wi-Fi.',
+          pill: 'Singapore Airlines',
+          price: 'From $580 return',
+          query: 'Sydney (SYD)',
+          image: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=600&auto=format&fit=crop&q=80'
+        }
+      ]
+    },
+    hotels: {
+      eyebrow: 'LUXURY STAYS & RESORTS',
+      title: 'Top-Rated Global Sanctuaries & City Escapes',
+      subtitle: 'Handpicked 5-star properties with instant confirmation, breakfast inclusions, and flexible cancellation.',
+      cards: [
+        {
+          title: 'Four Seasons Resort, Bora Bora',
+          desc: 'Private lagoon overwater bungalows facing Mount Otemanu with turquoise water views.',
+          pill: 'Overwater Villa ★★★★★',
+          price: 'From $1,250/night',
+          query: 'Bora Bora (BOB)',
+          image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'The Ritz-Carlton, Kyoto',
+          desc: 'Serene Zen gardens and tranquil luxury along the banks of the historic Kamogawa River.',
+          pill: 'Riverside Suite ★★★★★',
+          price: 'From $680/night',
+          query: 'Kyoto (KIX)',
+          image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Belmond Hotel Caruso, Amalfi',
+          desc: '11th-century cliffside palace set 1,000 feet above the sparkling Mediterranean Sea.',
+          pill: 'Palace Suite ★★★★★',
+          price: 'From $890/night',
+          query: 'Naples (NAP)',
+          image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Burj Al Arab Jumeirah, Dubai',
+          desc: 'World-famous sail landmark featuring duplex ocean suites and 24-hour butler service.',
+          pill: 'Ultra-Luxury ★★★★★',
+          price: 'From $1,420/night',
+          query: 'Dubai (DXB)',
+          image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&auto=format&fit=crop&q=80'
+        }
+      ]
+    },
+    vacations: {
+      eyebrow: 'ALL-INCLUSIVE GETAWAYS',
+      title: 'Curated Vacation Packages & Island Escapes',
+      subtitle: 'Bundled resort stays, transfers, and excursions designed for zero-stress relaxation.',
+      cards: [
+        {
+          title: 'Maldives Coral Lagoon Paradise',
+          desc: '7-day private water villa stay, guided manta ray snorkeling, and catamaran cruise.',
+          pill: '7 Days • All-Inclusive',
+          price: 'From $2,450/pkg',
+          query: 'Male (MLE)',
+          image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Swiss Alps Mountain Retreat',
+          desc: '5-day first-class scenic rail passes, luxury alpine chalet lodging, and fondue tours.',
+          pill: '5 Days • Mountain Pass',
+          price: 'From $1,820/pkg',
+          query: 'Zurich (ZRH)',
+          image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Bali Rainforest Wellness Villa',
+          desc: '8-day private jungle pool sanctuary in Ubud with holistic yoga and temple treks.',
+          pill: '8 Days • Spa & Tours',
+          price: 'From $1,390/pkg',
+          query: 'Bali (DPS)',
+          image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Santorini Sunset Escapade',
+          desc: '6-day cliffside caldera suite, sommelier volcanic wine tastings, and private yacht cruise.',
+          pill: '6 Days • Caldera View',
+          price: 'From $1,750/pkg',
+          query: 'Santorini (JTR)',
+          image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&auto=format&fit=crop&q=80'
+        }
+      ]
+    },
+    jets: {
+      eyebrow: 'PRIVATE AVIATION CORRIDORS',
+      title: 'Signature VIP Charter Routes & Empty Legs',
+      subtitle: 'Access over 4,500 vetted aircraft with discreet FBO tarmac transfers and guaranteed flight dispatch.',
+      cards: [
+        {
+          title: 'Teterboro (TEB) ➔ Miami (OPF)',
+          desc: 'Bespoke charter on Citation Sovereign or Challenger 300 with private valet boarding.',
+          pill: 'Super Midsize Jet',
+          price: 'From $14,800 charter',
+          query: 'Miami (MIA)',
+          image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'London Luton (LTN) ➔ Geneva (GVA)',
+          desc: 'Rapid business shuttle on Embraer Phenom 300E with bespoke ski & sports stowage.',
+          pill: 'Light / Midsize Jet',
+          price: 'From €8,900 charter',
+          query: 'Geneva (GVA)',
+          image: 'https://images.unsplash.com/photo-1583416750470-965b2707b355?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Van Nuys (VNY) ➔ Las Vegas (LAS)',
+          desc: 'Fast 45-minute VIP hop with expedited departure clearance and champagne service.',
+          pill: 'Midsize Jet',
+          price: 'From $6,500 charter',
+          query: 'Las Vegas (LAS)',
+          image: 'https://images.unsplash.com/photo-1520437358207-323b43b50729?w=600&auto=format&fit=crop&q=80'
+        },
+        {
+          title: 'Dubai (DWC) ➔ Nice Côte d’Azur (NCE)',
+          desc: 'Direct transcontinental charter on Falcon 7X with master bedroom and satellite Wi-Fi.',
+          pill: 'Heavy Jet / Falcon 7X',
+          price: 'From €42,000 charter',
+          query: 'Nice (NCE)',
+          image: 'https://images.unsplash.com/photo-1519074069444-1ba4ea16e838?w=600&auto=format&fit=crop&q=80'
+        }
+      ]
+    }
+  };
+
+  function renderPopularDestinations(productKey) {
+    const data = DESTINATIONS_DATA[productKey] || DESTINATIONS_DATA.cars;
+    const eyebrowEl = document.getElementById('destinations-eyebrow');
+    const headingEl = document.getElementById('destinations-heading');
+    const subEl = document.getElementById('destinations-subheading');
+    const container = document.getElementById('destinations-container');
+
+    if (eyebrowEl) eyebrowEl.textContent = data.eyebrow;
+    if (headingEl) headingEl.textContent = data.title;
+    if (subEl) subEl.textContent = data.subtitle;
+
+    if (!container) return;
+
+    container.innerHTML = data.cards.map(card => `
+      <article class="destination-card" data-query="${escapeHtml(card.query)}" tabindex="0" role="button" aria-label="Explore ${escapeHtml(card.title)}">
+        <div class="destination-bg" style="background-image: url('${escapeHtml(card.image)}');"></div>
+        <div class="destination-gradient"></div>
+        <div class="destination-card-content">
+          <span class="destination-pill">${escapeHtml(card.pill)}</span>
+          <h3 class="destination-title">${escapeHtml(card.title)}</h3>
+          <p class="destination-desc">${escapeHtml(card.desc)}</p>
+          <div class="destination-footer">
+            <span class="destination-price">${escapeHtml(card.price)}</span>
+            <button type="button" class="destination-cta-btn">Explore</button>
+          </div>
+        </div>
+      </article>
+    `).join('');
+
+    // Attach click-to-search handlers
+    container.querySelectorAll('.destination-card').forEach(cardEl => {
+      cardEl.addEventListener('click', function () {
+        const queryVal = this.getAttribute('data-query');
+        if (!queryVal) return;
+
+        // Auto-fill active destination or pickup field
+        const targetInput =
+          document.getElementById('input-destination') ||
+          document.getElementById('input-hotel-dest') ||
+          document.getElementById('input-vacation-dest') ||
+          document.getElementById('input-jet-dest') ||
+          document.getElementById('input-pickup-location');
+
+        if (targetInput) {
+          targetInput.value = queryVal;
+          targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+          targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+          targetInput.focus();
+        }
+
+        // Smooth scroll to search form engine
+        const engineCard = document.getElementById('hero-engine-card') || DOM.searchForm;
+        if (engineCard) {
+          engineCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+
+      // Keyboard accessibility
+      cardEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
     });
   }
 
