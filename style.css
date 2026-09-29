@@ -373,6 +373,22 @@ body:not(.theme-car-rental):not(.cars) .floating-orange-car {
   transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
+/* Glassmorphism Frosted Glass for Car Rental Theme */
+body.theme-car-rental .search-engine-card,
+body.car-rental .search-engine-card {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+body.theme-car-rental .search-engine-card .form-input,
+body.car-rental .search-engine-card .form-input {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
 .engine-header {
   margin-bottom: 1.75rem;
 }
