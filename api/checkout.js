@@ -171,13 +171,17 @@ export default async function handler(req, res) {
       itinerary: {
         id: item.id || `ITIN-${Date.now()}`,
         type: item.type || 'flight',
+        tripType: item.tripType || (item.legs && item.legs.length > 1 ? 'roundtrip' : 'oneway'),
         title: item.title || (item.airline ? `${item.airline} (${item.flightNumber})` : (item.name || 'Travel Reservation')),
         origin: item.origin || 'DEL (New Delhi)',
         destination: item.destination || 'LHR (London Heathrow)',
         departureTime: item.departureTime || item.dates || new Date().toISOString(),
         arrivalTime: item.arrivalTime || '2026-10-15T16:30:00Z',
+        returnDepartureTime: item.returnDepartureTime || null,
+        returnArrivalTime: item.returnArrivalTime || null,
         seat: item.seat || '12A (Window)',
-        cabinClass: item.cabinClass || 'Economy'
+        cabinClass: item.cabinClass || 'Economy',
+        legs: item.legs || []
       },
       paymentSummary: {
         basePrice,

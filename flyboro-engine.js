@@ -111,6 +111,22 @@
       </div>
     `,
     flights: `
+      <div class="form-group trip-type-selector-wrapper" style="grid-column: 1 / -1; margin-bottom: -0.25rem;">
+        <div class="trip-type-segmented-control" role="radiogroup" aria-label="Flight Trip Type">
+          <label class="trip-type-option">
+            <input type="radio" name="trip_type" value="roundtrip" checked>
+            <span>Round-Trip ⇄</span>
+          </label>
+          <label class="trip-type-option">
+            <input type="radio" name="trip_type" value="oneway">
+            <span>One-Way →</span>
+          </label>
+          <label class="trip-type-option">
+            <input type="radio" name="trip_type" value="multicity">
+            <span>Multi-City ✈️</span>
+          </label>
+        </div>
+      </div>
       <div class="form-group">
         <label for="input-origin" class="form-label">Flying From</label>
         <div class="input-wrapper">
@@ -128,6 +144,10 @@
       <div class="form-group">
         <label for="input-flight-dep" class="form-label">Departure Date</label>
         <input type="date" id="input-flight-dep" name="start_date" class="form-input" required>
+      </div>
+      <div class="form-group" id="flight-return-group">
+        <label for="input-flight-ret" class="form-label">Return Date</label>
+        <input type="date" id="input-flight-ret" name="end_date" class="form-input" required>
       </div>
       <div class="form-group">
         <label for="input-passengers" class="form-label">Cabin & Passengers</label>
@@ -575,19 +595,43 @@
     DOM.dynamicFields.innerHTML = FORM_TEMPLATES[productKey] || FORM_TEMPLATES.cars;
     setSmartDefaultDates();
     setupAutocomplete();
+    if (productKey === 'flights') {
+      setupTripTypeToggle();
+    }
+  }
+
+  function setupTripTypeToggle() {
+    const radios = DOM.dynamicFields.querySelectorAll('input[name="trip_type"]');
+    const returnGroup = document.getElementById('flight-return-group');
+    const returnInput = document.getElementById('input-flight-ret');
+    if (!radios.length || !returnGroup || !returnInput) return;
+
+    radios.forEach(radio => {
+      radio.addEventListener('change', function () {
+        if (this.value === 'oneway') {
+          returnGroup.style.display = 'none';
+          returnInput.removeAttribute('required');
+        } else {
+          returnGroup.style.display = 'flex';
+          returnInput.setAttribute('required', 'required');
+        }
+      });
+    });
   }
 
   function setSmartDefaultDates() {
     const today = new Date();
     const plus3 = new Date(today);
     plus3.setDate(plus3.getDate() + 3);
+    const plus10 = new Date(today);
+    plus10.setDate(plus10.getDate() + 10);
 
     const start = DOM.dynamicFields.querySelector('input[name="start_date"]');
     const end = DOM.dynamicFields.querySelector('input[name="end_date"]');
 
     const fmt = d => d.toISOString().split('T')[0];
-    if (start && start.type === 'date') start.value = fmt(today);
-    if (end && end.type === 'date') end.value = fmt(plus3);
+    if (start && start.type === 'date') start.value = fmt(plus3);
+    if (end && end.type === 'date') end.value = fmt(plus10);
   }
 
   /**
@@ -728,35 +772,59 @@
       return;
     }
 
-    const cardsHtml = list.map(item => `
-      <article class="travel-card" data-sku="${escapeHtml(item.id)}">
-        <div class="travel-card-media">
-          <img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" loading="lazy">
+    const cardsHtml = list.map(item => {
+      const isRoundTrip = item.tripType === 'roundtrip' || (item.legs && item.legs.length > 1);
+      const priceSub = isRoundTrip ? 'Round-trip total' : 'Rate from';
+
+      const legsHtml = (item.legs && item.legs.length > 0) ? `
+        <div class="flight-legs-container">
+          ${item.legs.map((leg, idx) => `
+            <div class="flight-leg-row">
+              <div class="flight-leg-route">
+                <span class="leg-pill ${leg.direction === 'Outbound' ? 'leg-pill-outbound' : 'leg-pill-return'}">${escapeHtml(leg.direction || `Leg ${idx + 1}`)}</span>
+                <strong>${escapeHtml(leg.route || `${leg.origin} → ${leg.destination}`)}</strong>
+                <span class="flight-leg-number">${escapeHtml(leg.flightNumber || '')}</span>
+              </div>
+              <div class="flight-leg-timings">
+                <span>${escapeHtml(leg.departureDate || '')} • ${escapeHtml(leg.duration || '')}</span>
+                <span class="flight-leg-stops">${escapeHtml(leg.stopsText || '')}</span>
+              </div>
+            </div>
+          `).join('')}
         </div>
-        <div class="travel-card-details">
-          <h3 class="travel-card-title">${escapeHtml(item.title)}</h3>
-          <p class="travel-card-meta">${escapeHtml(item.subtitle)}</p>
-          <div class="travel-card-tags">
-            ${(item.badges || []).map(b => `<span class="badge-tag">${escapeHtml(b)}</span>`).join('')}
+      ` : '';
+
+      return `
+        <article class="travel-card" data-sku="${escapeHtml(item.id)}">
+          <div class="travel-card-media">
+            <img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" loading="lazy">
           </div>
-        </div>
-        <div class="travel-card-actions">
-          <div class="travel-card-price">
-            <div class="price-sub">Rate from</div>
-            <div class="price-val">${formatCurrency(item.price)}</div>
+          <div class="travel-card-details">
+            <h3 class="travel-card-title">${escapeHtml(item.title)}</h3>
+            <p class="travel-card-meta">${escapeHtml(item.subtitle)}</p>
+            ${legsHtml}
+            <div class="travel-card-tags">
+              ${(item.badges || []).map(b => `<span class="badge-tag">${escapeHtml(b)}</span>`).join('')}
+            </div>
           </div>
-          <!-- Global Conversion CTA: Always Sunset Orange -->
-          <button type="button" 
-                  class="global-cta-button btn-book-now" 
-                  data-sku="${escapeHtml(item.id)}"
-                  data-title="${escapeHtml(item.title)}"
-                  data-price="${item.price}"
-                  data-provider="${escapeHtml(item.provider || 'Flyboro Partner')}">
-            Book Now
-          </button>
-        </div>
-      </article>
-    `).join('');
+          <div class="travel-card-actions">
+            <div class="travel-card-price">
+              <div class="price-sub">${priceSub}</div>
+              <div class="price-val">${formatCurrency(item.price)}</div>
+            </div>
+            <!-- Global Conversion CTA: Always Sunset Orange -->
+            <button type="button" 
+                    class="global-cta-button btn-book-now" 
+                    data-sku="${escapeHtml(item.id)}"
+                    data-title="${escapeHtml(item.title)}"
+                    data-price="${item.price}"
+                    data-provider="${escapeHtml(item.provider || item.airline || 'Flyboro Partner')}">
+              Book Now
+            </button>
+          </div>
+        </article>
+      `;
+    }).join('');
 
     DOM.resultsContainer.innerHTML = cardsHtml;
     bindBookingButtons();
@@ -766,9 +834,17 @@
     document.querySelectorAll('.btn-book-now').forEach(btn => {
       btn.addEventListener('click', function () {
         const sku = this.getAttribute('data-sku');
-        const title = this.getAttribute('data-title');
-        const price = this.getAttribute('data-price');
-        const provider = this.getAttribute('data-provider');
+        const list = state.currentResults ? (state.currentResults.results || state.currentResults.data || []) : [];
+        const fullItem = list.find(it => it.id === sku) || {
+          id: sku,
+          title: this.getAttribute('data-title'),
+          price: parseFloat(this.getAttribute('data-price')) || 0,
+          provider: this.getAttribute('data-provider')
+        };
+
+        const title = fullItem.title || this.getAttribute('data-title');
+        const price = fullItem.price || this.getAttribute('data-price');
+        const provider = fullItem.provider || fullItem.airline || this.getAttribute('data-provider') || 'Flyboro Partner';
 
         // Show confirmation modal
         DOM.modalItemTitle.textContent = title;
@@ -785,7 +861,7 @@
         if (typeof DOM.modal.showModal === 'function') {
           DOM.modal.showModal();
         } else {
-          openPassengerModal({ id: sku, price: parseFloat(price) || 0, title: title, provider: provider });
+          openPassengerModal(fullItem);
         }
       });
     });
@@ -844,18 +920,16 @@
     // From review modal -> Transition to Passenger Information Modal
     DOM.modalCheckoutBtn.addEventListener('click', function () {
       const sku = DOM.modal.getAttribute('data-target-sku');
-      const price = parseFloat(DOM.modal.getAttribute('data-target-price')) || 0;
-      const title = DOM.modal.getAttribute('data-target-title');
-      const provider = DOM.modal.getAttribute('data-target-provider') || 'Flyboro Partner';
+      const list = state.currentResults ? (state.currentResults.results || state.currentResults.data || []) : [];
+      const fullItem = list.find(it => it.id === sku) || {
+        id: sku,
+        price: parseFloat(DOM.modal.getAttribute('data-target-price')) || 0,
+        title: DOM.modal.getAttribute('data-target-title'),
+        provider: DOM.modal.getAttribute('data-target-provider') || 'Flyboro Partner'
+      };
 
       DOM.modal.close();
-
-      openPassengerModal({
-        id: sku,
-        price: price,
-        title: title,
-        provider: provider
-      });
+      openPassengerModal(fullItem);
     });
 
     DOM.modal.addEventListener('click', (e) => {

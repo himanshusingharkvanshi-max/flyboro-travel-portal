@@ -27,15 +27,25 @@ export default async function handler(req, res) {
 
     const {
       type = incoming.product_type || 'flights',
-      origin = incoming.location || 'DEL',
+      tripType = incoming.trip_type || incoming.tripType || (incoming.end_date ? 'roundtrip' : 'oneway'),
+      origin = incoming.location || incoming.origin || 'DEL',
       destination = incoming.destination || (incoming.product_type === 'hotels' ? (incoming.location || 'Santorini') : 'LHR'),
-      departDate = incoming.start_date || '2026-10-15',
-      returnDate = incoming.end_date || '2026-10-22',
-      passengers = incoming.guests || '1',
-      cabinClass = incoming.aircraft_category || 'economy'
+      departDate = incoming.start_date || incoming.departDate || '2026-10-15',
+      returnDate = incoming.end_date || incoming.returnDate || '2026-10-22',
+      passengers = incoming.passengers || incoming.guests || '1',
+      cabinClass = incoming.cabinClass || incoming.cabin || incoming.aircraft_category || 'economy'
     } = incoming;
 
-    const numPassengers = parseInt(passengers, 10) || 1;
+    // Parse passenger count and cabin class cleanly
+    let numPassengers = 1;
+    let resolvedCabin = cabinClass;
+    if (typeof passengers === 'string' && passengers.includes('-')) {
+      const parts = passengers.split('-');
+      numPassengers = parseInt(parts[0], 10) || 1;
+      resolvedCabin = parts[1] || cabinClass;
+    } else {
+      numPassengers = parseInt(passengers, 10) || 1;
+    }
 
     // 3. Environment Variable API Keys Check
     const duffelApiKey = process.env.DUFFEL_API_KEY;
@@ -48,10 +58,10 @@ export default async function handler(req, res) {
     // 4. Provider Dispatcher Logic
     if (type === 'flights') {
       if (duffelApiKey) {
-        searchResults = await fetchDuffelFlights({ origin, destination, departDate, numPassengers, duffelApiKey });
+        searchResults = await fetchDuffelFlights({ origin, destination, departDate, returnDate, tripType, numPassengers, cabinClass: resolvedCabin, duffelApiKey });
         providerSource = 'Duffel Live Flight API';
       } else {
-        searchResults = generateMockFlights(origin.toUpperCase(), destination.toUpperCase(), departDate, numPassengers);
+        searchResults = generateMockFlights(origin, destination, departDate, returnDate, numPassengers, tripType, resolvedCabin);
       }
     } else if (type === 'hotels') {
       if (hotelbedsKey) {
@@ -71,7 +81,7 @@ export default async function handler(req, res) {
     // 5. Send Unified JSON Payload Response (Provides both results and data keys for full client compatibility)
     return res.status(200).json({
       success: true,
-      query: { type, origin, destination, departDate, returnDate, passengers: numPassengers, cabinClass },
+      query: { type, tripType, origin, destination, departDate, returnDate, passengers: numPassengers, cabinClass: resolvedCabin },
       meta: {
         providerSource,
         cachedAt: new Date().toISOString(),
@@ -95,8 +105,24 @@ export default async function handler(req, res) {
    SUPPLIER API HANDLERS (Live Integrations)
    ========================================================================== */
 
-async function fetchDuffelFlights({ origin, destination, departDate, numPassengers, duffelApiKey }) {
-  // Example live call structure for Duffel Flight API
+function extractIata(str, fallback) {
+  if (!str) return fallback;
+  const match = String(str).match(/\(([A-Z]{3})\)/i);
+  if (match) return match[1].toUpperCase();
+  const cleaned = String(str).trim().toUpperCase();
+  if (/^[A-Z]{3}$/.test(cleaned)) return cleaned;
+  return fallback;
+}
+
+async function fetchDuffelFlights({ origin, destination, departDate, returnDate, tripType, numPassengers, cabinClass, duffelApiKey }) {
+  const originCode = extractIata(origin, 'DEL');
+  const destCode = extractIata(destination, 'LHR');
+
+  const slices = [{ origin: originCode, destination: destCode, departure_date: departDate }];
+  if (tripType === 'roundtrip' && returnDate) {
+    slices.push({ origin: destCode, destination: originCode, departure_date: returnDate });
+  }
+
   const response = await fetch('https://api.duffel.com/air/offer_requests', {
     method: 'POST',
     headers: {
@@ -106,9 +132,9 @@ async function fetchDuffelFlights({ origin, destination, departDate, numPassenge
     },
     body: JSON.stringify({
       data: {
-        slices: [{ origin, destination, departure_date: departDate }],
+        slices,
         passengers: Array(numPassengers).fill({ type: 'adult' }),
-        cabin_class: 'economy'
+        cabin_class: cabinClass || 'economy'
       }
     })
   });
@@ -122,28 +148,55 @@ async function fetchDuffelFlights({ origin, destination, departDate, numPassenge
       const airlineName = offer.owner.name;
       const airlineCode = offer.owner.iata_code;
       const flightNum = `${airlineCode}-${Math.floor(100 + Math.random() * 900)}`;
+      const offerSlices = offer.slices || [];
+      const isRoundTrip = offerSlices.length > 1;
+
+      const legs = offerSlices.map((slice, sIdx) => {
+        const seg = slice.segments && slice.segments[0];
+        const dir = sIdx === 0 ? 'Outbound' : 'Return';
+        const sOrigin = slice.origin?.iata_code || (sIdx === 0 ? originCode : destCode);
+        const sDest = slice.destination?.iata_code || (sIdx === 0 ? destCode : originCode);
+        const sNum = seg?.operating_carrier_flight_number
+          ? `${seg.operating_carrier?.iata_code || airlineCode}-${seg.operating_carrier_flight_number}`
+          : (sIdx === 0 ? flightNum : `${airlineCode}-${Math.floor(100 + Math.random() * 900)}`);
+
+        return {
+          direction: dir,
+          route: `${sOrigin} → ${sDest}`,
+          flightNumber: sNum,
+          departureDate: (seg?.departing_at || '').split('T')[0] || (sIdx === 0 ? departDate : returnDate),
+          departureTime: seg?.departing_at || (sIdx === 0 ? `${departDate}T08:00:00` : `${returnDate}T10:00:00`),
+          arrivalTime: seg?.arriving_at || (sIdx === 0 ? `${departDate}T16:30:00` : `${returnDate}T18:30:00`),
+          duration: slice.duration ? slice.duration.replace('PT', '').toLowerCase() : '8h 30m',
+          stopsText: (slice.segments?.length || 1) > 1 ? `${slice.segments.length - 1} Stop(s)` : 'Nonstop',
+          origin: sOrigin,
+          destination: sDest
+        };
+      });
 
       return {
         id: offer.id,
         type: 'flight',
+        tripType: isRoundTrip ? 'roundtrip' : 'oneway',
         airline: airlineName,
         airlineCode: airlineCode,
         flightNumber: flightNum,
-        origin,
-        destination,
-        departureTime: offer.slices[0]?.segments[0]?.departing_at || `${departDate}T08:00:00`,
-        arrivalTime: offer.slices[0]?.segments[0]?.arriving_at || `${departDate}T16:30:00`,
-        duration: '8h 30m',
-        stops: offer.slices[0]?.segments.length - 1 || 0,
+        origin: originCode,
+        destination: destCode,
+        departureTime: offerSlices[0]?.segments[0]?.departing_at || `${departDate}T08:00:00`,
+        arrivalTime: offerSlices[0]?.segments[0]?.arriving_at || `${departDate}T16:30:00`,
+        duration: offerSlices[0]?.duration ? offerSlices[0].duration.replace('PT', '').toLowerCase() : '8h 30m',
+        stops: (offerSlices[0]?.segments?.length || 1) - 1,
         price: price,
         currency: offer.total_currency || 'USD',
         cabinClass: 'Economy',
         refundable: true,
+        legs,
         // UI Presentation Normalization
-        title: `${airlineName} • ${origin} → ${destination}`,
-        subtitle: `${flightNum} • Nonstop • 8h 30m • Meal Included`,
+        title: `${airlineName} • ${originCode} ${isRoundTrip ? '⇄' : '→'} ${destCode}${isRoundTrip ? ' (Round-Trip)' : ''}`,
+        subtitle: `${flightNum} • ${isRoundTrip ? 'Round-Trip' : 'One-Way'} • Live Duffel API`,
         image_url: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80',
-        badges: ['Live Duffel Inventory', 'Instant E-Ticket']
+        badges: [isRoundTrip ? 'Round-Trip' : 'One-Way', 'Live Duffel Inventory', 'Instant E-Ticket']
       };
     });
   }
@@ -160,7 +213,10 @@ async function fetchHotelBeds({ destination, departDate, returnDate, hotelbedsKe
    DYNAMIC MOCK INVENTORY GENERATORS (Fallback / Offline Mode)
    ========================================================================== */
 
-function generateMockFlights(origin, destination, departDate, passengers) {
+function generateMockFlights(originRaw, destinationRaw, departDate, returnDate, numPassengers, tripType = 'roundtrip', cabinClass = 'economy') {
+  const originCode = extractIata(originRaw, 'DEL');
+  const destCode = extractIata(destinationRaw, 'LHR');
+
   const airlines = [
     { name: 'Air India', code: 'AI', basePrice: 450, img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80' },
     { name: 'British Airways', code: 'BA', basePrice: 580, img: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=600&q=80' },
@@ -169,33 +225,173 @@ function generateMockFlights(origin, destination, departDate, passengers) {
     { name: 'Virgin Atlantic', code: 'VS', basePrice: 540, img: 'https://images.unsplash.com/photo-1583416750470-965b2707b355?auto=format&fit=crop&w=600&q=80' }
   ];
 
-  return airlines.map((airline, idx) => {
-    const price = (airline.basePrice + idx * 35) * passengers;
-    const flightNumber = `${airline.code}-${101 + idx * 12}`;
-    const stopsText = idx % 2 === 0 ? 'Nonstop' : '1 Stop via Hub';
+  const cabinMultiplier = {
+    economy: 1,
+    premium: 1.4,
+    business: 2.5,
+    first: 4.0
+  }[String(cabinClass).toLowerCase()] || 1;
 
-    return {
-      id: `fl-${origin}-${destination}-${idx + 1}`,
-      type: 'flight',
-      airline: airline.name,
-      airlineCode: airline.code,
-      flightNumber: flightNumber,
-      origin,
-      destination,
-      departureTime: `${departDate}T0${6 + idx * 2}:00:00`,
-      arrivalTime: `${departDate}T${14 + idx * 2}:30:00`,
-      duration: '8h 30m',
-      stops: idx % 2 === 0 ? 0 : 1,
-      price,
-      currency: 'USD',
-      cabinClass: 'Economy',
-      refundable: idx % 2 === 0,
-      // UI Presentation Normalization
-      title: `${airline.name} • ${origin} → ${destination}`,
-      subtitle: `${flightNumber} • ${stopsText} • 8h 30m • Standard Cabin`,
-      image_url: airline.img,
-      badges: [stopsText, idx % 2 === 0 ? 'Free Cancellation' : 'Seat Choice Included']
-    };
+  const normalizedCabin = cabinClass.charAt(0).toUpperCase() + cabinClass.slice(1);
+
+  return airlines.map((airline, idx) => {
+    const stopsText = idx % 2 === 0 ? 'Nonstop' : '1 Stop via Hub';
+    const outboundFlightNum = `${airline.code}-${101 + idx * 12}`;
+    const returnFlightNum = `${airline.code}-${102 + idx * 12}`;
+    const outDepTime = `${departDate}T0${6 + idx * 2}:00:00`;
+    const outArrTime = `${departDate}T${14 + idx * 2}:30:00`;
+
+    if (tripType === 'roundtrip') {
+      const retDepTime = `${returnDate}T${10 + idx}:15:00`;
+      const retArrTime = `${returnDate}T${18 + idx}:45:00`;
+      const price = Math.round((airline.basePrice + idx * 35) * cabinMultiplier * 1.85 * numPassengers);
+
+      return {
+        id: `fl-${originCode}-${destCode}-${idx + 1}-rt`,
+        type: 'flight',
+        tripType: 'roundtrip',
+        airline: airline.name,
+        airlineCode: airline.code,
+        flightNumber: outboundFlightNum,
+        returnFlightNumber: returnFlightNum,
+        origin: originCode,
+        destination: destCode,
+        departureTime: outDepTime,
+        arrivalTime: outArrTime,
+        returnDepartureTime: retDepTime,
+        returnArrivalTime: retArrTime,
+        duration: '17h 00m Total Transit',
+        stops: idx % 2 === 0 ? 0 : 1,
+        price,
+        currency: 'USD',
+        cabinClass: normalizedCabin,
+        refundable: idx % 2 === 0,
+        legs: [
+          {
+            direction: 'Outbound',
+            route: `${originCode} → ${destCode}`,
+            flightNumber: outboundFlightNum,
+            departureDate: departDate,
+            departureTime: outDepTime,
+            arrivalTime: outArrTime,
+            duration: '8h 30m',
+            stopsText,
+            origin: originCode,
+            destination: destCode
+          },
+          {
+            direction: 'Return',
+            route: `${destCode} → ${originCode}`,
+            flightNumber: returnFlightNum,
+            departureDate: returnDate,
+            departureTime: retDepTime,
+            arrivalTime: retArrTime,
+            duration: '8h 30m',
+            stopsText,
+            origin: destCode,
+            destination: originCode
+          }
+        ],
+        title: `${airline.name} • ${originCode} ⇄ ${destCode} (Round-Trip)`,
+        subtitle: `Out: ${outboundFlightNum} (${departDate}) • Ret: ${returnFlightNum} (${returnDate}) • ${stopsText}`,
+        image_url: airline.img,
+        badges: ['Round-Trip', stopsText, idx % 2 === 0 ? 'Free Cancellation' : 'Seat Choice Included']
+      };
+    } else if (tripType === 'multicity') {
+      const transitHub = idx % 2 === 0 ? 'DXB' : 'FRA';
+      const leg2DepTime = `${returnDate}T11:30:00`;
+      const leg2ArrTime = `${returnDate}T19:00:00`;
+      const price = Math.round((airline.basePrice + idx * 35) * cabinMultiplier * 2.1 * numPassengers);
+
+      return {
+        id: `fl-${originCode}-${destCode}-${idx + 1}-mc`,
+        type: 'flight',
+        tripType: 'multicity',
+        airline: airline.name,
+        airlineCode: airline.code,
+        flightNumber: outboundFlightNum,
+        origin: originCode,
+        destination: destCode,
+        departureTime: outDepTime,
+        arrivalTime: outArrTime,
+        duration: '22h 30m Combined Transit',
+        stops: 1,
+        price,
+        currency: 'USD',
+        cabinClass: normalizedCabin,
+        refundable: true,
+        legs: [
+          {
+            direction: 'Leg 1',
+            route: `${originCode} → ${destCode}`,
+            flightNumber: outboundFlightNum,
+            departureDate: departDate,
+            departureTime: outDepTime,
+            arrivalTime: outArrTime,
+            duration: '8h 30m',
+            stopsText: 'Direct Flight',
+            origin: originCode,
+            destination: destCode
+          },
+          {
+            direction: 'Leg 2',
+            route: `${destCode} → ${transitHub}`,
+            flightNumber: returnFlightNum,
+            departureDate: returnDate,
+            departureTime: leg2DepTime,
+            arrivalTime: leg2ArrTime,
+            duration: '6h 30m',
+            stopsText: 'Connecting Segment',
+            origin: destCode,
+            destination: transitHub
+          }
+        ],
+        title: `${airline.name} • ${originCode} → ${destCode} → ${transitHub} (Multi-City)`,
+        subtitle: `Leg 1: ${outboundFlightNum} • Leg 2: ${returnFlightNum} • Multi-City Transit`,
+        image_url: airline.img,
+        badges: ['Multi-City', 'Baggage Checked Through', 'Free Cancellation']
+      };
+    } else {
+      // Default: One-Way
+      const price = Math.round((airline.basePrice + idx * 35) * cabinMultiplier * numPassengers);
+
+      return {
+        id: `fl-${originCode}-${destCode}-${idx + 1}-ow`,
+        type: 'flight',
+        tripType: 'oneway',
+        airline: airline.name,
+        airlineCode: airline.code,
+        flightNumber: outboundFlightNum,
+        origin: originCode,
+        destination: destCode,
+        departureTime: outDepTime,
+        arrivalTime: outArrTime,
+        duration: '8h 30m',
+        stops: idx % 2 === 0 ? 0 : 1,
+        price,
+        currency: 'USD',
+        cabinClass: normalizedCabin,
+        refundable: idx % 2 === 0,
+        legs: [
+          {
+            direction: 'Outbound',
+            route: `${originCode} → ${destCode}`,
+            flightNumber: outboundFlightNum,
+            departureDate: departDate,
+            departureTime: outDepTime,
+            arrivalTime: outArrTime,
+            duration: '8h 30m',
+            stopsText,
+            origin: originCode,
+            destination: destCode
+          }
+        ],
+        title: `${airline.name} • ${originCode} → ${destCode} (One-Way)`,
+        subtitle: `${outboundFlightNum} • ${stopsText} • 8h 30m • ${normalizedCabin}`,
+        image_url: airline.img,
+        badges: ['One-Way', stopsText, idx % 2 === 0 ? 'Free Cancellation' : 'Seat Choice Included']
+      };
+    }
   });
 }
 

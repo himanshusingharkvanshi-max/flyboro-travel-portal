@@ -706,6 +706,114 @@ select.currency-selector option {
 }
 
 /* --------------------------------------------------------------------------
+   8b. FLIGHT SEGMENT & DUAL-LEG ITINERARY DISPLAY
+   -------------------------------------------------------------------------- */
+.trip-type-segmented-control {
+  display: inline-flex;
+  gap: 6px;
+  background-color: var(--theme-surface-subtle, rgba(0, 0, 0, 0.04));
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--theme-border);
+}
+
+.trip-type-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  margin: 0;
+}
+
+.trip-type-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.trip-type-option span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  border-radius: calc(var(--radius-sm) - 2px);
+  color: var(--theme-muted-text);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.trip-type-option input[type="radio"]:checked + span {
+  background-color: var(--theme-surface);
+  color: var(--theme-header-text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.flight-legs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.flight-leg-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background-color: var(--theme-surface-subtle, rgba(0, 0, 0, 0.02));
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.flight-leg-route {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.leg-pill {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.leg-pill-outbound {
+  background-color: #0F2A4A;
+  color: #FFFFFF;
+}
+
+.leg-pill-return {
+  background-color: #FF6D00;
+  color: #FFFFFF;
+}
+
+.flight-leg-number {
+  font-size: 0.8rem;
+  color: var(--theme-muted-text);
+}
+
+.flight-leg-timings {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--theme-muted-text);
+  font-size: 0.8125rem;
+}
+
+.flight-leg-stops {
+  font-weight: 600;
+  color: #10B981;
+}
+
+/* --------------------------------------------------------------------------
    9. MODAL & DIALOG ARCHITECTURE
    -------------------------------------------------------------------------- */
 .booking-modal {

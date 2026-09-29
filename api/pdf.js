@@ -50,8 +50,39 @@ export default async function handler(req, res) {
       seat: seat || stored?.itinerary?.seat || '12A',
       cabinClass: cabin || stored?.itinerary?.cabinClass || 'Economy',
       status: stored?.status || 'CONFIRMED',
-      totalPaid: total || (stored?.paymentSummary ? `$${Number(stored.paymentSummary.totalPaid || stored.paymentSummary.totalAmount).toFixed(2)}` : '$519.00')
+      totalPaid: total || (stored?.paymentSummary ? `$${Number(stored.paymentSummary.totalPaid || stored.paymentSummary.totalAmount).toFixed(2)}` : '$519.00'),
+      legs: stored?.itinerary?.legs || [],
+      tripType: stored?.itinerary?.tripType || (stored?.itinerary?.legs?.length > 1 ? 'roundtrip' : 'oneway')
     };
+
+    // Build Legs breakdown HTML if round-trip or multi-leg
+    const legsTableHtml = (booking.legs && booking.legs.length > 0) ? `
+      <div style="margin-bottom: 24px;">
+        <div class="label" style="margin-bottom: 8px;">Itinerary Segments (${booking.tripType.toUpperCase()})</div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px; background: #f8fafc; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+          <thead>
+            <tr style="background: #0f2a4a; color: #ffffff; text-align: left;">
+              <th style="padding: 8px 12px;">Leg</th>
+              <th style="padding: 8px 12px;">Route</th>
+              <th style="padding: 8px 12px;">Flight</th>
+              <th style="padding: 8px 12px;">Date & Timing</th>
+              <th style="padding: 8px 12px;">Transit</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${booking.legs.map((leg, idx) => `
+              <tr style="border-bottom: 1px solid #e2e8f0; ${idx % 2 === 1 ? 'background: #ffffff;' : ''}">
+                <td style="padding: 8px 12px; font-weight: bold; color: ${leg.direction === 'Outbound' ? '#0f2a4a' : '#ff6d00'};">${leg.direction || `Leg ${idx + 1}`}</td>
+                <td style="padding: 8px 12px; font-weight: 600;">${leg.route || `${leg.origin} → ${leg.destination}`}</td>
+                <td style="padding: 8px 12px;">${leg.flightNumber}</td>
+                <td style="padding: 8px 12px;">${leg.departureDate || ''} (${leg.duration || ''})</td>
+                <td style="padding: 8px 12px; color: #10b981; font-weight: 600;">${leg.stopsText || 'Nonstop'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    ` : '';
 
     // 3. Render Printable PDF Document
     const pdfHtml = `
@@ -107,7 +138,7 @@ export default async function handler(req, res) {
                 <div class="label">Origin</div>
                 <div class="city">${booking.origin}</div>
               </div>
-              <div class="arrow">✈</div>
+              <div class="arrow">${booking.tripType === 'roundtrip' ? '⇄' : '✈'}</div>
               <div>
                 <div class="label">Destination</div>
                 <div class="city">${booking.destination}</div>
@@ -122,6 +153,8 @@ export default async function handler(req, res) {
               <div><div class="label">Cabin Class</div><div class="value">${booking.cabinClass}</div></div>
               <div><div class="label">Total Paid</div><div class="value">${booking.totalPaid}</div></div>
             </div>
+
+            ${legsTableHtml}
 
             <div class="barcode-box">
               <div class="barcode">||||| | |||||| ||| ||||||| |||||</div>
