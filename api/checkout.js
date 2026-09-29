@@ -28,6 +28,7 @@ export default async function handler(req, res) {
       item = {},
       passenger = {},
       paymentMethod = 'stripe',
+      promoCode,
       successUrl = 'https://flyboro-travel-portal.vercel.app/?status=success',
       cancelUrl = 'https://flyboro-travel-portal.vercel.app/?status=cancelled'
     } = body;
@@ -40,12 +41,39 @@ export default async function handler(req, res) {
       });
     }
 
-    // 3. Server-Side Price Verification & Tax Calculations
+    // 3. Server-Side Price Verification, Promo Validation & Tax Calculations
     const basePrice = parseFloat(item.price) || 0;
+
+    // Server-side promo code verification
+    let discountAmount = 0;
+    let appliedPromoCode = null;
+    if (promoCode) {
+      const cleanCode = String(promoCode).trim().toUpperCase();
+      const PROMO_DATABASE = {
+        'FLYBORO10': { type: 'percentage', value: 10, maxDiscount: 50, minSpend: 100 },
+        'WELCOME25': { type: 'flat', value: 25, maxDiscount: 25, minSpend: 150 },
+        'FIRSTFLY': { type: 'percentage', value: 15, maxDiscount: 75, minSpend: 200 }
+      };
+      const promoRule = PROMO_DATABASE[cleanCode];
+      if (promoRule && basePrice >= (promoRule.minSpend || 0)) {
+        if (promoRule.type === 'percentage') {
+          discountAmount = (basePrice * promoRule.value) / 100;
+          if (promoRule.maxDiscount && discountAmount > promoRule.maxDiscount) {
+            discountAmount = promoRule.maxDiscount;
+          }
+        } else if (promoRule.type === 'flat') {
+          discountAmount = promoRule.value;
+        }
+        discountAmount = parseFloat(discountAmount.toFixed(2));
+        appliedPromoCode = cleanCode;
+      }
+    }
+
+    const discountedBase = Math.max(0, basePrice - discountAmount);
     const taxRate = 0.12; // 12% VAT / GST
     const convenienceFee = 15.00; // Flat OTA convenience fee
-    const taxAmount = parseFloat((basePrice * taxRate).toFixed(2));
-    const totalAmount = parseFloat((basePrice + taxAmount + convenienceFee).toFixed(2));
+    const taxAmount = parseFloat((discountedBase * taxRate).toFixed(2));
+    const totalAmount = parseFloat((discountedBase + taxAmount + convenienceFee).toFixed(2));
 
     // 4. Generate IATA-Compliant PNR Reference Code
     const pnr = generatePNR();
@@ -139,6 +167,8 @@ export default async function handler(req, res) {
       },
       paymentSummary: {
         basePrice,
+        discountAmount,
+        promoCode: appliedPromoCode,
         taxAmount,
         convenienceFee,
         totalAmount,
@@ -169,6 +199,8 @@ export default async function handler(req, res) {
       },
       paymentSummary: {
         basePrice,
+        discountAmount,
+        promoCode: appliedPromoCode,
         taxAmount,
         convenienceFee,
         totalAmount,

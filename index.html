@@ -176,6 +176,35 @@
           </div>
         </div>
 
+        <!-- Promo Code & Discount Application Box -->
+        <div class="promo-box" style="margin-top: 1rem; padding: 1rem; background: var(--theme-surface-subtle); border: 1px dashed var(--theme-border); border-radius: var(--radius-sm);">
+          <label for="promo-code-input" class="form-label" style="display: flex; justify-content: space-between;">
+            <span>Have a Promo Code?</span>
+            <span style="font-size: 0.75rem; color: var(--cta-primary); font-weight: 600;">Try FLYBORO10 or WELCOME25</span>
+          </label>
+          <div style="display: flex; gap: 8px; margin-top: 6px;">
+            <input type="text" id="promo-code-input" class="form-input" placeholder="e.g. FLYBORO10" style="text-transform: uppercase;" autocomplete="off" />
+            <button type="button" id="btn-apply-promo" class="btn-secondary" style="height: 42px; min-width: 90px; font-weight: 700;">Apply</button>
+          </div>
+          <div id="promo-feedback-msg" style="display: none; margin-top: 8px; font-size: 0.825rem; font-weight: 600;"></div>
+        </div>
+
+        <!-- Fare Preview & Discount Summary -->
+        <div id="passenger-modal-fare-summary" style="margin-top: 1rem; padding: 0.75rem 1rem; background: var(--theme-surface); border: 1px solid var(--theme-border); border-radius: var(--radius-sm); font-size: 0.875rem;">
+          <div style="display: flex; justify-content: space-between; color: var(--theme-muted-text);">
+            <span>Base Fare:</span>
+            <span id="modal-fare-base">$0.00</span>
+          </div>
+          <div id="modal-fare-discount-row" style="display: none; justify-content: space-between; color: #16A34A; font-weight: 600; margin-top: 4px;">
+            <span id="modal-fare-discount-label">Discount:</span>
+            <span id="modal-fare-discount-val">-$0.00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-weight: 800; color: var(--theme-header-text); margin-top: 6px; border-top: 1px solid var(--theme-border); padding-top: 6px;">
+            <span>Estimated Total:</span>
+            <span id="modal-fare-total" style="color: var(--cta-primary);">$0.00</span>
+          </div>
+        </div>
+
         <div class="flyboro-modal-footer">
           <button type="button" id="cancel-passenger-modal" class="btn-secondary">Cancel</button>
           <button type="submit" id="submit-booking-btn" class="global-cta-button" style="min-width: 180px; height: 44px; font-size: 0.95rem;">Confirm & Proceed</button>

@@ -24,6 +24,7 @@
     abortController: null,
     currentResults: null,
     activeCurrency: localStorage.getItem('flyboro_currency') || 'USD',
+    activePromo: null,
     currencyRates: {
       USD: { code: 'USD', symbol: '$', rate: 1.0, locale: 'en-US' },
       INR: { code: 'INR', symbol: '₹', rate: 83.5, locale: 'en-IN' },
@@ -802,6 +803,23 @@
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
 
+      // Reset promo state and feedback
+      state.activePromo = null;
+      const promoInput = document.getElementById('promo-code-input');
+      const promoFeedback = document.getElementById('promo-feedback-msg');
+      const baseSpan = document.getElementById('modal-fare-base');
+      const discountRow = document.getElementById('modal-fare-discount-row');
+      const totalSpan = document.getElementById('modal-fare-total');
+
+      if (promoInput) promoInput.value = '';
+      if (promoFeedback) {
+        promoFeedback.style.display = 'none';
+        promoFeedback.textContent = '';
+      }
+      if (discountRow) discountRow.style.display = 'none';
+      if (baseSpan) baseSpan.textContent = formatCurrency(itemData.price);
+      if (totalSpan) totalSpan.textContent = formatCurrency(itemData.price);
+
       // Focus first input for immediate typing
       const firstInput = document.getElementById('passenger-first-name');
       if (firstInput) setTimeout(() => firstInput.focus(), 60);
@@ -859,6 +877,82 @@
       });
     }
 
+    // Promo Code Application Binding
+    const applyPromoBtn = document.getElementById('btn-apply-promo');
+    const promoInput = document.getElementById('promo-code-input');
+    const promoFeedback = document.getElementById('promo-feedback-msg');
+    const discountRow = document.getElementById('modal-fare-discount-row');
+    const discountLabel = document.getElementById('modal-fare-discount-label');
+    const discountVal = document.getElementById('modal-fare-discount-val');
+    const totalSpan = document.getElementById('modal-fare-total');
+
+    if (applyPromoBtn && promoInput) {
+      applyPromoBtn.addEventListener('click', async () => {
+        const code = promoInput.value.trim().toUpperCase();
+        const hiddenInput = document.getElementById('selected-booking-item');
+        const itemData = hiddenInput && hiddenInput.value ? JSON.parse(hiddenInput.value) : {};
+
+        if (!code) {
+          if (promoFeedback) {
+            promoFeedback.style.display = 'block';
+            promoFeedback.style.color = '#DC2626';
+            promoFeedback.textContent = 'Please enter a promotion code.';
+          }
+          return;
+        }
+
+        const origBtnText = applyPromoBtn.textContent;
+        applyPromoBtn.disabled = true;
+        applyPromoBtn.textContent = 'Checking...';
+
+        try {
+          const res = await fetch('/api/promo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              code,
+              basePrice: itemData.price || 0,
+              currency: state.activeCurrency
+            })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok || !data.success) {
+            throw new Error(data.error || 'Invalid or expired promo code.');
+          }
+
+          state.activePromo = data;
+
+          if (promoFeedback) {
+            promoFeedback.style.display = 'block';
+            promoFeedback.style.color = '#16A34A';
+            promoFeedback.textContent = `✓ ${data.description} (-${formatCurrency(data.discountAmount)})`;
+          }
+
+          if (discountRow && discountLabel && discountVal && totalSpan) {
+            discountRow.style.display = 'flex';
+            discountLabel.textContent = `Promo Discount (${data.code}):`;
+            discountVal.textContent = `-${formatCurrency(data.discountAmount)}`;
+            totalSpan.textContent = formatCurrency(data.finalPrice);
+          }
+
+        } catch (err) {
+          state.activePromo = null;
+          if (promoFeedback) {
+            promoFeedback.style.display = 'block';
+            promoFeedback.style.color = '#DC2626';
+            promoFeedback.textContent = `✕ ${err.message}`;
+          }
+          if (discountRow) discountRow.style.display = 'none';
+          if (totalSpan) totalSpan.textContent = formatCurrency(itemData.price || 0);
+        } finally {
+          applyPromoBtn.disabled = false;
+          applyPromoBtn.textContent = origBtnText;
+        }
+      });
+    }
+
     if (passengerForm) {
       passengerForm.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -887,8 +981,11 @@
           submitBtn.textContent = origSubmitText;
         }
 
-        // Trigger checkout call with user-provided dynamic passenger details
-        await initiateBooking(itemData, { passenger: passengerData });
+        // Trigger checkout call with user-provided dynamic passenger details and active promo
+        await initiateBooking(itemData, {
+          passenger: passengerData,
+          promoCode: state.activePromo ? state.activePromo.code : undefined
+        });
       });
     }
   }
@@ -915,6 +1012,7 @@
             currency: state.activeCurrency
           },
           currency: state.activeCurrency,
+          promoCode: options.promoCode,
           passenger: options.passenger || {
             firstName: 'Himanshu',
             lastName: 'Singh',
@@ -997,6 +1095,12 @@
           <span>Base Fare:</span>
           <span>${formatCurrency(data.paymentSummary.basePrice)}</span>
         </div>
+        ${data.paymentSummary.discountAmount > 0 ? `
+          <div class="summary-row" style="color: #16A34A; font-weight: 600;">
+            <span>Promo Discount (${escapeHtml(data.paymentSummary.promoCode || 'PROMO')}):</span>
+            <span>-${formatCurrency(data.paymentSummary.discountAmount)}</span>
+          </div>
+        ` : ''}
         <div class="summary-row">
           <span>Taxes & GST (12%):</span>
           <span>${formatCurrency(data.paymentSummary.taxAmount)}</span>
