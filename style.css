@@ -243,12 +243,67 @@ select.currency-selector option {
 }
 
 /* --------------------------------------------------------------------------
-   5. PRODUCT NAVIGATION: HORIZONTAL TOUCH-SNAP SCROLLER
+   5. HERO SECTION & FLOATING CAR CUTOUT
    -------------------------------------------------------------------------- */
+.hero-portal-section {
+  position: relative;
+  background-color: var(--theme-bg, #F4F7F6);
+  overflow: hidden;
+  isolation: isolate;
+  padding: 1.5rem 0 0.5rem;
+}
+
 .portal-wrapper {
+  position: relative;
+  z-index: 10;
   max-width: 1100px;
-  margin: 2.5rem auto 1.5rem;
+  margin: 1.5rem auto 1.5rem;
   padding: 0 1.25rem;
+}
+
+/* Floating Orange Car via CSS Masking */
+.floating-orange-car {
+  position: absolute;
+  top: 50%;
+  right: -5%;
+  transform: translateY(-50%);
+  width: 720px;
+  height: 520px;
+  max-width: 60vw;
+  background-color: var(--brand-accent, #FF6D00);
+  -webkit-mask-image: url('assets/car-vector.png');
+  mask-image: url('assets/car-vector.png');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center right;
+  mask-position: center right;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.35s ease, right 0.35s ease, transform 0.35s ease;
+}
+
+/* Multi-product portal context: fade out when navigating to non-car tabs */
+body:not(.theme-car-rental):not(.cars) .floating-orange-car {
+  opacity: 0;
+  transform: translateY(-50%) translateX(30px);
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .hero-portal-section {
+    padding-top: 0.5rem;
+  }
+
+  .floating-orange-car {
+    right: -20%;
+    opacity: 0.3;
+    width: 480px;
+    height: 360px;
+    max-width: 85vw;
+  }
 }
 
 .product-tabs-nav {
@@ -308,6 +363,8 @@ select.currency-selector option {
    6. SEARCH CARD & INPUT SYSTEM
    -------------------------------------------------------------------------- */
 .search-engine-card {
+  position: relative;
+  z-index: 10;
   background-color: var(--theme-surface);
   border: 1px solid var(--theme-border);
   border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
