@@ -28,6 +28,7 @@
       </div>
 
       <nav class="user-nav" aria-label="Account and Currency Navigation">
+        <button type="button" class="btn-secondary" id="btn-open-manage-modal" aria-label="Manage Booking">Manage Booking</button>
         <button class="currency-selector" aria-label="Select Currency">USD ($)</button>
         <a href="#signin" class="btn-secondary">Sign In</a>
       </nav>
@@ -176,6 +177,28 @@
       </form>
     </div>
   </div>
+
+  <!-- FLYBORO PNR LOOKUP & MANAGE BOOKING MODAL -->
+  <dialog id="pnr-lookup-modal" class="booking-modal">
+    <div class="modal-card" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3>Manage Travel Reservation</h3>
+        <button type="button" id="close-pnr-modal" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="pnr-search-form" style="margin-bottom: 1.25rem;">
+          <label for="pnr-input-code" class="form-label">Enter 6-Character PNR Reference</label>
+          <div style="display: flex; gap: 8px; margin-top: 6px;">
+            <input type="text" id="pnr-input-code" class="form-input" placeholder="e.g. FLY-X82A9P" required maxlength="12" style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px;" />
+            <button type="submit" class="global-cta-button" id="btn-find-pnr" style="min-width: 130px; height: 48px;">Lookup</button>
+          </div>
+        </form>
+
+        <!-- Container for retrieved booking itinerary -->
+        <div id="pnr-result-view" style="display: none;"></div>
+      </div>
+    </div>
+  </dialog>
 
   <!-- Localized Configuration (Simulates WordPress wp_localize_script) -->
   <script>

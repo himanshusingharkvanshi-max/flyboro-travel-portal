@@ -329,6 +329,7 @@
     setupProductTabs();
     setupFormSubmission();
     setupModalEvents();
+    setupManageBooking();
 
     // Render initial form fields for default Car Rentals
     renderProductFields('cars');
@@ -973,6 +974,187 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
   }
+
+  /* ==========================================================================
+     PNR LOOKUP & MANAGE BOOKINGS CONTROLLER
+     ========================================================================== */
+  function setupManageBooking() {
+    const manageBtn = document.getElementById('btn-open-manage-modal');
+    const pnrModal = document.getElementById('pnr-lookup-modal');
+    const closePnrBtn = document.getElementById('close-pnr-modal');
+    const pnrForm = document.getElementById('pnr-search-form');
+    const pnrResultView = document.getElementById('pnr-result-view');
+    const pnrInput = document.getElementById('pnr-input-code');
+
+    if (manageBtn && pnrModal) {
+      manageBtn.addEventListener('click', () => {
+        if (pnrResultView) {
+          pnrResultView.style.display = 'none';
+          pnrResultView.innerHTML = '';
+        }
+        if (typeof pnrModal.showModal === 'function') {
+          pnrModal.showModal();
+        }
+        if (pnrInput) pnrInput.focus();
+      });
+    }
+
+    if (closePnrBtn && pnrModal) {
+      closePnrBtn.addEventListener('click', () => pnrModal.close());
+    }
+
+    if (pnrModal) {
+      pnrModal.addEventListener('click', (e) => {
+        if (e.target === pnrModal) pnrModal.close();
+      });
+    }
+
+    if (pnrForm) {
+      pnrForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const pnrVal = pnrInput.value.trim().toUpperCase();
+        if (!pnrVal) return;
+
+        const findBtn = document.getElementById('btn-find-pnr');
+        const origBtnText = findBtn ? findBtn.textContent : '';
+        if (findBtn) {
+          findBtn.disabled = true;
+          findBtn.textContent = 'Searching...';
+        }
+
+        try {
+          const booking = await fetchBookingByPNR(pnrVal);
+          renderManageBookingCard(booking);
+        } catch (err) {
+          if (pnrResultView) {
+            pnrResultView.style.display = 'block';
+            pnrResultView.innerHTML = `
+              <div style="background: #FEE2E2; border: 1px solid #FCA5A5; color: #991B1B; padding: 1rem; border-radius: var(--radius-sm); font-size: 0.9rem;">
+                <strong>Lookup Error:</strong> ${escapeHtml(err.message)}
+              </div>
+            `;
+          }
+        } finally {
+          if (findBtn) {
+            findBtn.disabled = false;
+            findBtn.textContent = origBtnText;
+          }
+        }
+      });
+    }
+  }
+
+  async function fetchBookingByPNR(pnr) {
+    const res = await fetch(`/api/booking?pnr=${encodeURIComponent(pnr)}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'No booking found matching that PNR.');
+    }
+    const json = await res.json();
+    return json.booking;
+  }
+
+  async function cancelBookingByPNR(pnr) {
+    const res = await fetch('/api/booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pnr, action: 'cancel' })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to process cancellation.');
+    }
+    return await res.json();
+  }
+
+  function renderManageBookingCard(booking) {
+    const container = document.getElementById('pnr-result-view');
+    if (!container) return;
+
+    const isCancelled = booking.status === 'CANCELLED';
+    const statusColor = isCancelled ? '#EF4444' : '#10B981';
+    const statusBg = isCancelled ? '#FEE2E2' : '#DCFCE7';
+
+    container.style.display = 'block';
+    container.innerHTML = `
+      <div style="border: 1px solid var(--theme-border); border-radius: var(--radius-md); padding: 1.25rem; background: var(--theme-surface-subtle); display: flex; flex-direction: column; gap: 0.75rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--theme-border); padding-bottom: 0.75rem;">
+          <div>
+            <span style="font-size: 0.75rem; color: var(--theme-muted-text); text-transform: uppercase;">Reference Code</span>
+            <div style="font-size: 1.25rem; font-weight: 800; color: var(--cta-primary); letter-spacing: 1px;">${escapeHtml(booking.pnr)}</div>
+          </div>
+          <span style="background: ${statusBg}; color: ${statusColor}; font-weight: 700; font-size: 0.8rem; padding: 4px 10px; border-radius: 999px;">
+            ${escapeHtml(booking.status)}
+          </span>
+        </div>
+
+        <div style="font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--theme-muted-text);">Passenger:</span>
+            <strong>${escapeHtml(booking.passenger.firstName)} ${escapeHtml(booking.passenger.lastName)}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--theme-muted-text);">Itinerary:</span>
+            <strong>${escapeHtml(booking.itinerary.title)}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--theme-muted-text);">Route:</span>
+            <span>${escapeHtml(booking.itinerary.origin)} ➔ ${escapeHtml(booking.itinerary.destination)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--theme-muted-text);">Departure:</span>
+            <span>${new Date(booking.itinerary.departureTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--theme-muted-text);">Seat Assignment:</span>
+            <span>${escapeHtml(booking.itinerary.seat)} (${escapeHtml(booking.itinerary.cabinClass)})</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--theme-border); padding-top: 0.5rem; font-size: 0.95rem;">
+            <strong>Total Paid:</strong>
+            <strong style="color: var(--theme-header-text);">$${Number(booking.paymentSummary.totalPaid).toFixed(2)} ${escapeHtml(booking.paymentSummary.currency)}</strong>
+          </div>
+        </div>
+
+        <div id="cancel-status-msg" style="display: none; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem; margin-top: 0.25rem;"></div>
+
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem; border-top: 1px solid var(--theme-border); padding-top: 0.75rem;">
+          ${!isCancelled ? `<button type="button" id="btn-cancel-reservation" class="btn-modal-cancel" style="color: #DC2626; border-color: #FCA5A5;">Cancel Reservation</button>` : ''}
+          <button type="button" class="global-cta-button" style="height: 42px; min-width: 140px; font-size: 0.9rem;" onclick="window.print()">Print E-Ticket</button>
+        </div>
+      </div>
+    `;
+
+    const cancelBtn = document.getElementById('btn-cancel-reservation');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', async () => {
+        if (!confirm(`Are you sure you want to cancel booking ${booking.pnr}? A $50.00 cancellation fee applies.`)) return;
+
+        cancelBtn.disabled = true;
+        cancelBtn.textContent = 'Cancelling...';
+
+        try {
+          const cancelRes = await cancelBookingByPNR(booking.pnr);
+          booking.status = 'CANCELLED';
+          const msgBox = document.getElementById('cancel-status-msg');
+          if (msgBox) {
+            msgBox.style.display = 'block';
+            msgBox.style.background = '#FEE2E2';
+            msgBox.style.color = '#991B1B';
+            msgBox.innerHTML = `<strong>Cancellation Processed:</strong> ${escapeHtml(cancelRes.data.message)} (Refund: ${escapeHtml(cancelRes.data.refundAmount)} after ${escapeHtml(cancelRes.data.penaltyFee)} fee).`;
+          }
+          cancelBtn.style.display = 'none';
+        } catch (err) {
+          alert('Cancellation failed: ' + err.message);
+          cancelBtn.disabled = false;
+          cancelBtn.textContent = 'Cancel Reservation';
+        }
+      });
+    }
+  }
+
+  // Expose PNR handlers on window
+  window.fetchBookingByPNR = fetchBookingByPNR;
+  window.cancelBookingByPNR = cancelBookingByPNR;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
