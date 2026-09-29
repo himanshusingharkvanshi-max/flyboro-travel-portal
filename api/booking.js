@@ -58,6 +58,24 @@ export default async function handler(req, res) {
           message: 'Your reservation has been cancelled. Refund processing takes 3-5 business days.'
         };
 
+        // Asynchronous cancellation notification trigger (non-blocking)
+        const host = req.headers['host'] || 'localhost:3000';
+        const protocol = host.includes('localhost') ? 'http' : 'https';
+        fetch(`${protocol}://${host}/api/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: body.email || 'passenger@flyboro.com',
+            passengerName: body.passengerName || 'Valued Passenger',
+            pnr: pnr.toUpperCase(),
+            bookingDetails: {
+              title: 'Cancelled Reservation',
+              totalPaid: '$469.00 Refunded (after $50 penalty fee)'
+            },
+            type: 'cancellation'
+          })
+        }).catch(err => console.warn('Non-blocking cancel notify error:', err.message));
+
         return res.status(200).json({
           success: true,
           action: 'cancel',

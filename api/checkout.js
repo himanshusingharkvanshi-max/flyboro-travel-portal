@@ -91,6 +91,27 @@ export default async function handler(req, res) {
       });
     }
 
+    // Asynchronous notification trigger (non-blocking)
+    const host = req.headers['host'] || 'localhost:3000';
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    const targetEmail = passenger.email || 'passenger@flyboro.com';
+    const passengerFullName = `${passenger.firstName || 'Valued'} ${passenger.lastName || 'Passenger'}`.trim();
+
+    fetch(`${protocol}://${host}/api/notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: targetEmail,
+        passengerName: passengerFullName,
+        pnr,
+        bookingDetails: {
+          title: item.title || (item.airline ? `${item.airline} (${item.flightNumber})` : (item.name || 'Travel Reservation')),
+          totalPaid: `$${totalAmount.toFixed(2)} USD`
+        },
+        type: 'confirmation'
+      })
+    }).catch(err => console.warn('Non-blocking notify error:', err.message));
+
     // 7. Fallback Demo / Simulated Booking Response
     return res.status(200).json({
       success: true,
