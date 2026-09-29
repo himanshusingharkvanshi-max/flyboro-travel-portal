@@ -29,7 +29,13 @@
 
       <nav class="user-nav" aria-label="Account and Currency Navigation">
         <button type="button" class="btn-secondary" id="btn-open-manage-modal" aria-label="Manage Booking">Manage Booking</button>
-        <button class="currency-selector" aria-label="Select Currency">USD ($)</button>
+        <select id="currency-selector" class="currency-selector" aria-label="Select Currency">
+          <option value="USD">USD ($)</option>
+          <option value="INR">INR (₹)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+          <option value="AED">AED (د.إ)</option>
+        </select>
         <a href="#signin" class="btn-secondary">Sign In</a>
       </nav>
     </div>

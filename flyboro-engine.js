@@ -18,11 +18,35 @@
     enableClientMockFallback: true
   };
 
-  // State
+  // State & Multi-Currency Localization
   const state = {
     activeProduct: 'cars',
-    abortController: null
+    abortController: null,
+    currentResults: null,
+    activeCurrency: localStorage.getItem('flyboro_currency') || 'USD',
+    currencyRates: {
+      USD: { code: 'USD', symbol: '$', rate: 1.0, locale: 'en-US' },
+      INR: { code: 'INR', symbol: '₹', rate: 83.5, locale: 'en-IN' },
+      EUR: { code: 'EUR', symbol: '€', rate: 0.92, locale: 'de-DE' },
+      GBP: { code: 'GBP', symbol: '£', rate: 0.78, locale: 'en-GB' },
+      AED: { code: 'AED', symbol: 'د.إ', rate: 3.67, locale: 'ar-AE' }
+    }
   };
+
+  /**
+   * Converts a base USD price to target currency and formats using Intl.NumberFormat
+   */
+  function formatCurrency(amountInUSD, targetCurrency) {
+    const code = (targetCurrency || state.activeCurrency || 'USD').toUpperCase();
+    const config = state.currencyRates[code] || state.currencyRates.USD;
+    const converted = Number(amountInUSD || 0) * config.rate;
+
+    return new Intl.NumberFormat(config.locale, {
+      style: 'currency',
+      currency: config.code,
+      maximumFractionDigits: code === 'INR' || code === 'AED' ? 0 : 2
+    }).format(converted);
+  }
 
   // Product Line Content Metadata
   const PRODUCT_METADATA = {
@@ -322,6 +346,9 @@
     DOM.modalSku = document.getElementById('modal-sku');
     DOM.modalPrice = document.getElementById('modal-price');
     DOM.modalProvider = document.getElementById('modal-provider');
+
+    // Currency
+    DOM.currencySelector = document.getElementById('currency-selector');
   }
 
   function init() {
@@ -330,9 +357,41 @@
     setupFormSubmission();
     setupModalEvents();
     setupManageBooking();
+    setupCurrencySelector();
 
     // Render initial form fields for default Car Rentals
     renderProductFields('cars');
+  }
+
+  function setupCurrencySelector() {
+    if (!DOM.currencySelector) return;
+
+    // Set initial value from persisted preference or default USD
+    DOM.currencySelector.value = state.activeCurrency;
+
+    // React to currency changes
+    DOM.currencySelector.addEventListener('change', function () {
+      state.activeCurrency = this.value;
+      localStorage.setItem('flyboro_currency', this.value);
+
+      // Instantly re-render active inventory cards with updated currency formatting
+      if (state.currentResults) {
+        renderLiveResults(state.currentResults);
+      }
+    });
+
+    // Asynchronously fetch current exchange rates from /api/currency
+    fetch('/api/currency')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.rates) {
+          state.currencyRates = data.rates;
+          if (state.currentResults) {
+            renderLiveResults(state.currentResults);
+          }
+        }
+      })
+      .catch(() => {});
   }
 
   /**
@@ -656,6 +715,7 @@
    * Render Actual Data Results
    */
   function renderLiveResults(res) {
+    state.currentResults = res;
     const list = res.results || res.data;
     if (!list || list.length === 0) {
       DOM.resultsContainer.innerHTML = `
@@ -682,7 +742,7 @@
         <div class="travel-card-actions">
           <div class="travel-card-price">
             <div class="price-sub">Rate from</div>
-            <div class="price-val">$${Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+            <div class="price-val">${formatCurrency(item.price)}</div>
           </div>
           <!-- Global Conversion CTA: Always Sunset Orange -->
           <button type="button" 
@@ -712,7 +772,7 @@
         // Show confirmation modal
         DOM.modalItemTitle.textContent = title;
         DOM.modalSku.textContent = sku;
-        DOM.modalPrice.textContent = `$${Number(price).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        DOM.modalPrice.textContent = formatCurrency(price);
         DOM.modalProvider.textContent = provider;
 
         // Store active sku on modal for checkout dispatch
@@ -850,7 +910,11 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          item: itemData,
+          item: {
+            ...itemData,
+            currency: state.activeCurrency
+          },
+          currency: state.activeCurrency,
           passenger: options.passenger || {
             firstName: 'Himanshu',
             lastName: 'Singh',
@@ -877,7 +941,7 @@
           renderBookingConfirmedView(result);
         } else {
           // Display confirmation alert fallback
-          alert(`Booking Confirmed!\n\nPNR: ${result.pnr}\nBooking ID: ${result.bookingId}\nTotal: $${result.paymentSummary.totalAmount}`);
+          alert(`Booking Confirmed!\n\nPNR: ${result.pnr}\nBooking ID: ${result.bookingId}\nTotal: ${formatCurrency(result.paymentSummary.totalAmount)}`);
         }
       } else {
         alert('Booking error: ' + (result.error || 'Failed to complete checkout'));
@@ -931,19 +995,19 @@
         <hr style="border: none; border-top: 1px solid var(--theme-border); margin: 4px 0;">
         <div class="summary-row">
           <span>Base Fare:</span>
-          <span>$${Number(data.paymentSummary.basePrice).toFixed(2)}</span>
+          <span>${formatCurrency(data.paymentSummary.basePrice)}</span>
         </div>
         <div class="summary-row">
           <span>Taxes & GST (12%):</span>
-          <span>$${Number(data.paymentSummary.taxAmount).toFixed(2)}</span>
+          <span>${formatCurrency(data.paymentSummary.taxAmount)}</span>
         </div>
         <div class="summary-row">
           <span>Convenience Fee:</span>
-          <span>$${Number(data.paymentSummary.convenienceFee).toFixed(2)}</span>
+          <span>${formatCurrency(data.paymentSummary.convenienceFee)}</span>
         </div>
         <div class="summary-row" style="font-size: 1.05rem; font-weight: 800; color: var(--theme-header-text); margin-top: 4px;">
           <span>Total Paid:</span>
-          <span style="color: var(--cta-primary);">$${Number(data.paymentSummary.totalAmount).toFixed(2)} USD</span>
+          <span style="color: var(--cta-primary);">${formatCurrency(data.paymentSummary.totalAmount)}</span>
         </div>
       </div>
     `;
@@ -1111,7 +1175,7 @@
           </div>
           <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--theme-border); padding-top: 0.5rem; font-size: 0.95rem;">
             <strong>Total Paid:</strong>
-            <strong style="color: var(--theme-header-text);">$${Number(booking.paymentSummary.totalPaid).toFixed(2)} ${escapeHtml(booking.paymentSummary.currency)}</strong>
+            <strong style="color: var(--theme-header-text);">${formatCurrency(booking.paymentSummary.totalPaid, booking.paymentSummary.currency)}</strong>
           </div>
         </div>
 
