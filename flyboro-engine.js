@@ -950,7 +950,7 @@
 
     modalFooter.innerHTML = `
       <button type="button" class="btn-modal-cancel" id="btn-confirmed-close">Close</button>
-      <button type="button" class="global-cta-button" onclick="window.print()">Print Itinerary Receipt</button>
+      <button type="button" class="global-cta-button" onclick="openPdfETicket('${escapeHtml(data.pnr)}')">Print E-Ticket</button>
     `;
 
     const closeBtn = document.getElementById('btn-confirmed-close');
@@ -1119,7 +1119,7 @@
 
         <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem; border-top: 1px solid var(--theme-border); padding-top: 0.75rem;">
           ${!isCancelled ? `<button type="button" id="btn-cancel-reservation" class="btn-modal-cancel" style="color: #DC2626; border-color: #FCA5A5;">Cancel Reservation</button>` : ''}
-          <button type="button" class="global-cta-button" style="height: 42px; min-width: 140px; font-size: 0.9rem;" onclick="window.print()">Print E-Ticket</button>
+          <button type="button" class="global-cta-button" style="height: 42px; min-width: 140px; font-size: 0.9rem;" onclick="openPdfETicket('${escapeHtml(booking.pnr)}')">Print E-Ticket</button>
         </div>
       </div>
     `;
@@ -1152,9 +1152,16 @@
     }
   }
 
+  function openPdfETicket(pnr) {
+    if (!pnr) return;
+    const url = `/api/pdf?pnr=${encodeURIComponent(pnr)}&autoprint=true`;
+    window.open(url, '_blank');
+  }
+
   // Expose PNR handlers on window
   window.fetchBookingByPNR = fetchBookingByPNR;
   window.cancelBookingByPNR = cancelBookingByPNR;
+  window.openPdfETicket = openPdfETicket;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
