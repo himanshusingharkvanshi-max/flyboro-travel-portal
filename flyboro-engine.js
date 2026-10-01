@@ -92,32 +92,33 @@
     }
   };
 
-  // Dynamic Form Field Templates
+  // Dynamic Form Field Templates (Universal Horizontal Search Pill Layout)
   const FORM_TEMPLATES = {
     cars: `
-      <div class="form-group">
-        <label for="input-pickup-location" class="form-label">Pick-up Location *</label>
-        <div class="input-wrapper">
-          <input type="text" id="input-pickup-location" name="location" class="form-input location-autocomplete" placeholder="City or airport (e.g. DEL, MIA, JFK)" value="Miami (MIA)" required autocomplete="off" data-label="Pick-up Location">
-          <ul class="autocomplete-dropdown" role="listbox"></ul>
-        </div>
+      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
+        <label for="input-pickup-location" class="micro-label">PICK-UP LOCATION *</label>
+        <input type="text" id="input-pickup-location" name="location" class="pill-input location-autocomplete" placeholder="City or airport (e.g. DEL, MIA, JFK)" value="Miami (MIA)" required autocomplete="off" data-label="Pick-up Location">
+        <ul class="autocomplete-dropdown" role="listbox"></ul>
       </div>
-      <div class="form-group">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-          <label for="input-pickup-date" class="form-label" style="margin-bottom: 0;">Pick-up Date *</label>
-          <div id="car-duration-badge" style="font-size: 0.75rem; font-weight: 700; color: var(--cta-primary); background: rgba(255, 109, 0, 0.1); padding: 2px 8px; border-radius: 4px;">
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label for="input-pickup-date" class="micro-label">PICK-UP DATE *</label>
+          <div id="car-duration-badge" style="font-size: 0.65rem; font-weight: 800; color: #FF6D00; background: rgba(255, 109, 0, 0.1); padding: 1px 6px; border-radius: 9999px;">
             ⏱️ <span id="car-duration-text">7 Days</span>
           </div>
         </div>
-        <input type="date" id="input-pickup-date" name="start_date" class="form-input" required data-label="Pick-up Date">
+        <input type="date" id="input-pickup-date" name="start_date" class="pill-input" required data-label="Pick-up Date">
       </div>
-      <div class="form-group">
-        <label for="input-return-date" class="form-label">Drop-off Date *</label>
-        <input type="date" id="input-return-date" name="end_date" class="form-input" required data-label="Drop-off Date">
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+        <label for="input-return-date" class="micro-label">DROP-OFF DATE *</label>
+        <input type="date" id="input-return-date" name="end_date" class="pill-input" required data-label="Drop-off Date">
       </div>
-      <div class="form-group">
-        <label for="input-driver-age" class="form-label">Driver Age</label>
-        <select id="input-driver-age" name="driver_age" class="form-input" data-label="Driver Age">
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
+        <label for="input-driver-age" class="micro-label">DRIVER AGE</label>
+        <select id="input-driver-age" name="driver_age" class="pill-input" data-label="Driver Age">
           <option value="25+" selected>25 to 69 Years (Standard)</option>
           <option value="21-24">21 to 24 Years (Young Driver)</option>
           <option value="70+">70+ Years (Senior Driver)</option>
@@ -125,47 +126,31 @@
       </div>
     `,
     flights: `
-      <div class="form-group trip-type-selector-wrapper" style="grid-column: 1 / -1; margin-bottom: -0.25rem;">
-        <div class="trip-type-segmented-control" role="radiogroup" aria-label="Flight Trip Type">
-          <label class="trip-type-option">
-            <input type="radio" name="trip_type" value="roundtrip" checked>
-            <span>Round-Trip ⇄</span>
-          </label>
-          <label class="trip-type-option">
-            <input type="radio" name="trip_type" value="oneway">
-            <span>One-Way →</span>
-          </label>
-          <label class="trip-type-option">
-            <input type="radio" name="trip_type" value="multicity">
-            <span>Multi-City ✈️</span>
-          </label>
-        </div>
+      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
+        <label for="input-origin" class="micro-label">FLYING FROM *</label>
+        <input type="text" id="input-origin" name="origin" class="pill-input location-autocomplete" placeholder="Origin (e.g. DEL, JFK)" value="New Delhi (DEL)" required autocomplete="off" data-label="Flying From">
+        <ul class="autocomplete-dropdown" role="listbox"></ul>
       </div>
-      <div class="form-group">
-        <label for="input-origin" class="form-label">Flying From *</label>
-        <div class="input-wrapper">
-          <input type="text" id="input-origin" name="origin" class="form-input location-autocomplete" placeholder="Origin (e.g. DEL, JFK)" value="New Delhi (DEL)" required autocomplete="off" data-label="Flying From">
-          <ul class="autocomplete-dropdown" role="listbox"></ul>
-        </div>
+      <div class="pill-divider"></div>
+      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
+        <label for="input-destination" class="micro-label">FLYING TO *</label>
+        <input type="text" id="input-destination" name="destination" class="pill-input location-autocomplete" placeholder="Destination (e.g. LHR, DXB)" value="London (LHR)" required autocomplete="off" data-label="Flying To">
+        <ul class="autocomplete-dropdown" role="listbox"></ul>
       </div>
-      <div class="form-group">
-        <label for="input-destination" class="form-label">Flying To *</label>
-        <div class="input-wrapper">
-          <input type="text" id="input-destination" name="destination" class="form-input location-autocomplete" placeholder="Destination (e.g. LHR, DXB)" value="London (LHR)" required autocomplete="off" data-label="Flying To">
-          <ul class="autocomplete-dropdown" role="listbox"></ul>
-        </div>
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+        <label for="input-flight-dep" class="micro-label">DEPARTURE DATE *</label>
+        <input type="date" id="input-flight-dep" name="start_date" class="pill-input" required data-label="Departure Date">
       </div>
-      <div class="form-group">
-        <label for="input-flight-dep" class="form-label">Departure Date *</label>
-        <input type="date" id="input-flight-dep" name="start_date" class="form-input" required data-label="Departure Date">
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" id="flight-return-group" onclick="this.querySelector('input').focus()">
+        <label for="input-flight-ret" class="micro-label">RETURN DATE *</label>
+        <input type="date" id="input-flight-ret" name="end_date" class="pill-input" required data-label="Return Date">
       </div>
-      <div class="form-group" id="flight-return-group">
-        <label for="input-flight-ret" class="form-label">Return Date *</label>
-        <input type="date" id="input-flight-ret" name="end_date" class="form-input" required data-label="Return Date">
-      </div>
-      <div class="form-group">
-        <label for="input-passengers" class="form-label">Cabin & Passengers</label>
-        <select id="input-passengers" name="passengers" class="form-input" data-label="Cabin & Passengers">
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
+        <label for="input-passengers" class="micro-label">CABIN & PASSENGERS</label>
+        <select id="input-passengers" name="passengers" class="pill-input" data-label="Cabin & Passengers">
           <option value="1-economy" selected>1 Adult, Economy</option>
           <option value="2-economy">2 Adults, Economy</option>
           <option value="2-business">2 Adults, Business Class</option>
@@ -174,24 +159,25 @@
       </div>
     `,
     hotels: `
-      <div class="form-group">
-        <label for="input-hotel-dest" class="form-label">Destination / Resort *</label>
-        <div class="input-wrapper">
-          <input type="text" id="input-hotel-dest" name="location" class="form-input location-autocomplete" placeholder="City or airport (e.g. Dubai, Paris)" value="Paris (CDG)" required autocomplete="off" data-label="Destination">
-          <ul class="autocomplete-dropdown" role="listbox"></ul>
-        </div>
+      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
+        <label for="input-hotel-dest" class="micro-label">DESTINATION / RESORT *</label>
+        <input type="text" id="input-hotel-dest" name="location" class="pill-input location-autocomplete" placeholder="City or resort (e.g. Paris, Dubai)" value="Paris (CDG)" required autocomplete="off" data-label="Destination">
+        <ul class="autocomplete-dropdown" role="listbox"></ul>
       </div>
-      <div class="form-group">
-        <label for="input-hotel-in" class="form-label">Check-in Date *</label>
-        <input type="date" id="input-hotel-in" name="start_date" class="form-input" required data-label="Check-in Date">
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+        <label for="input-hotel-in" class="micro-label">CHECK-IN DATE *</label>
+        <input type="date" id="input-hotel-in" name="start_date" class="pill-input" required data-label="Check-in Date">
       </div>
-      <div class="form-group">
-        <label for="input-hotel-out" class="form-label">Check-out Date *</label>
-        <input type="date" id="input-hotel-out" name="end_date" class="form-input" required data-label="Check-out Date">
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+        <label for="input-hotel-out" class="micro-label">CHECK-OUT DATE *</label>
+        <input type="date" id="input-hotel-out" name="end_date" class="pill-input" required data-label="Check-out Date">
       </div>
-      <div class="form-group">
-        <label for="input-hotel-rooms" class="form-label">Guests & Rooms</label>
-        <select id="input-hotel-rooms" name="guests" class="form-input" data-label="Guests & Rooms">
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
+        <label for="input-hotel-rooms" class="micro-label">GUESTS & ROOMS</label>
+        <select id="input-hotel-rooms" name="guests" class="pill-input" data-label="Guests & Rooms">
           <option value="2-1" selected>2 Guests, 1 Suite</option>
           <option value="1-1">1 Guest, 1 Deluxe Room</option>
           <option value="4-2">4 Guests, 2 Villa Suites</option>
@@ -199,162 +185,53 @@
       </div>
     `,
     vacations: `
-      <div style="grid-column: 1 / -1; margin-bottom: 0.5rem;">
-        <div class="date-flexibility-toggle" role="group" aria-label="Date Flexibility">
-          <button type="button" class="btn-toggle active" id="vacay-flex-exact" data-flex="exact">Exact Day</button>
-          <button type="button" class="btn-toggle" id="vacay-flex-month" data-flex="month">Anytime This Month</button>
-        </div>
+      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
+        <label for="input-vacation-dest" class="micro-label">PACKAGE EXPERIENCE / REGION *</label>
+        <input type="text" id="input-vacation-dest" name="location" class="pill-input location-autocomplete" placeholder="Destination Region" value="Costa Rica (SJO)" required autocomplete="off" data-label="Package Experience">
+        <ul class="autocomplete-dropdown" role="listbox"></ul>
       </div>
-      <div class="form-group">
-        <label for="input-vacation-dest" class="form-label">Package Experience / Region *</label>
-        <div class="input-wrapper">
-          <input type="text" id="input-vacation-dest" name="location" class="form-input location-autocomplete" placeholder="Destination Region" value="Costa Rica (SJO)" required autocomplete="off" data-label="Package Experience">
-          <ul class="autocomplete-dropdown" role="listbox"></ul>
-        </div>
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" id="vacation-date-group" onclick="this.querySelector('input').focus()">
+        <label for="input-vacation-start" class="micro-label" id="vacation-date-label">TARGET DATE *</label>
+        <input type="date" id="input-vacation-start" name="start_date" class="pill-input" required data-label="Target Date">
       </div>
-      <div class="form-group" id="vacation-date-group">
-        <label for="input-vacation-start" class="form-label" id="vacation-date-label">Target Date *</label>
-        <input type="date" id="input-vacation-start" name="start_date" class="form-input" required data-label="Target Date">
-      </div>
-      <div class="form-group" style="grid-column: 1 / -1;">
-        <label class="form-label">Ticket Tiers & Guest Allocation</label>
-        <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 6px; background: var(--theme-surface-subtle); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--theme-border);">
-          <div style="display: flex; align-items: center; justify-content: space-between; flex: 1; min-width: 140px;">
-            <div>
-              <strong style="display: block; font-size: 0.85rem; color: var(--theme-header-text);">Adults (18+)</strong>
-              <span style="font-size: 0.75rem; color: var(--theme-muted-text);">$2,150 / guest</span>
-            </div>
-            <div class="stepper-controls">
-              <button type="button" class="btn-step btn-step-minus" data-target="vacay-adults" data-min="1" aria-label="Decrease Adults">-</button>
-              <span class="step-count" id="vacay-adults">1</span>
-              <button type="button" class="btn-step btn-step-plus" data-target="vacay-adults" data-max="10" aria-label="Increase Adults">+</button>
-            </div>
-          </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; flex: 1; min-width: 140px;">
-            <div>
-              <strong style="display: block; font-size: 0.85rem; color: var(--theme-header-text);">Children (3-17)</strong>
-              <span style="font-size: 0.75rem; color: var(--theme-muted-text);">$1,290 / guest</span>
-            </div>
-            <div class="stepper-controls">
-              <button type="button" class="btn-step btn-step-minus" data-target="vacay-children" data-min="0" aria-label="Decrease Children">-</button>
-              <span class="step-count" id="vacay-children">0</span>
-              <button type="button" class="btn-step btn-step-plus" data-target="vacay-children" data-max="8" aria-label="Increase Children">+</button>
-            </div>
-          </div>
-          <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--theme-border); padding-top: 8px; margin-top: 4px;">
-            <span style="font-size: 0.8rem; color: var(--theme-muted-text);">Estimated Expedition Total:</span>
-            <strong id="vacay-live-subtotal" style="font-size: 0.95rem; color: var(--cta-primary);">$2,150.00</strong>
-          </div>
-        </div>
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
+        <label for="vacation-guest-select" class="micro-label">GUESTS ALLOCATION</label>
+        <select id="vacation-guest-select" name="guests" class="pill-input" data-label="Guests Allocation">
+          <option value="2-0" selected>2 Adults, 0 Children</option>
+          <option value="1-0">1 Adult, 0 Children</option>
+          <option value="2-2">2 Adults, 2 Children</option>
+          <option value="4-2">4 Adults, 2 Children</option>
+        </select>
       </div>
     `,
     jets: `
-      <div class="jet-concierge-wizard" style="grid-column: 1 / -1;">
-        <div class="wizard-progress-bar">
-          <div class="wizard-progress-track">
-            <div class="progress-indicator" id="jet-progress-indicator" style="width: 33.33%;"></div>
-          </div>
-          <div class="step-nodes">
-            <span class="node active" data-step="1">1. Routing</span>
-            <span class="node" data-step="2">2. Aircraft</span>
-            <span class="node" data-step="3">3. VIP Concierge</span>
-          </div>
-        </div>
-
-        <!-- Step 1: Routing -->
-        <fieldset class="wizard-step-slide is-active" data-step="1">
-          <div class="step-title">Step 1: Mission Routing & Schedule</div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="input-jet-origin" class="form-label">Departure FBO *</label>
-              <div class="input-wrapper">
-                <input type="text" id="input-jet-origin" name="origin" class="form-input location-autocomplete" placeholder="Airport FBO (e.g. DEL, TEB)" value="New Delhi (DEL)" required autocomplete="off" data-label="Departure FBO">
-                <ul class="autocomplete-dropdown" role="listbox"></ul>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="input-jet-dest" class="form-label">Destination FBO *</label>
-              <div class="input-wrapper">
-                <input type="text" id="input-jet-dest" name="destination" class="form-input location-autocomplete" placeholder="Airport FBO (e.g. DXB, VNY)" value="Dubai (DXB)" required autocomplete="off" data-label="Destination FBO">
-                <ul class="autocomplete-dropdown" role="listbox"></ul>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="input-jet-date" class="form-label">Charter Departure Date *</label>
-              <input type="date" id="input-jet-date" name="start_date" class="form-input" required data-label="Charter Departure Date">
-            </div>
-            <div class="form-group">
-              <label for="input-jet-passengers" class="form-label">Estimated Passengers</label>
-              <select id="input-jet-passengers" name="passengers" class="form-input" data-label="Passengers">
-                <option value="1-4">1 to 4 Passengers</option>
-                <option value="5-8" selected>5 to 8 Passengers</option>
-                <option value="9-14">9 to 14 Passengers</option>
-                <option value="15+">15+ Group Charter</option>
-              </select>
-            </div>
-          </div>
-          <div class="wizard-nav-row">
-            <div></div>
-            <button type="button" class="global-cta-button btn-wizard-next" data-next="2">Continue to Aircraft ➔</button>
-          </div>
-        </fieldset>
-
-        <!-- Step 2: Aircraft Category -->
-        <fieldset class="wizard-step-slide" data-step="2">
-          <div class="step-title">Step 2: Aircraft Fleet Class</div>
-          <div class="form-grid">
-            <div class="form-group" style="grid-column: 1 / -1;">
-              <label for="input-jet-cabin" class="form-label">Aircraft Specification & Range</label>
-              <select id="input-jet-cabin" name="aircraft_category" class="form-input" data-label="Aircraft Category">
-                <option value="heavy" selected>Heavy Jet (Challenger 650 / 12 Pax • Intercontinental)</option>
-                <option value="ultra-long">Ultra Long Range (Gulfstream G650ER • 14 Pax • Global Range)</option>
-                <option value="super-mid">Super Midsize (Citation X+ • 8 Pax • High Speed)</option>
-                <option value="light">Light Jet (Phenom 300E • 6 Pax • Regional Sprint)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="input-jet-luggage" class="form-label">Baggage Capacity</label>
-              <select id="input-jet-luggage" name="luggage_tier" class="form-input" data-label="Baggage Capacity">
-                <option value="standard" selected>Standard VIP Luggage (Up to 12 pieces)</option>
-                <option value="excess">Excess Baggage & Oversized Equipment</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="input-jet-pets" class="form-label">Pet Traveling in Cabin</label>
-              <select id="input-jet-pets" name="pets_allowed" class="form-input" data-label="Pets">
-                <option value="no" selected>No Pets</option>
-                <option value="yes">Yes (Pet-friendly cabin prep)</option>
-              </select>
-            </div>
-          </div>
-          <div class="wizard-nav-row">
-            <button type="button" class="btn-secondary btn-wizard-prev" data-prev="1">← Back</button>
-            <button type="button" class="global-cta-button btn-wizard-next" data-next="3">Continue to Concierge ➔</button>
-          </div>
-        </fieldset>
-
-        <!-- Step 3: VIP Concierge Contact -->
-        <fieldset class="wizard-step-slide" data-step="3">
-          <div class="step-title">Step 3: Dedicated VIP Concierge Handling</div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="input-jet-contact-name" class="form-label">Principal / Client Name *</label>
-              <input type="text" id="input-jet-contact-name" name="client_name" class="form-input" placeholder="e.g. Lord Harrington" value="Executive Travel Group" required data-label="Principal Name">
-            </div>
-            <div class="form-group">
-              <label for="input-jet-contact-phone" class="form-label">Direct Secure Contact Phone *</label>
-              <input type="tel" id="input-jet-contact-phone" name="client_phone" class="form-input" placeholder="+1-555-0199" value="+1-555-0199" required data-label="Contact Phone">
-            </div>
-            <div class="form-group" style="grid-column: 1 / -1;">
-              <label for="input-jet-catering" class="form-label">Special Requests, FBO Ground Chauffeur & Catering</label>
-              <input type="text" id="input-jet-catering" name="catering_notes" class="form-input" placeholder="e.g. Dom Pérignon champagne, tarmac ramp access, kosher meal prep">
-            </div>
-          </div>
-          <div class="wizard-nav-row">
-            <button type="button" class="btn-secondary btn-wizard-prev" data-prev="2">← Back</button>
-            <button type="submit" class="global-cta-button" id="btn-submit-jet-wizard">Request Confidential Charter Quote ✈️</button>
-          </div>
-        </fieldset>
+      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
+        <label for="input-jet-origin" class="micro-label">DEPARTURE FBO *</label>
+        <input type="text" id="input-jet-origin" name="origin" class="pill-input location-autocomplete" placeholder="Airport FBO (e.g. DEL, TEB)" value="New Delhi (DEL)" required autocomplete="off" data-label="Departure FBO">
+        <ul class="autocomplete-dropdown" role="listbox"></ul>
+      </div>
+      <div class="pill-divider"></div>
+      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
+        <label for="input-jet-dest" class="micro-label">DESTINATION FBO *</label>
+        <input type="text" id="input-jet-dest" name="destination" class="pill-input location-autocomplete" placeholder="Airport FBO (e.g. DXB, VNY)" value="Dubai (DXB)" required autocomplete="off" data-label="Destination FBO">
+        <ul class="autocomplete-dropdown" role="listbox"></ul>
+      </div>
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+        <label for="input-jet-date" class="micro-label">CHARTER DEPARTURE DATE *</label>
+        <input type="date" id="input-jet-date" name="start_date" class="pill-input" required data-label="Charter Departure Date">
+      </div>
+      <div class="pill-divider"></div>
+      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
+        <label for="input-jet-passengers" class="micro-label">ESTIMATED PASSENGERS</label>
+        <select id="input-jet-passengers" name="passengers" class="pill-input" data-label="Estimated Passengers">
+          <option value="5-8" selected>5 to 8 Passengers</option>
+          <option value="1-4">1 to 4 Passengers</option>
+          <option value="9-14">9 to 14 Passengers</option>
+          <option value="15+">15+ Group Charter</option>
+        </select>
       </div>
     `
   };
@@ -563,7 +440,7 @@
 
     showError(input, message) {
       input.classList.add('has-error');
-      const wrapper = input.closest('.form-group') || input.parentElement;
+      const wrapper = input.closest('.form-group') || input.closest('.pill-input-group') || input.parentElement;
 
       let errSpan = wrapper.querySelector('.inline-field-error');
       if (!errSpan) {
@@ -690,9 +567,19 @@
         }
 
         state.activeProduct = targetProduct;
-        DOM.productTypeInput.value = targetProduct;
-        DOM.engineHeadline.textContent = meta.title;
-        DOM.engineSubheadline.textContent = meta.subtitle;
+        if (DOM.productTypeInput) DOM.productTypeInput.value = targetProduct;
+        if (DOM.engineHeadline) DOM.engineHeadline.textContent = meta.title;
+        if (DOM.engineSubheadline) DOM.engineSubheadline.textContent = meta.subtitle;
+
+        // Dynamic Orange CTA Button text sync
+        const ctaBtnText = document.getElementById('cta-btn-text') || (DOM.btnSubmit && DOM.btnSubmit.querySelector('.btn-text'));
+        if (ctaBtnText) {
+          ctaBtnText.textContent = targetProduct === 'jets' ? 'Continue to Aircraft ➔' : 'Search Availability';
+        }
+        const ctaBtn = document.getElementById('cta-btn');
+        if (ctaBtn && ctaBtn !== DOM.btnSubmit) {
+          ctaBtn.textContent = targetProduct === 'jets' ? 'Continue to Aircraft ➔' : 'Search Availability';
+        }
 
         renderProductFields(targetProduct);
         renderPopularDestinations(targetProduct);
@@ -707,6 +594,14 @@
       });
     });
   }
+
+  // Global switchTab bridge for inline event handlers and external controllers
+  window.switchTab = function (clickedBtn, tabId) {
+    const targetPill = document.querySelector(`.tab-pill[data-product="${tabId}"]`);
+    if (targetPill) {
+      targetPill.click();
+    }
+  };
 
   // Primary fallback database for instant offline/static lookups
   const FALLBACK_LOCATIONS = [
@@ -997,12 +892,12 @@
    * Product Flow 5: Private Jet 3-Step Concierge Wizard
    */
   function setupJetWizard() {
+    const wizard = DOM.dynamicFields.querySelector('.jet-concierge-wizard');
+    if (!wizard) return;
+
     if (DOM.btnSubmit) {
       DOM.btnSubmit.style.display = 'none';
     }
-
-    const wizard = DOM.dynamicFields.querySelector('.jet-concierge-wizard');
-    if (!wizard) return;
 
     const slides = wizard.querySelectorAll('.wizard-step-slide');
     const nodes = wizard.querySelectorAll('.step-nodes .node');

@@ -42,62 +42,48 @@
     </div>
   </header>
 
-  <!-- Hero & Multi-Product Engine Section -->
+  <!-- Hero & Multi-Product Horizontal Search Pill Section -->
   <main class="main-content" id="main-content">
-    <section class="hero-portal-section">
-      <div class="portal-wrapper">
-        
-        <!-- Touch-Friendly, Horizontal-Scroller Product Line Tabs -->
-        <nav class="product-tabs-nav" aria-label="Product Lines">
-          <div class="product-tabs-scroller" role="tablist">
-            <button class="tab-pill active" role="tab" id="tab-cars" aria-selected="true" aria-controls="panel-cars" data-theme="theme-car-rental" data-product="cars" data-desc="Car Rentals (Trust & Efficiency)">
-              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
-              <span>Car Rentals</span>
-            </button>
-            <button class="tab-pill" role="tab" id="tab-flights" aria-selected="false" aria-controls="panel-flights" data-theme="theme-flights" data-product="flights" data-desc="Commercial Flights (Trust & Efficiency)">
-              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
-              <span>Flights</span>
-            </button>
-            <button class="tab-pill" role="tab" id="tab-hotels" aria-selected="false" aria-controls="panel-hotels" data-theme="theme-hotels" data-product="hotels" data-desc="Hotels & Resorts (Luxury & Relaxation)">
-              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg>
-              <span>Hotels</span>
-            </button>
-            <button class="tab-pill" role="tab" id="tab-vacations" aria-selected="false" aria-controls="panel-vacations" data-theme="theme-vacations" data-product="vacations" data-desc="Vacation Packages (Action & Adventure)">
-              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 12v7"/></svg>
-              <span>Vacations</span>
-            </button>
-            <button class="tab-pill" role="tab" id="tab-jets" aria-selected="false" aria-controls="panel-jets" data-theme="theme-private-jets" data-product="jets" data-desc="Private Jets (Exclusive Dark Mode)">
-              <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>
-              <span>Private Jets</span>
-            </button>
-          </div>
-        </nav>
+    <section class="hero-search-wrapper" aria-label="Search Travel Products">
+      <!-- Dynamic Hero Headline & Subtitle -->
+      <div class="hero-headline-container">
+        <h1 class="hero-headline-title" id="engine-headline">Reserve Premium Car Rentals Worldwide</h1>
+        <p class="hero-headline-subtitle" id="engine-subheadline">Partnered with Carnect for direct fleet availability, zero hidden fees, and instant vouchers.</p>
+      </div>
 
-        <!-- Search Engine Box -->
-        <div class="search-engine-card" id="search-card">
-          <div class="engine-header">
-            <h1 class="engine-title" id="engine-headline">Reserve Premium Car Rentals Worldwide</h1>
-            <p class="engine-subtitle" id="engine-subheadline">Partnered with Carnect for direct fleet availability, zero hidden fees, and instant vouchers.</p>
-          </div>
+      <!-- Tabbed Navigation (The Top Layer) -->
+      <nav class="search-tabs" role="tablist" aria-label="Product Lines">
+        <button class="tab-btn tab-pill active" role="tab" id="tab-cars" aria-selected="true" data-theme="theme-car-rental" data-product="cars" data-desc="Car Rentals (Trust & Efficiency)" onclick="window.switchTab && window.switchTab(this, 'cars')">
+          <span>🚗</span> <span>Car Rentals</span>
+        </button>
+        <button class="tab-btn tab-pill" role="tab" id="tab-flights" aria-selected="false" data-theme="theme-flights" data-product="flights" data-desc="Commercial Flights (Trust & Efficiency)" onclick="window.switchTab && window.switchTab(this, 'flights')">
+          <span>✈️</span> <span>Flights</span>
+        </button>
+        <button class="tab-btn tab-pill" role="tab" id="tab-hotels" aria-selected="false" data-theme="theme-hotels" data-product="hotels" data-desc="Hotels & Resorts (Luxury & Relaxation)" onclick="window.switchTab && window.switchTab(this, 'hotels')">
+          <span>🏨</span> <span>Hotels</span>
+        </button>
+        <button class="tab-btn tab-pill" role="tab" id="tab-vacations" aria-selected="false" data-theme="theme-vacations" data-product="vacations" data-desc="Vacation Packages (Action & Adventure)" onclick="window.switchTab && window.switchTab(this, 'vacations')">
+          <span>🌴</span> <span>Vacations</span>
+        </button>
+        <button class="tab-btn tab-pill" role="tab" id="tab-jets" aria-selected="false" data-theme="theme-private-jets" data-product="jets" data-desc="Private Jets (Exclusive Dark Mode)" onclick="window.switchTab && window.switchTab(this, 'jets')">
+          <span>🛩️</span> <span>Private Jets</span>
+        </button>
+      </nav>
 
-          <form id="flyboro-search-form" class="booking-form" novalidate>
-            <input type="hidden" name="product_type" id="field-product-type" value="cars">
+      <!-- The Universal Horizontal "Pill" Container -->
+      <form id="flyboro-search-form" class="search-pill-container" novalidate>
+        <input type="hidden" name="product_type" id="field-product-type" value="cars">
 
-            <div class="form-grid" id="dynamic-form-fields">
-              <!-- Injected by flyboro-engine.js (Default: Car Rentals) -->
-            </div>
-
-            <!-- Global Uniform CTA Button: Strictly Sunset Orange across all themes -->
-            <div class="form-cta-container">
-              <button type="submit" class="global-cta-button" id="btn-submit-search">
-                <span class="btn-text">Search Availability</span>
-                <span class="btn-spinner" aria-hidden="true"></span>
-              </button>
-            </div>
-          </form>
+        <div id="dynamic-form-fields" class="pill-inputs-wrapper">
+          <!-- Injected by flyboro-engine.js (Default: Car Rentals) -->
         </div>
 
-      </div>
+        <!-- Docked Sunset Orange Action Button -->
+        <button type="submit" class="pill-cta-btn global-cta-button" id="btn-submit-search">
+          <span id="cta-btn-text" class="btn-text">Search Availability</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
     </section>
 
     <!-- ==========================================================================

@@ -243,7 +243,327 @@ select.currency-selector option {
 }
 
 /* --------------------------------------------------------------------------
-   5. HERO SECTION & PORTAL WRAPPER
+   5. HERO SEARCH WRAPPER & TABBED CAPSULE NAVIGATION
+   -------------------------------------------------------------------------- */
+.hero-search-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 580px;
+  padding: 90px 24px 70px;
+  background: linear-gradient(rgba(11, 30, 54, 0.45), rgba(11, 30, 54, 0.65)),
+              url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.hero-headline-container {
+  text-align: center;
+  margin-bottom: 28px;
+  color: #FFFFFF;
+  max-width: 960px;
+  padding: 0 16px;
+  z-index: 2;
+}
+
+.hero-headline-title {
+  font-size: clamp(1.85rem, 4vw, 2.85rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: #FFFFFF;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+.hero-headline-subtitle {
+  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+  line-height: 1.5;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Tabbed Navigation (The Top Layer) */
+.search-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  width: 100%;
+  max-width: 1100px;
+  padding-left: 16px;
+  flex-wrap: wrap;
+  z-index: 2;
+}
+
+.tab-btn {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  text-decoration: none;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.tab-btn.active {
+  background: #FFFFFF;
+  color: #0B1E36;
+  border-color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   6. UNIVERSAL HORIZONTAL SEARCH PILL CONTAINER
+   -------------------------------------------------------------------------- */
+.search-pill-container {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  background: #FFFFFF;
+  border-radius: 9999px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 1100px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
+}
+
+.pill-inputs-wrapper {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Shared Input Item Group */
+.pill-input-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 14px 22px;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pill-input-group:first-child {
+  border-radius: 9999px 0 0 9999px;
+  padding-left: 28px;
+}
+
+.pill-input-group:hover {
+  background-color: rgba(248, 250, 252, 0.85);
+}
+
+/* The Vertical 1px Line Divider */
+.pill-divider {
+  width: 1px;
+  height: 38px;
+  background-color: #E2E8F0;
+  flex-shrink: 0;
+}
+
+/* Micro-Label (The Top Text) */
+.micro-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 4px;
+  pointer-events: none;
+  display: block;
+  line-height: 1.1;
+}
+
+/* Bold Input Element */
+.pill-input {
+  border: none !important;
+  outline: none !important;
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: #0B1E36;
+  width: 100%;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0;
+  font-family: inherit;
+  line-height: 1.3;
+  box-shadow: none !important;
+}
+
+.pill-input::placeholder {
+  color: #94A3B8;
+  font-weight: 500;
+}
+
+select.pill-input {
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748B' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E") no-repeat right 0 center !important;
+  padding-right: 1.25rem !important;
+}
+
+select.pill-input option {
+  background-color: #FFFFFF;
+  color: #0B1E36;
+  font-weight: 600;
+  padding: 6px 12px;
+}
+
+input[type="date"].pill-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+input[type="date"].pill-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Docked Sunset Orange CTA Button */
+.pill-cta-btn {
+  background-color: #FF6D00 !important;
+  color: #FFFFFF !important;
+  border: none;
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 0 36px;
+  height: 72px;
+  border-radius: 0 9999px 9999px 0;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 4px 18px rgba(255, 109, 0, 0.35);
+  user-select: none;
+  text-decoration: none;
+}
+
+.pill-cta-btn:hover {
+  background-color: #E65100 !important;
+  box-shadow: 0 6px 24px rgba(255, 109, 0, 0.45);
+}
+
+.pill-cta-btn:active {
+  transform: scale(0.99);
+}
+
+/* Inline Field Errors within the Pill */
+.pill-input-group .inline-field-error {
+  position: absolute;
+  bottom: -24px;
+  left: 20px;
+  background: #FFF1F2;
+  border: 1px solid #FECDD3;
+  color: #DC2626;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15);
+  z-index: 1001;
+  white-space: nowrap;
+}
+
+.pill-input.has-error {
+  color: #DC2626;
+}
+
+.pill-input-group:has(.has-error) {
+  background-color: #FFF5F5;
+}
+
+/* Responsive Degradation for Search Pill */
+@media (max-width: 1024px) {
+  .hero-search-wrapper {
+    min-height: auto;
+    padding: 60px 20px 50px;
+  }
+  .search-pill-container {
+    border-radius: 24px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pill-inputs-wrapper {
+    flex-wrap: wrap;
+  }
+  .pill-divider {
+    display: none;
+  }
+  .pill-input-group {
+    flex: 1 1 45%;
+    border-bottom: 1px solid #E2E8F0;
+    border-radius: 0 !important;
+    padding: 14px 20px;
+  }
+  .pill-cta-btn {
+    width: 100%;
+    height: 60px;
+    border-radius: 0 0 24px 24px;
+  }
+  .pill-input-group .inline-field-error {
+    position: static;
+    margin-top: 4px;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-search-wrapper {
+    padding: 40px 14px 40px;
+  }
+  .search-tabs {
+    justify-content: center;
+    padding-left: 0;
+    gap: 6px;
+  }
+  .tab-btn {
+    padding: 8px 16px;
+    font-size: 0.825rem;
+  }
+  .pill-input-group {
+    flex: 1 1 100%;
+    padding: 12px 18px;
+  }
+  .pill-cta-btn {
+    border-radius: 0 0 20px 20px;
+    height: 56px;
+    font-size: 1rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. LEGACY HERO PORTAL SECTION (Fallback)
    -------------------------------------------------------------------------- */
 .hero-portal-section {
   position: relative;
