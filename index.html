@@ -42,47 +42,35 @@
     </div>
   </header>
 
-  <!-- Hero & Multi-Product Horizontal Search Pill Section -->
+  <!-- Hero & Multi-Product Dark Navy Glassmorphic Search Engine -->
   <main class="main-content" id="main-content">
     <section class="hero-search-wrapper" aria-label="Search Travel Products">
-      <!-- Dynamic Hero Headline & Subtitle -->
-      <div class="hero-headline-container">
-        <h1 class="hero-headline-title" id="engine-headline">Reserve Premium Car Rentals Worldwide</h1>
-        <p class="hero-headline-subtitle" id="engine-subheadline">Partnered with Carnect for direct fleet availability, zero hidden fees, and instant vouchers.</p>
-      </div>
-
-      <!-- Tabbed Navigation (The Top Layer) -->
+      <!-- Exactly Sequenced Frosted Navigation Tabs -->
       <nav class="search-tabs" role="tablist" aria-label="Product Lines">
-        <button class="tab-btn tab-pill active" role="tab" id="tab-cars" aria-selected="true" data-theme="theme-car-rental" data-product="cars" data-desc="Car Rentals (Trust & Efficiency)" onclick="window.switchTab && window.switchTab(this, 'cars')">
-          <span>🚗</span> <span>Car Rentals</span>
+        <button class="tab-btn active" role="tab" id="tab-cars" aria-selected="true" data-theme="theme-car-rental" data-product="cars" onclick="switchTab(this, 'cars')">
+          <span>🚘</span> <span>Car Rentals</span>
         </button>
-        <button class="tab-btn tab-pill" role="tab" id="tab-flights" aria-selected="false" data-theme="theme-flights" data-product="flights" data-desc="Commercial Flights (Trust & Efficiency)" onclick="window.switchTab && window.switchTab(this, 'flights')">
+        <button class="tab-btn" role="tab" id="tab-flights" aria-selected="false" data-theme="theme-flights" data-product="flights" onclick="switchTab(this, 'flights')">
           <span>✈️</span> <span>Flights</span>
         </button>
-        <button class="tab-btn tab-pill" role="tab" id="tab-hotels" aria-selected="false" data-theme="theme-hotels" data-product="hotels" data-desc="Hotels & Resorts (Luxury & Relaxation)" onclick="window.switchTab && window.switchTab(this, 'hotels')">
+        <button class="tab-btn" role="tab" id="tab-hotels" aria-selected="false" data-theme="theme-hotels" data-product="hotels" onclick="switchTab(this, 'hotels')">
           <span>🏨</span> <span>Hotels</span>
         </button>
-        <button class="tab-btn tab-pill" role="tab" id="tab-vacations" aria-selected="false" data-theme="theme-vacations" data-product="vacations" data-desc="Vacation Packages (Action & Adventure)" onclick="window.switchTab && window.switchTab(this, 'vacations')">
+        <button class="tab-btn" role="tab" id="tab-vacations" aria-selected="false" data-theme="theme-vacations" data-product="vacations" onclick="switchTab(this, 'vacations')">
           <span>🌴</span> <span>Vacations</span>
         </button>
-        <button class="tab-btn tab-pill" role="tab" id="tab-jets" aria-selected="false" data-theme="theme-private-jets" data-product="jets" data-desc="Private Jets (Exclusive Dark Mode)" onclick="window.switchTab && window.switchTab(this, 'jets')">
+        <button class="tab-btn" role="tab" id="tab-jets" aria-selected="false" data-theme="theme-private-jets" data-product="jets" onclick="switchTab(this, 'jets')">
           <span>🛩️</span> <span>Private Jets</span>
         </button>
       </nav>
 
-      <!-- The Universal Horizontal "Pill" Container -->
-      <form id="flyboro-search-form" class="search-pill-container" novalidate>
+      <!-- Main Glassmorphism Container Form -->
+      <form id="flyboro-search-form" class="glass-card-container" id="search-card" novalidate>
         <input type="hidden" name="product_type" id="field-product-type" value="cars">
 
-        <div id="dynamic-form-fields" class="pill-inputs-wrapper">
-          <!-- Injected by flyboro-engine.js (Default: Car Rentals) -->
+        <div id="dynamic-content">
+          <!-- Injected dynamically by flyboro-engine.js -->
         </div>
-
-        <!-- Docked Sunset Orange Action Button -->
-        <button type="submit" class="pill-cta-btn global-cta-button" id="btn-submit-search">
-          <span id="cta-btn-text" class="btn-text">Search Availability</span>
-          <span class="btn-spinner" aria-hidden="true"></span>
-        </button>
       </form>
     </section>
 

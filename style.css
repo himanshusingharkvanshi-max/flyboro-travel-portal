@@ -243,433 +243,469 @@ select.currency-selector option {
 }
 
 /* --------------------------------------------------------------------------
-   5. HERO SEARCH WRAPPER & TABBED CAPSULE NAVIGATION
+   5. GLASSMORPHISM HERO SECTION & MULTI-PRODUCT TABS
    -------------------------------------------------------------------------- */
 .hero-search-wrapper {
   position: relative;
   width: 100%;
   min-height: 580px;
-  padding: 90px 24px 70px;
-  background: linear-gradient(rgba(11, 30, 54, 0.45), rgba(11, 30, 54, 0.65)),
-              url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+  padding: 60px 20px 40px;
+  background: linear-gradient(rgba(11, 30, 54, 0.6), rgba(11, 30, 54, 0.7)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  isolation: isolate;
-  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.hero-headline-container {
-  text-align: center;
-  margin-bottom: 28px;
-  color: #FFFFFF;
-  max-width: 960px;
-  padding: 0 16px;
-  z-index: 2;
-}
-
-.hero-headline-title {
-  font-size: clamp(1.85rem, 4vw, 2.85rem);
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  line-height: 1.15;
-  color: #FFFFFF;
-  margin-bottom: 8px;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
-}
-
-.hero-headline-subtitle {
-  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 400;
-  line-height: 1.5;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
-}
-
-/* Tabbed Navigation (The Top Layer) */
+/* THE TABS (Top Navigation) */
 .search-tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 0px;
   width: 100%;
   max-width: 1100px;
-  padding-left: 16px;
+  padding-left: 24px;
   flex-wrap: wrap;
-  z-index: 2;
+  position: relative;
+  z-index: 10;
 }
 
 .tab-btn {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #FFFFFF;
-  padding: 10px 22px;
-  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 14px 28px;
+  border-radius: 16px 16px 0 0;
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 8px;
-  user-select: none;
-  text-decoration: none;
 }
 
 .tab-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
   color: #FFFFFF;
-  transform: translateY(-1px);
 }
 
 .tab-btn.active {
-  background: #FFFFFF;
-  color: #0B1E36;
-  border-color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  background: rgba(11, 30, 54, 0.65);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid transparent;
 }
 
-/* --------------------------------------------------------------------------
-   6. UNIVERSAL HORIZONTAL SEARCH PILL CONTAINER
-   -------------------------------------------------------------------------- */
-.search-pill-container {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  background: #FFFFFF;
-  border-radius: 9999px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+/* THE GLASSMORPHISM MAIN CARD */
+.glass-card-container {
+  background: rgba(11, 30, 54, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0 24px 24px 24px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   width: 100%;
   max-width: 1100px;
-  transition: all 0.3s ease;
+  padding: 40px;
   position: relative;
-  z-index: 10;
+  z-index: 9;
+  box-sizing: border-box;
 }
 
-.pill-inputs-wrapper {
+/* Headers */
+.card-header h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #FFFFFF;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.card-header p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 28px;
+}
+
+/* Sub-Navigation (Round-Trip, Exact Day, etc.) */
+.subnav-row {
   display: flex;
-  flex: 1;
-  align-items: center;
-  width: 100%;
-  min-width: 0;
+  gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  width: fit-content;
+  padding: 6px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  background: rgba(0, 0, 0, 0.2);
 }
 
-/* Shared Input Item Group */
+.subnav-btn {
+  background: transparent;
+  border: none;
+  padding: 8px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.subnav-btn.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* SLEEK INPUT ROW */
+.input-glass-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  transition: all 0.3s;
+  position: relative;
+}
+
+.input-glass-row:focus-within {
+  border-color: #FF6D00;
+  box-shadow: 0 0 0 3px rgba(255, 109, 0, 0.25);
+  background: rgba(0, 0, 0, 0.4);
+}
+
 .pill-input-group {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 14px 22px;
   flex: 1;
-  min-width: 0;
+  padding: 14px 24px;
+  cursor: text;
   position: relative;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
-.pill-input-group:first-child {
-  border-radius: 9999px 0 0 9999px;
-  padding-left: 28px;
-}
-
-.pill-input-group:hover {
-  background-color: rgba(248, 250, 252, 0.85);
-}
-
-/* The Vertical 1px Line Divider */
 .pill-divider {
+  height: 40px;
   width: 1px;
-  height: 38px;
-  background-color: #E2E8F0;
+  background-color: rgba(255, 255, 255, 0.15);
   flex-shrink: 0;
 }
 
-/* Micro-Label (The Top Text) */
 .micro-label {
   font-size: 10px;
   font-weight: 800;
-  color: #64748B;
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin-bottom: 4px;
-  pointer-events: none;
-  display: block;
-  line-height: 1.1;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Bold Input Element */
-.pill-input {
-  border: none !important;
-  outline: none !important;
-  font-size: 0.975rem;
+.badge {
+  background: rgba(255, 109, 0, 0.2);
+  color: #FF6D00;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 9px;
   font-weight: 700;
-  color: #0B1E36;
+  border: 1px solid rgba(255, 109, 0, 0.3);
+}
+
+.pill-input {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  outline: none;
   width: 100%;
-  background: transparent !important;
-  padding: 0 !important;
-  margin: 0;
+  cursor: pointer;
   font-family: inherit;
-  line-height: 1.3;
-  box-shadow: none !important;
 }
 
 .pill-input::placeholder {
-  color: #94A3B8;
-  font-weight: 500;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.pill-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
 }
 
 select.pill-input {
-  cursor: pointer;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
-  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748B' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E") no-repeat right 0 center !important;
-  padding-right: 1.25rem !important;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  padding-right: 1.5rem;
 }
 
 select.pill-input option {
-  background-color: #FFFFFF;
-  color: #0B1E36;
-  font-weight: 600;
-  padding: 6px 12px;
+  background: #0B1E36;
+  color: #FFFFFF;
 }
 
-input[type="date"].pill-input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
+/* Autocomplete within pill-input-group */
+.input-glass-row .autocomplete-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(11, 30, 54, 0.98);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
-input[type="date"].pill-input::-webkit-calendar-picker-indicator:hover {
-  opacity: 1;
+.input-glass-row .autocomplete-item:hover,
+.input-glass-row .autocomplete-item.is-selected {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Docked Sunset Orange CTA Button */
-.pill-cta-btn {
-  background-color: #FF6D00 !important;
-  color: #FFFFFF !important;
-  border: none;
-  font-size: 1.05rem;
-  font-weight: 700;
-  padding: 0 36px;
-  height: 72px;
-  border-radius: 0 9999px 9999px 0;
-  cursor: pointer;
-  white-space: nowrap;
+.input-glass-row .autocomplete-city {
+  color: #FFFFFF;
+}
+
+.input-glass-row .autocomplete-airport {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.input-glass-row .autocomplete-code-pill {
+  background: rgba(255, 109, 0, 0.2);
+  color: #FF6D00;
+  border: 1px solid rgba(255, 109, 0, 0.4);
+}
+
+/* CTA & LAYOUT SPECIALTIES */
+.bottom-cta-row {
   display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+}
+
+.standalone-cta {
+  background: #FF6D00;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0 40px;
+  height: 56px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(255, 109, 0, 0.3);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-  flex-shrink: 0;
-  box-shadow: 0 4px 18px rgba(255, 109, 0, 0.35);
-  user-select: none;
-  text-decoration: none;
+  gap: 10px;
 }
 
-.pill-cta-btn:hover {
-  background-color: #E65100 !important;
-  box-shadow: 0 6px 24px rgba(255, 109, 0, 0.45);
+.standalone-cta:hover {
+  background: #e66200;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(255, 109, 0, 0.4);
 }
 
-.pill-cta-btn:active {
-  transform: scale(0.99);
+.standalone-cta:active {
+  transform: translateY(0);
 }
 
-/* Inline Field Errors within the Pill */
-.pill-input-group .inline-field-error {
-  position: absolute;
-  bottom: -24px;
-  left: 20px;
-  background: #FFF1F2;
-  border: 1px solid #FECDD3;
-  color: #DC2626;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.72rem;
+/* Vacations Guest Allocation (Glassmorphism version) */
+.vacations-allocation {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  margin-top: 24px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.alloc-header {
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.alloc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.guest-info h4 {
+  font-size: 1rem;
   font-weight: 700;
-  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15);
-  z-index: 1001;
-  white-space: nowrap;
+  color: #FFFFFF;
 }
 
-.pill-input.has-error {
-  color: #DC2626;
+.guest-info p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-.pill-input-group:has(.has-error) {
-  background-color: #FFF5F5;
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
 }
 
-/* Responsive Degradation for Search Pill */
+.counter button {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #FFFFFF;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.counter button:hover {
+  color: #FF6D00;
+}
+
+.counter span {
+  font-weight: 700;
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.total-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-price {
+  color: #FF6D00;
+  font-weight: 800;
+  font-size: 1.4rem;
+}
+
+/* Private Jets Progress Bar */
+.jet-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.jet-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  flex: 1;
+}
+
+.jet-step.active {
+  color: #FF6D00;
+}
+
+.jet-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  flex: 1;
+  border-radius: 2px;
+}
+
+.jet-step.active .jet-bar {
+  background: #FF6D00;
+  box-shadow: 0 0 10px rgba(255, 109, 0, 0.5);
+}
+
+.step-subtitle {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #FFFFFF;
+}
+
+/* Responsive Adjustments */
 @media (max-width: 1024px) {
-  .hero-search-wrapper {
-    min-height: auto;
-    padding: 60px 20px 50px;
-  }
-  .search-pill-container {
+  .glass-card-container {
     border-radius: 24px;
+    padding: 24px;
+  }
+
+  .input-glass-row {
     flex-direction: column;
-    align-items: stretch;
+    border-radius: 16px;
+    overflow: hidden;
+    background: transparent;
+    border: none;
   }
-  .pill-inputs-wrapper {
-    flex-wrap: wrap;
+
+  .input-glass-row:focus-within {
+    box-shadow: none;
+    border-color: transparent;
+    background: transparent;
   }
+
+  .pill-input-group {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.25);
+    margin-bottom: 8px;
+    border-radius: 12px;
+    padding: 16px 20px;
+    width: 100%;
+  }
+
+  .pill-input-group:focus-within {
+    border-color: #FF6D00;
+  }
+
   .pill-divider {
     display: none;
   }
-  .pill-input-group {
-    flex: 1 1 45%;
-    border-bottom: 1px solid #E2E8F0;
-    border-radius: 0 !important;
-    padding: 14px 20px;
+
+  .alloc-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
   }
-  .pill-cta-btn {
+
+  .jet-progress {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .jet-bar {
+    display: none;
+  }
+
+  .bottom-cta-row {
+    justify-content: stretch;
+  }
+
+  .standalone-cta {
     width: 100%;
-    height: 60px;
-    border-radius: 0 0 24px 24px;
   }
-  .pill-input-group .inline-field-error {
-    position: static;
-    margin-top: 4px;
-    white-space: normal;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-search-wrapper {
-    padding: 40px 14px 40px;
-  }
-  .search-tabs {
-    justify-content: center;
-    padding-left: 0;
-    gap: 6px;
-  }
-  .tab-btn {
-    padding: 8px 16px;
-    font-size: 0.825rem;
-  }
-  .pill-input-group {
-    flex: 1 1 100%;
-    padding: 12px 18px;
-  }
-  .pill-cta-btn {
-    border-radius: 0 0 20px 20px;
-    height: 56px;
-    font-size: 1rem;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   7. LEGACY HERO PORTAL SECTION (Fallback)
-   -------------------------------------------------------------------------- */
-.hero-portal-section {
-  position: relative;
-  background-color: var(--theme-bg, #F4F7F6);
-  overflow: hidden;
-  isolation: isolate;
-  padding: 1.5rem 0 0.5rem;
-}
-
-.portal-wrapper {
-  position: relative;
-  z-index: 10;
-  max-width: 1100px;
-  margin: 1.5rem auto 1.5rem;
-  padding: 0 1.25rem;
-}
-
-@media (max-width: 768px) {
-  .hero-portal-section {
-    padding-top: 0.5rem;
-  }
-}
-
-.product-tabs-nav {
-  margin-bottom: -1px;
-  position: relative;
-  z-index: 2;
-}
-
-.product-tabs-scroller {
-  display: flex;
-  gap: 0.35rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.product-tabs-scroller::-webkit-scrollbar {
-  display: none;
-}
-
-.tab-pill {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
-  height: var(--min-touch-target);
-  padding: 0 1.25rem;
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
-  border: 1px solid transparent;
-  border-bottom: none;
-  background-color: transparent;
-  color: var(--theme-muted-text);
-  font-weight: 600;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.tab-pill:hover {
-  color: var(--theme-header-text);
-}
-
-.tab-pill.active {
-  background-color: var(--theme-surface);
-  color: var(--theme-header-text);
-  border-color: var(--theme-border);
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
-}
-
-.tab-pill.active .tab-icon {
-  stroke: var(--theme-accent);
-}
-
-/* --------------------------------------------------------------------------
-   6. SEARCH CARD & INPUT SYSTEM
-   -------------------------------------------------------------------------- */
-.search-engine-card {
-  position: relative;
-  z-index: 10;
-  background-color: var(--theme-surface);
-  border: 1px solid var(--theme-border);
-  border-top: 6px solid #0B1E36;
-  border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
-  padding: 2.25rem;
-  box-shadow: var(--theme-card-shadow);
-  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-/* Glassmorphism Frosted Glass for Car Rental Theme */
-body.theme-car-rental .search-engine-card,
-body.car-rental .search-engine-card {
-  background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-top: 6px solid #0B1E36;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-body.theme-car-rental .search-engine-card .form-input,
-body.car-rental .search-engine-card .form-input {
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.9);
 }
 
 .engine-header {

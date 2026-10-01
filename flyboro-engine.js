@@ -92,146 +92,322 @@
     }
   };
 
-  // Dynamic Form Field Templates (Universal Horizontal Search Pill Layout)
+  // Dynamic Form Field Templates (Dark Navy Glassmorphism Hero Search Engine)
   const FORM_TEMPLATES = {
     cars: `
-      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
-        <label for="input-pickup-location" class="micro-label">PICK-UP LOCATION *</label>
-        <input type="text" id="input-pickup-location" name="location" class="pill-input location-autocomplete" placeholder="City or airport (e.g. DEL, MIA, JFK)" value="Miami (MIA)" required autocomplete="off" data-label="Pick-up Location">
-        <ul class="autocomplete-dropdown" role="listbox"></ul>
+      <div class="card-header">
+        <h2 id="engine-headline">Reserve Premium Car Rentals Worldwide</h2>
+        <p id="engine-subheadline">Partnered with Carnect for direct fleet availability, zero hidden fees, and instant vouchers.</p>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label for="input-pickup-date" class="micro-label">PICK-UP DATE *</label>
-          <div id="car-duration-badge" style="font-size: 0.65rem; font-weight: 800; color: #FF6D00; background: rgba(255, 109, 0, 0.1); padding: 1px 6px; border-radius: 9999px;">
-            ⏱️ <span id="car-duration-text">7 Days</span>
+      <div class="input-glass-row">
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">PICK-UP LOCATION *</label>
+          <div class="input-wrapper">
+            <input type="text" id="input-pickup-location" name="location" class="pill-input location-autocomplete" placeholder="City or airport (e.g. DEL, MIA)" value="Miami (MIA)" required autocomplete="off" data-label="Pick-up Location">
+            <ul class="autocomplete-dropdown" role="listbox"></ul>
           </div>
         </div>
-        <input type="date" id="input-pickup-date" name="start_date" class="pill-input" required data-label="Pick-up Date">
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">PICK-UP DATE * <span class="badge" id="car-duration-badge">⏱ <span id="car-duration-text">7 Days</span></span></label>
+          <input type="date" id="input-pickup-date" name="start_date" class="pill-input" required data-label="Pick-up Date">
+        </div>
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">DROP-OFF DATE *</label>
+          <input type="date" id="input-return-date" name="end_date" class="pill-input" required data-label="Drop-off Date">
+        </div>
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" onclick="this.querySelector('select').focus()">
+          <label class="micro-label">DRIVER AGE</label>
+          <select id="input-driver-age" name="driver_age" class="pill-input" data-label="Driver Age">
+            <option value="25+" selected>25 to 69 Years (Standard)</option>
+            <option value="21-24">Under 25 Years</option>
+            <option value="70+">70+ Years</option>
+          </select>
+        </div>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
-        <label for="input-return-date" class="micro-label">DROP-OFF DATE *</label>
-        <input type="date" id="input-return-date" name="end_date" class="pill-input" required data-label="Drop-off Date">
-      </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
-        <label for="input-driver-age" class="micro-label">DRIVER AGE</label>
-        <select id="input-driver-age" name="driver_age" class="pill-input" data-label="Driver Age">
-          <option value="25+" selected>25 to 69 Years (Standard)</option>
-          <option value="21-24">21 to 24 Years (Young Driver)</option>
-          <option value="70+">70+ Years (Senior Driver)</option>
-        </select>
+      <div class="bottom-cta-row">
+        <button type="submit" class="standalone-cta" id="btn-submit-search">
+          <span class="btn-text">Search Availability</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
       </div>
     `,
     flights: `
-      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
-        <label for="input-origin" class="micro-label">FLYING FROM *</label>
-        <input type="text" id="input-origin" name="origin" class="pill-input location-autocomplete" placeholder="Origin (e.g. DEL, JFK)" value="New Delhi (DEL)" required autocomplete="off" data-label="Flying From">
-        <ul class="autocomplete-dropdown" role="listbox"></ul>
+      <div class="card-header">
+        <h2 id="engine-headline">Compare & Book Commercial Airline Flights</h2>
+        <p id="engine-subheadline">Real-time global GDS ticketing powered by RateHawk with flexible fare options.</p>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
-        <label for="input-destination" class="micro-label">FLYING TO *</label>
-        <input type="text" id="input-destination" name="destination" class="pill-input location-autocomplete" placeholder="Destination (e.g. LHR, DXB)" value="London (LHR)" required autocomplete="off" data-label="Flying To">
-        <ul class="autocomplete-dropdown" role="listbox"></ul>
+      <div class="subnav-row" role="radiogroup" aria-label="Flight Trip Type">
+        <button type="button" class="subnav-btn active" data-trip="roundtrip">Round-Trip ⇄</button>
+        <button type="button" class="subnav-btn" data-trip="oneway">One-Way →</button>
+        <button type="button" class="subnav-btn" data-trip="multicity">Multi-City ✈</button>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
-        <label for="input-flight-dep" class="micro-label">DEPARTURE DATE *</label>
-        <input type="date" id="input-flight-dep" name="start_date" class="pill-input" required data-label="Departure Date">
+      <input type="hidden" name="trip_type" id="flight-trip-type" value="roundtrip">
+      <div class="input-glass-row">
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">FLYING FROM *</label>
+          <div class="input-wrapper">
+            <input type="text" id="input-origin" name="origin" class="pill-input location-autocomplete" placeholder="Origin (e.g. DEL, JFK)" value="New Delhi (DEL)" required autocomplete="off" data-label="Flying From">
+            <ul class="autocomplete-dropdown" role="listbox"></ul>
+          </div>
+        </div>
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">FLYING TO *</label>
+          <div class="input-wrapper">
+            <input type="text" id="input-destination" name="destination" class="pill-input location-autocomplete" placeholder="Destination (e.g. LHR, DXB)" value="London (LHR)" required autocomplete="off" data-label="Flying To">
+            <ul class="autocomplete-dropdown" role="listbox"></ul>
+          </div>
+        </div>
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">DEPARTURE DATE *</label>
+          <input type="date" id="input-flight-dep" name="start_date" class="pill-input" required data-label="Departure Date">
+        </div>
+        <div class="pill-divider" id="flight-return-divider"></div>
+        <div class="pill-input-group" id="flight-return-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">RETURN DATE *</label>
+          <input type="date" id="input-flight-ret" name="end_date" class="pill-input" required data-label="Return Date">
+        </div>
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" onclick="this.querySelector('select').focus()">
+          <label class="micro-label">CABIN & PASSENGERS</label>
+          <select id="input-passengers" name="passengers" class="pill-input" data-label="Cabin & Passengers">
+            <option value="1-economy" selected>1 Adult, Economy</option>
+            <option value="2-business">2 Adults, Business</option>
+            <option value="2-economy">2 Adults, Economy</option>
+            <option value="1-first">1 Adult, First Class</option>
+          </select>
+        </div>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" id="flight-return-group" onclick="this.querySelector('input').focus()">
-        <label for="input-flight-ret" class="micro-label">RETURN DATE *</label>
-        <input type="date" id="input-flight-ret" name="end_date" class="pill-input" required data-label="Return Date">
-      </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
-        <label for="input-passengers" class="micro-label">CABIN & PASSENGERS</label>
-        <select id="input-passengers" name="passengers" class="pill-input" data-label="Cabin & Passengers">
-          <option value="1-economy" selected>1 Adult, Economy</option>
-          <option value="2-economy">2 Adults, Economy</option>
-          <option value="2-business">2 Adults, Business Class</option>
-          <option value="1-first">1 Adult, First Class</option>
-        </select>
+      <div class="bottom-cta-row">
+        <button type="submit" class="standalone-cta" id="btn-submit-search">
+          <span class="btn-text">Search Availability</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
       </div>
     `,
     hotels: `
-      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
-        <label for="input-hotel-dest" class="micro-label">DESTINATION / RESORT *</label>
-        <input type="text" id="input-hotel-dest" name="location" class="pill-input location-autocomplete" placeholder="City or resort (e.g. Paris, Dubai)" value="Paris (CDG)" required autocomplete="off" data-label="Destination">
-        <ul class="autocomplete-dropdown" role="listbox"></ul>
+      <div class="card-header">
+        <h2 id="engine-headline">Curated 5-Star Luxury Hotels & Private Resorts</h2>
+        <p id="engine-subheadline">Direct Hotelbeds portfolio integration offering premier hospitality perks and best rates.</p>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
-        <label for="input-hotel-in" class="micro-label">CHECK-IN DATE *</label>
-        <input type="date" id="input-hotel-in" name="start_date" class="pill-input" required data-label="Check-in Date">
+      <div class="input-glass-row">
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">DESTINATION / RESORT *</label>
+          <div class="input-wrapper">
+            <input type="text" id="input-hotel-dest" name="location" class="pill-input location-autocomplete" placeholder="City or hotel (e.g. CDG, DXB)" value="Paris (CDG)" required autocomplete="off" data-label="Destination / Resort">
+            <ul class="autocomplete-dropdown" role="listbox"></ul>
+          </div>
+        </div>
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">CHECK-IN DATE *</label>
+          <input type="date" id="input-hotel-in" name="start_date" class="pill-input" required data-label="Check-in Date">
+        </div>
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">CHECK-OUT DATE *</label>
+          <input type="date" id="input-hotel-out" name="end_date" class="pill-input" required data-label="Check-out Date">
+        </div>
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" onclick="this.querySelector('select').focus()">
+          <label class="micro-label">GUESTS & ROOMS</label>
+          <select id="input-hotel-rooms" name="guests" class="pill-input" data-label="Guests & Rooms">
+            <option value="2-1" selected>2 Guests, 1 Suite</option>
+            <option value="1-1">1 Guest, 1 Room</option>
+            <option value="4-2">4 Guests, 2 Villa Suites</option>
+          </select>
+        </div>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
-        <label for="input-hotel-out" class="micro-label">CHECK-OUT DATE *</label>
-        <input type="date" id="input-hotel-out" name="end_date" class="pill-input" required data-label="Check-out Date">
-      </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
-        <label for="input-hotel-rooms" class="micro-label">GUESTS & ROOMS</label>
-        <select id="input-hotel-rooms" name="guests" class="pill-input" data-label="Guests & Rooms">
-          <option value="2-1" selected>2 Guests, 1 Suite</option>
-          <option value="1-1">1 Guest, 1 Deluxe Room</option>
-          <option value="4-2">4 Guests, 2 Villa Suites</option>
-        </select>
+      <div class="bottom-cta-row">
+        <button type="submit" class="standalone-cta" id="btn-submit-search">
+          <span class="btn-text">Search Availability</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
       </div>
     `,
     vacations: `
-      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
-        <label for="input-vacation-dest" class="micro-label">PACKAGE EXPERIENCE / REGION *</label>
-        <input type="text" id="input-vacation-dest" name="location" class="pill-input location-autocomplete" placeholder="Destination Region" value="Costa Rica (SJO)" required autocomplete="off" data-label="Package Experience">
-        <ul class="autocomplete-dropdown" role="listbox"></ul>
+      <div class="card-header">
+        <h2 id="engine-headline">Handcrafted Adventure & All-Inclusive Escapes</h2>
+        <p id="engine-subheadline">Immersive excursions, beachfront bundles, and curated regional expeditions.</p>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" id="vacation-date-group" onclick="this.querySelector('input').focus()">
-        <label for="input-vacation-start" class="micro-label" id="vacation-date-label">TARGET DATE *</label>
-        <input type="date" id="input-vacation-start" name="start_date" class="pill-input" required data-label="Target Date">
+      <div class="subnav-row" role="group" aria-label="Date Flexibility">
+        <button type="button" class="subnav-btn active" id="vacay-flex-exact" data-flex="exact">Exact Day</button>
+        <button type="button" class="subnav-btn" id="vacay-flex-month" data-flex="month">Anytime This Month</button>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
-        <label for="vacation-guest-select" class="micro-label">GUESTS ALLOCATION</label>
-        <select id="vacation-guest-select" name="guests" class="pill-input" data-label="Guests Allocation">
-          <option value="2-0" selected>2 Adults, 0 Children</option>
-          <option value="1-0">1 Adult, 0 Children</option>
-          <option value="2-2">2 Adults, 2 Children</option>
-          <option value="4-2">4 Adults, 2 Children</option>
-        </select>
+      <div class="input-glass-row">
+        <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label">PACKAGE EXPERIENCE / REGION *</label>
+          <div class="input-wrapper">
+            <input type="text" id="input-vacation-dest" name="location" class="pill-input location-autocomplete" placeholder="Destination Region" value="Costa Rica (SJO)" required autocomplete="off" data-label="Package Experience">
+            <ul class="autocomplete-dropdown" role="listbox"></ul>
+          </div>
+        </div>
+        <div class="pill-divider"></div>
+        <div class="pill-input-group" id="vacation-date-group" onclick="this.querySelector('input').focus()">
+          <label class="micro-label" id="vacation-date-label">TARGET DATE *</label>
+          <input type="date" id="input-vacation-start" name="start_date" class="pill-input" required data-label="Target Date">
+        </div>
+      </div>
+
+      <!-- Preserved Exact Guest Allocation Details -->
+      <div class="vacations-allocation">
+        <div class="alloc-header">TICKET TIERS & GUEST ALLOCATION</div>
+        
+        <div class="alloc-row">
+          <div class="guest-info">
+            <h4>Adults (18+)</h4>
+            <p>$2,150 / guest</p>
+          </div>
+          <div class="counter">
+            <button type="button" class="btn-step-minus" data-target="vacay-adults" data-min="1" aria-label="Decrease Adults">-</button>
+            <span id="vacay-adults">1</span>
+            <button type="button" class="btn-step-plus" data-target="vacay-adults" data-max="10" aria-label="Increase Adults">+</button>
+          </div>
+        </div>
+        
+        <div class="alloc-row">
+          <div class="guest-info">
+            <h4>Children (3-17)</h4>
+            <p>$1,290 / guest</p>
+          </div>
+          <div class="counter">
+            <button type="button" class="btn-step-minus" data-target="vacay-children" data-min="0" aria-label="Decrease Children">-</button>
+            <span id="vacay-children">0</span>
+            <button type="button" class="btn-step-plus" data-target="vacay-children" data-max="8" aria-label="Increase Children">+</button>
+          </div>
+        </div>
+
+        <div class="total-row">
+          <span style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Estimated Expedition Total:</span>
+          <span class="total-price" id="vacay-live-subtotal">$2,150.00</span>
+        </div>
+      </div>
+
+      <div class="bottom-cta-row">
+        <button type="submit" class="standalone-cta" id="btn-submit-search">
+          <span class="btn-text">Search Availability</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
       </div>
     `,
     jets: `
-      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
-        <label for="input-jet-origin" class="micro-label">DEPARTURE FBO *</label>
-        <input type="text" id="input-jet-origin" name="origin" class="pill-input location-autocomplete" placeholder="Airport FBO (e.g. DEL, TEB)" value="New Delhi (DEL)" required autocomplete="off" data-label="Departure FBO">
-        <ul class="autocomplete-dropdown" role="listbox"></ul>
+      <div class="card-header">
+        <h2 id="engine-headline">Bespoke Private Charter Jets & Empty Legs</h2>
+        <p id="engine-subheadline">On-demand heavy, midsize, and light jet availability with private VIP FBO handling.</p>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group input-wrapper" onclick="this.querySelector('input').focus()">
-        <label for="input-jet-dest" class="micro-label">DESTINATION FBO *</label>
-        <input type="text" id="input-jet-dest" name="destination" class="pill-input location-autocomplete" placeholder="Airport FBO (e.g. DXB, VNY)" value="Dubai (DXB)" required autocomplete="off" data-label="Destination FBO">
-        <ul class="autocomplete-dropdown" role="listbox"></ul>
+
+      <!-- Preserved Exact Jet Progress Bar -->
+      <div class="jet-progress">
+        <div class="jet-step active" data-step="1"><span>1. Routing</span><div class="jet-bar"></div></div>
+        <div class="jet-step" data-step="2"><span>2. Aircraft</span><div class="jet-bar"></div></div>
+        <div class="jet-step" data-step="3"><span>3. VIP Concierge</span></div>
       </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('input').focus()">
-        <label for="input-jet-date" class="micro-label">CHARTER DEPARTURE DATE *</label>
-        <input type="date" id="input-jet-date" name="start_date" class="pill-input" required data-label="Charter Departure Date">
-      </div>
-      <div class="pill-divider"></div>
-      <div class="pill-input-group" onclick="this.querySelector('select').focus()">
-        <label for="input-jet-passengers" class="micro-label">ESTIMATED PASSENGERS</label>
-        <select id="input-jet-passengers" name="passengers" class="pill-input" data-label="Estimated Passengers">
-          <option value="5-8" selected>5 to 8 Passengers</option>
-          <option value="1-4">1 to 4 Passengers</option>
-          <option value="9-14">9 to 14 Passengers</option>
-          <option value="15+">15+ Group Charter</option>
-        </select>
+
+      <div class="jet-wizard-slides">
+        <!-- Step 1: Routing -->
+        <fieldset class="wizard-step-slide is-active" data-step="1" style="border: none; margin: 0; padding: 0;">
+          <h3 class="step-subtitle">Step 1: Mission Routing & Schedule</h3>
+          <div class="input-glass-row">
+            <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+              <label class="micro-label">DEPARTURE FBO *</label>
+              <div class="input-wrapper">
+                <input type="text" id="input-jet-origin" name="origin" class="pill-input location-autocomplete" placeholder="Airport FBO (e.g. DEL, TEB)" value="New Delhi (DEL)" required autocomplete="off" data-label="Departure FBO">
+                <ul class="autocomplete-dropdown" role="listbox"></ul>
+              </div>
+            </div>
+            <div class="pill-divider"></div>
+            <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+              <label class="micro-label">DESTINATION FBO *</label>
+              <div class="input-wrapper">
+                <input type="text" id="input-jet-dest" name="destination" class="pill-input location-autocomplete" placeholder="Airport FBO (e.g. DXB, VNY)" value="Dubai (DXB)" required autocomplete="off" data-label="Destination FBO">
+                <ul class="autocomplete-dropdown" role="listbox"></ul>
+              </div>
+            </div>
+            <div class="pill-divider"></div>
+            <div class="pill-input-group" onclick="this.querySelector('input').focus()">
+              <label class="micro-label">CHARTER DEPARTURE DATE *</label>
+              <input type="date" id="input-jet-date" name="start_date" class="pill-input" required data-label="Charter Departure Date">
+            </div>
+            <div class="pill-divider"></div>
+            <div class="pill-input-group" onclick="this.querySelector('select').focus()">
+              <label class="micro-label">ESTIMATED PASSENGERS</label>
+              <select id="input-jet-passengers" name="passengers" class="pill-input" data-label="Passengers">
+                <option value="5-8" selected>5 to 8 Passengers</option>
+                <option value="1-4">1 to 4 Passengers</option>
+                <option value="9-14">9 to 14 Passengers</option>
+                <option value="15+">15+ Group Charter</option>
+              </select>
+            </div>
+          </div>
+          <div class="bottom-cta-row">
+            <button type="button" class="standalone-cta btn-wizard-next" data-next="2">Continue to Aircraft ➔</button>
+          </div>
+        </fieldset>
+
+        <!-- Step 2: Aircraft Category -->
+        <fieldset class="wizard-step-slide" data-step="2" style="border: none; margin: 0; padding: 0; display: none;">
+          <h3 class="step-subtitle">Step 2: Aircraft Fleet Class</h3>
+          <div class="input-glass-row" style="flex-wrap: wrap; padding: 12px; gap: 12px;">
+            <div class="pill-input-group" style="flex: 2; min-width: 250px;">
+              <label class="micro-label">AIRCRAFT SPECIFICATION & RANGE</label>
+              <select id="input-jet-cabin" name="aircraft_category" class="pill-input" data-label="Aircraft Category">
+                <option value="heavy" selected>Heavy Jet (Challenger 650 / 12 Pax • Intercontinental)</option>
+                <option value="ultra-long">Ultra Long Range (Gulfstream G650ER • 14 Pax • Global Range)</option>
+                <option value="super-mid">Super Midsize (Citation X+ • 8 Pax • High Speed)</option>
+                <option value="light">Light Jet (Phenom 300E • 6 Pax • Regional Sprint)</option>
+              </select>
+            </div>
+            <div class="pill-divider"></div>
+            <div class="pill-input-group" style="flex: 1; min-width: 180px;">
+              <label class="micro-label">BAGGAGE CAPACITY</label>
+              <select id="input-jet-luggage" name="luggage_tier" class="pill-input" data-label="Baggage Capacity">
+                <option value="standard" selected>Standard VIP Luggage (Up to 12 pieces)</option>
+                <option value="excess">Excess Baggage & Oversized Equipment</option>
+              </select>
+            </div>
+            <div class="pill-divider"></div>
+            <div class="pill-input-group" style="flex: 1; min-width: 150px;">
+              <label class="micro-label">PET TRAVELING IN CABIN</label>
+              <select id="input-jet-pets" name="pets_allowed" class="pill-input" data-label="Pets">
+                <option value="no" selected>No Pets</option>
+                <option value="yes">Yes (Pet-friendly cabin prep)</option>
+              </select>
+            </div>
+          </div>
+          <div class="bottom-cta-row" style="justify-content: space-between;">
+            <button type="button" class="subnav-btn btn-wizard-prev" data-prev="1" style="border: 1px solid rgba(255,255,255,0.2);">← Back</button>
+            <button type="button" class="standalone-cta btn-wizard-next" data-next="3">Continue to Concierge ➔</button>
+          </div>
+        </fieldset>
+
+        <!-- Step 3: VIP Concierge Contact -->
+        <fieldset class="wizard-step-slide" data-step="3" style="border: none; margin: 0; padding: 0; display: none;">
+          <h3 class="step-subtitle">Step 3: Dedicated VIP Concierge Handling</h3>
+          <div class="input-glass-row" style="flex-wrap: wrap; padding: 12px; gap: 12px;">
+            <div class="pill-input-group" style="flex: 1; min-width: 220px;">
+              <label class="micro-label">PRINCIPAL / CLIENT NAME *</label>
+              <input type="text" id="input-jet-contact-name" name="client_name" class="pill-input" placeholder="e.g. Lord Harrington" value="Executive Travel Group" required data-label="Principal Name">
+            </div>
+            <div class="pill-divider"></div>
+            <div class="pill-input-group" style="flex: 1; min-width: 220px;">
+              <label class="micro-label">DIRECT SECURE PHONE *</label>
+              <input type="tel" id="input-jet-contact-phone" name="client_phone" class="pill-input" placeholder="+1-555-0199" value="+1-555-0199" required data-label="Contact Phone">
+            </div>
+            <div class="pill-divider"></div>
+            <div class="pill-input-group" style="flex: 2; min-width: 280px;">
+              <label class="micro-label">SPECIAL REQUESTS & CATERING</label>
+              <input type="text" id="input-jet-catering" name="catering_notes" class="pill-input" placeholder="e.g. Dom Pérignon champagne, ramp access">
+            </div>
+          </div>
+          <div class="bottom-cta-row" style="justify-content: space-between;">
+            <button type="button" class="subnav-btn btn-wizard-prev" data-prev="2" style="border: 1px solid rgba(255,255,255,0.2);">← Back</button>
+            <button type="submit" class="standalone-cta" id="btn-submit-jet-wizard">Request Confidential Charter Quote ✈️</button>
+          </div>
+        </fieldset>
       </div>
     `
   };
@@ -440,7 +616,7 @@
 
     showError(input, message) {
       input.classList.add('has-error');
-      const wrapper = input.closest('.form-group') || input.closest('.pill-input-group') || input.parentElement;
+      const wrapper = input.closest('.pill-input-group') || input.closest('.form-group') || input.parentElement;
 
       let errSpan = wrapper.querySelector('.inline-field-error');
       if (!errSpan) {
@@ -475,9 +651,9 @@
   function cacheDom() {
     DOM.body = document.body;
     DOM.themeIndicator = document.getElementById('theme-indicator');
-    DOM.tabPills = document.querySelectorAll('.tab-pill');
+    DOM.tabPills = document.querySelectorAll('.tab-btn, .tab-pill');
     DOM.searchForm = document.getElementById('flyboro-search-form');
-    DOM.dynamicFields = document.getElementById('dynamic-form-fields');
+    DOM.dynamicFields = document.getElementById('dynamic-content') || document.getElementById('dynamic-form-fields');
     DOM.productTypeInput = document.getElementById('field-product-type');
     DOM.engineHeadline = document.getElementById('engine-headline');
     DOM.engineSubheadline = document.getElementById('engine-subheadline');
@@ -543,65 +719,63 @@
       .catch(() => {});
   }
 
+  // Global switchTab bridge for inline onclick handlers and external controllers
+  window.switchTab = function (clickedBtn, tabId) {
+    const targetProduct = tabId;
+    const allTabs = document.querySelectorAll('.tab-btn, .tab-pill');
+    allTabs.forEach(p => {
+      p.classList.remove('active');
+      p.setAttribute('aria-selected', 'false');
+    });
+
+    const activeEl = clickedBtn || document.querySelector(`.tab-btn[data-product="${targetProduct}"], .tab-pill[data-product="${targetProduct}"]`);
+    if (activeEl) {
+      activeEl.classList.add('active');
+      activeEl.setAttribute('aria-selected', 'true');
+    }
+
+    const meta = PRODUCT_METADATA[targetProduct] || PRODUCT_METADATA.cars;
+    if (DOM.body && meta) {
+      DOM.body.className = meta.theme;
+    }
+
+    if (DOM.themeIndicator && meta) {
+      const tn = DOM.themeIndicator.querySelector('.theme-name');
+      if (tn) tn.textContent = meta.desc;
+    }
+
+    state.activeProduct = targetProduct;
+    if (DOM.productTypeInput) DOM.productTypeInput.value = targetProduct;
+    if (DOM.engineHeadline && meta) DOM.engineHeadline.textContent = meta.title;
+    if (DOM.engineSubheadline && meta) DOM.engineSubheadline.textContent = meta.subtitle;
+
+    renderProductFields(targetProduct);
+    renderPopularDestinations(targetProduct);
+
+    // Reset results and map viewports
+    if (DOM.resultsContainer) DOM.resultsContainer.innerHTML = '';
+    if (DOM.resultsHeader) DOM.resultsHeader.style.display = 'none';
+    const mapViewport = document.getElementById('hotel-map-viewport');
+    const btnToggleMap = document.getElementById('btn-toggle-map');
+    if (mapViewport) mapViewport.style.display = 'none';
+    if (btnToggleMap) btnToggleMap.style.display = 'none';
+  };
+
   /**
    * Product Tabs: Zero-Lag Theme Swap
    */
   function setupProductTabs() {
+    DOM.tabPills = document.querySelectorAll('.tab-btn, .tab-pill');
     DOM.tabPills.forEach(pill => {
-      pill.addEventListener('click', function () {
+      pill.addEventListener('click', function (e) {
+        e.preventDefault();
         const targetProduct = this.getAttribute('data-product');
-        if (state.activeProduct === targetProduct) return;
-
-        DOM.tabPills.forEach(p => {
-          p.classList.remove('active');
-          p.setAttribute('aria-selected', 'false');
-        });
-        this.classList.add('active');
-        this.setAttribute('aria-selected', 'true');
-
-        const meta = PRODUCT_METADATA[targetProduct] || PRODUCT_METADATA.cars;
-        DOM.body.className = meta.theme;
-
-        if (DOM.themeIndicator) {
-          DOM.themeIndicator.querySelector('.theme-name').textContent = meta.desc;
+        if (targetProduct) {
+          window.switchTab(this, targetProduct);
         }
-
-        state.activeProduct = targetProduct;
-        if (DOM.productTypeInput) DOM.productTypeInput.value = targetProduct;
-        if (DOM.engineHeadline) DOM.engineHeadline.textContent = meta.title;
-        if (DOM.engineSubheadline) DOM.engineSubheadline.textContent = meta.subtitle;
-
-        // Dynamic Orange CTA Button text sync
-        const ctaBtnText = document.getElementById('cta-btn-text') || (DOM.btnSubmit && DOM.btnSubmit.querySelector('.btn-text'));
-        if (ctaBtnText) {
-          ctaBtnText.textContent = targetProduct === 'jets' ? 'Continue to Aircraft ➔' : 'Search Availability';
-        }
-        const ctaBtn = document.getElementById('cta-btn');
-        if (ctaBtn && ctaBtn !== DOM.btnSubmit) {
-          ctaBtn.textContent = targetProduct === 'jets' ? 'Continue to Aircraft ➔' : 'Search Availability';
-        }
-
-        renderProductFields(targetProduct);
-        renderPopularDestinations(targetProduct);
-
-        // Reset results and map viewports
-        DOM.resultsContainer.innerHTML = '';
-        DOM.resultsHeader.style.display = 'none';
-        const mapViewport = document.getElementById('hotel-map-viewport');
-        const btnToggleMap = document.getElementById('btn-toggle-map');
-        if (mapViewport) mapViewport.style.display = 'none';
-        if (btnToggleMap) btnToggleMap.style.display = 'none';
       });
     });
   }
-
-  // Global switchTab bridge for inline event handlers and external controllers
-  window.switchTab = function (clickedBtn, tabId) {
-    const targetPill = document.querySelector(`.tab-pill[data-product="${tabId}"]`);
-    if (targetPill) {
-      targetPill.click();
-    }
-  };
 
   // Primary fallback database for instant offline/static lookups
   const FALLBACK_LOCATIONS = [
@@ -787,22 +961,49 @@
    * Product Flow 2: Flight Segmented Control
    */
   function setupTripTypeToggle() {
-    const radios = DOM.dynamicFields.querySelectorAll('input[name="trip_type"]');
+    const subnavBtns = DOM.dynamicFields.querySelectorAll('.subnav-btn[data-trip]');
+    const tripTypeInput = DOM.dynamicFields.querySelector('#flight-trip-type');
     const returnGroup = document.getElementById('flight-return-group');
+    const returnDivider = document.getElementById('flight-return-divider');
     const returnInput = document.getElementById('input-flight-ret');
-    if (!radios.length || !returnGroup || !returnInput) return;
 
-    radios.forEach(radio => {
-      radio.addEventListener('change', function () {
-        if (this.value === 'oneway') {
-          returnGroup.style.display = 'none';
-          returnInput.removeAttribute('required');
-        } else {
-          returnGroup.style.display = 'flex';
-          returnInput.setAttribute('required', 'required');
-        }
+    if (subnavBtns.length) {
+      subnavBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+          subnavBtns.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          const trip = this.getAttribute('data-trip');
+          if (tripTypeInput) tripTypeInput.value = trip;
+
+          if (trip === 'oneway') {
+            if (returnGroup) returnGroup.style.display = 'none';
+            if (returnDivider) returnDivider.style.display = 'none';
+            if (returnInput) returnInput.removeAttribute('required');
+          } else {
+            if (returnGroup) returnGroup.style.display = 'flex';
+            if (returnDivider) returnDivider.style.display = '';
+            if (returnInput) returnInput.setAttribute('required', 'required');
+          }
+        });
       });
-    });
+    }
+
+    const radios = DOM.dynamicFields.querySelectorAll('input[name="trip_type"]');
+    if (radios.length && returnGroup && returnInput) {
+      radios.forEach(radio => {
+        radio.addEventListener('change', function () {
+          if (this.value === 'oneway') {
+            returnGroup.style.display = 'none';
+            if (returnDivider) returnDivider.style.display = 'none';
+            returnInput.removeAttribute('required');
+          } else {
+            returnGroup.style.display = 'flex';
+            if (returnDivider) returnDivider.style.display = '';
+            returnInput.setAttribute('required', 'required');
+          }
+        });
+      });
+    }
   }
 
   /**
@@ -892,23 +1093,24 @@
    * Product Flow 5: Private Jet 3-Step Concierge Wizard
    */
   function setupJetWizard() {
-    const wizard = DOM.dynamicFields.querySelector('.jet-concierge-wizard');
-    if (!wizard) return;
+    const slides = DOM.dynamicFields.querySelectorAll('.wizard-step-slide');
+    const nodes = DOM.dynamicFields.querySelectorAll('.jet-progress .jet-step, .step-nodes .node');
+    const progressIndicator = DOM.dynamicFields.querySelector('#jet-progress-indicator');
+    if (!slides.length) return;
 
-    if (DOM.btnSubmit) {
-      DOM.btnSubmit.style.display = 'none';
-    }
-
-    const slides = wizard.querySelectorAll('.wizard-step-slide');
-    const nodes = wizard.querySelectorAll('.step-nodes .node');
-    const progressIndicator = wizard.querySelector('#jet-progress-indicator');
     let currentStep = 1;
 
     function goToStep(step) {
       currentStep = step;
       slides.forEach(s => {
         const sStep = parseInt(s.getAttribute('data-step'), 10);
-        s.classList.toggle('is-active', sStep === step);
+        if (sStep === step) {
+          s.classList.add('is-active');
+          s.style.display = 'block';
+        } else {
+          s.classList.remove('is-active');
+          s.style.display = 'none';
+        }
       });
 
       nodes.forEach(n => {
@@ -922,19 +1124,21 @@
       }
     }
 
-    wizard.querySelectorAll('.btn-wizard-next').forEach(btn => {
-      btn.addEventListener('click', () => {
+    DOM.dynamicFields.querySelectorAll('.btn-wizard-next').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
         const nextStep = parseInt(btn.getAttribute('data-next'), 10);
-        const currentSlide = wizard.querySelector(`.wizard-step-slide[data-step="${currentStep}"]`);
-        if (!FormValidator.validate(DOM.searchForm, currentSlide)) {
+        const currentSlide = DOM.dynamicFields.querySelector(`.wizard-step-slide[data-step="${currentStep}"]`);
+        if (currentSlide && !FormValidator.validate(DOM.searchForm, currentSlide)) {
           return;
         }
         goToStep(nextStep);
       });
     });
 
-    wizard.querySelectorAll('.btn-wizard-prev').forEach(btn => {
-      btn.addEventListener('click', () => {
+    DOM.dynamicFields.querySelectorAll('.btn-wizard-prev').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
         const prevStep = parseInt(btn.getAttribute('data-prev'), 10);
         goToStep(prevStep);
       });
@@ -1407,8 +1611,11 @@
       const payload = {};
       formData.forEach((v, k) => { payload[k] = v; });
 
-      DOM.btnSubmit.disabled = true;
-      DOM.btnSubmit.classList.add('is-loading');
+      const currentSubmitBtn = this.querySelector('#btn-submit-search, #btn-submit-jet-wizard, button[type="submit"]') || DOM.btnSubmit;
+      if (currentSubmitBtn) {
+        currentSubmitBtn.disabled = true;
+        currentSubmitBtn.classList.add('is-loading');
+      }
       DOM.resultsHeader.style.display = 'flex';
       DOM.resultsMetaSource.textContent = 'Querying live supplier inventory...';
       renderSkeletonCards(3);
@@ -1481,8 +1688,10 @@
           renderErrorMessage(err.message);
         }
       } finally {
-        DOM.btnSubmit.disabled = false;
-        DOM.btnSubmit.classList.remove('is-loading');
+        if (currentSubmitBtn) {
+          currentSubmitBtn.disabled = false;
+          currentSubmitBtn.classList.remove('is-loading');
+        }
       }
     });
   }
