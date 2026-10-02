@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flyboro Ultra-Compact Search Engine — Visual Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0B132B;
+      color: #F8FAFC;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Control Bar for Reviewer */
+    .preview-bar {
+      background: #0F172A;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      z-index: 100;
+    }
+    .preview-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .preview-badge {
+      background: rgba(255, 109, 0, 0.18);
+      color: #FF6D00;
+      border: 1px solid rgba(255, 109, 0, 0.4);
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .preview-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-view-toggle {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #E2E8F0;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-view-toggle.active {
+      background: #FF6D00;
+      border-color: #FF6D00;
+      color: #FFFFFF;
+    }
+
+    /* Hero Background Container */
+    .hero-search-wrapper {
+      position: relative;
+      width: 100%;
+      padding: 40px 20px 60px 20px;
+      background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.82)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: max-width 0.3s ease;
+    }
+    .hero-search-wrapper.mobile-preview {
+      max-width: 480px;
+      margin: 20px auto;
+      border-radius: 20px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      min-height: auto;
+      padding: 30px 16px;
+    }
+
+    /* ------------------------------------------- */
+    /* ULTRA-COMPACT MAIN CARD                     */
+    /* ------------------------------------------- */
+    .compact-card {
+      width: 100%;
+      max-width: 1100px;
+      background-color: #1E293B;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 1. Header Tabs: Flush with top */
+    .integrated-tabs {
+      display: flex;
+      background-color: #0F172A;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .integrated-tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      flex: 1;
+      padding: 13px 18px;
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 0.2s, background-color 0.2s;
+    }
+    .tab-btn:hover {
+      color: #F8FAFC;
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+    .tab-btn.active {
+      color: #FFFFFF;
+      background-color: #1E293B;
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: #FF6D00;
+    }
+
+    /* 2. Card Body */
+    .card-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Headings */
+    .section-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+    }
+    .section-subheading {
+      font-size: 0.82rem;
+      color: #94A3B8;
+      margin-top: -8px;
+      margin-bottom: 2px;
+    }
+
+    /* Subnav Row */
+    .subnav-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+    .subnav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94A3B8;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .subnav-btn:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .subnav-btn.active {
+      background: rgba(255, 109, 0, 0.2);
+      border-color: #FF6D00;
+      color: #FF6D00;
+    }
+
+    /* 3. Single Connected Pill Strip */
+    .input-strip {
+      display: flex;
+      background-color: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    /* 4. Flush Input Groups */
+    .input-group {
+      flex: 1;
+      padding: 8px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      min-width: 0;
+      cursor: text;
+    }
+    .input-group:focus-within {
+      background-color: rgba(255, 255, 255, 0.04);
+      border-radius: 9999px;
+    }
+
+    /* Micro-labels */
+    .micro-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+      pointer-events: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Transparent borderless inputs */
+    .strip-input {
+      background: transparent;
+      border: none;
+      color: #FFFFFF;
+      font-weight: 600;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      width: 100%;
+      padding: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .strip-input::placeholder {
+      color: #64748B;
+      font-weight: 400;
+    }
+    .strip-input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+      opacity: 0.6;
+    }
+    .strip-input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
+    select.strip-input {
+      cursor: pointer;
+    }
+    select.strip-input option {
+      background: #0F172A;
+      color: #FFFFFF;
+    }
+
+    /* Thin interior dividers */
+    .divider {
+      width: 1px;
+      background-color: rgba(255, 255, 255, 0.12);
+      margin: 10px 0;
+      flex-shrink: 0;
+    }
+
+    /* Flush-right CTA Button */
+    .cta-btn {
+      background-color: #FF6D00;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.92rem;
+      font-family: inherit;
+      padding: 0 30px;
+      border: none;
+      border-radius: 0 9999px 9999px 0;
+      cursor: pointer;
+      align-self: stretch;
+      transition: background-color 0.2s, transform 0.15s;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .cta-btn:hover {
+      background-color: #E66200;
+    }
+    .cta-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Vacation Guest Popover */
+    .vacation-guest-popover {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 280px;
+      background: #1E293B;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      padding: 16px;
+      z-index: 1000;
+      display: none;
+    }
+    .vacation-guest-popover.is-open {
+      display: block;
+      animation: popFade 0.2s ease-out;
+    }
+    @keyframes popFade {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .vacay-pop-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .vacay-pop-info h5 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+    .vacay-pop-info p {
+      font-size: 0.72rem;
+      color: #94A3B8;
+    }
+    .vacay-pop-counter {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .vacay-pop-counter button {
+      background: transparent;
+      border: none;
+      font-size: 1.1rem;
+      color: #FFFFFF;
+      cursor: pointer;
+      line-height: 1;
+      width: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .vacay-pop-counter span {
+      font-weight: 700;
+      font-size: 0.9rem;
+      min-width: 14px;
+      text-align: center;
+    }
+    .vacay-pop-total {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: #94A3B8;
+    }
+    .vacay-pop-total strong {
+      color: #FF6D00;
+      font-size: 0.95rem;
+    }
+
+    /* Private Jet Progress Bar */
+    .jet-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .jet-step {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .jet-step.active {
+      color: #FF6D00;
+    }
+    .jet-line {
+      height: 2px;
+      width: 32px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Autocomplete Dropdown Preview */
+    .autocomplete-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 280px;
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      list-style: none;
+      padding: 6px;
+      display: none;
+    }
+    .autocomplete-dropdown.is-active { display: block; }
+    .autocomplete-item {
+      padding: 8px 12px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .autocomplete-item:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+    .autocomplete-city {
+      color: #FFFFFF;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .autocomplete-airport {
+      color: #94A3B8;
+      font-size: 0.75rem;
+    }
+    .autocomplete-code-pill {
+      background: rgba(255, 109, 0, 0.2);
+      color: #FF6D00;
+      border: 1px solid rgba(255, 109, 0, 0.4);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0F172A;
+      border: 1px solid #FF6D00;
+      color: #FFFFFF;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast-msg.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* ------------------------------------------- */
+    /* RESPONSIVE STACKING FOR TABLETS & MOBILES   */
+    /* ------------------------------------------- */
+    @media (max-width: 1024px) {
+      .hero-search-wrapper.mobile-preview .input-strip,
+      .input-strip.force-mobile {
+        flex-direction: column;
+        border-radius: 12px;
+        background-color: #0F172A;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .hero-search-wrapper.mobile-preview .divider,
+      .input-strip.force-mobile .divider {
+        width: 100%;
+        height: 1px;
+        margin: 0;
+      }
+      .hero-search-wrapper.mobile-preview .input-group,
+      .input-strip.force-mobile .input-group {
+        padding: 12px 16px;
+      }
+      .hero-search-wrapper.mobile-preview .cta-btn,
+      .input-strip.force-mobile .cta-btn {
+        border-radius: 0 0 12px 12px;
+        padding: 14px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Preview Bar -->
+  <header class="preview-bar">
+    <div class="preview-title">
+      <span>Flyboro Travel Portal</span>
+      <span class="preview-badge">Ultra-Compact Connected Card</span>
+    </div>
+    <div class="preview-actions">
+      <button class="btn-view-toggle active" id="btn-desktop-view" onclick="setViewMode('desktop')">🖥️ Desktop Pill Strip</button>
+      <button class="btn-view-toggle" id="btn-mobile-view" onclick="setViewMode('mobile')">📱 Mobile View</button>
+    </div>
+  </header>
+
+  <!-- Hero Container -->
+  <div class="hero-search-wrapper" id="hero-wrapper">
+    <div class="compact-card" id="search-card">
+      <!-- 1. Integrated Header Tabs -->
+      <div class="integrated-tabs" role="tablist">
+        <button class="tab-btn active" data-tab="cars" onclick="switchProduct('cars')">
+          <span>🚘</span> <span>Car Rentals</span>
+        </button>
+        <button class="tab-btn" data-tab="flights" onclick="switchProduct('flights')">
+          <span>✈️</span> <span>Flights</span>
+        </button>
+        <button class="tab-btn" data-tab="hotels" onclick="switchProduct('hotels')">
+          <span>🏨</span> <span>Hotels</span>
+        </button>
+        <button class="tab-btn" data-tab="vacations" onclick="switchProduct('vacations')">
+          <span>🌴</span> <span>Vacations</span>
+        </button>
+        <button class="tab-btn" data-tab="jets" onclick="switchProduct('jets')">
+          <span>🛩️</span> <span>Private Jets</span>
+        </button>
+      </div>
+
+      <!-- Card Body with Dynamic Content -->
+      <div class="card-body" id="card-body-content">
+        <!-- Rendered by JS below -->
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-msg" id="toast">
+    <span>🚀</span> <span id="toast-text">Search dispatched to Flyboro API</span>
+  </div>
+
+  <script>
+    // State
+    let activeProduct = 'cars';
+    let isRoundTrip = true;
+    let vacationAdults = 1;
+    let vacationChildren = 0;
+    let jetStep = 1;
+
+    const templates = {
+      cars: () => `
+        <h2 class="section-heading">Search Premium Car Rentals</h2>
+        <p class="section-subheading">Unbeatable fleet rates with full insurance coverage and unlimited mileage.</p>
+        <div class="input-strip" id="input-strip-el">
+          <div class="input-group" onclick="showAutocomplete('car-pickup')">
+            <label class="micro-label">PICK-UP LOCATION *</label>
+            <input type="text" class="strip-input" id="car-pickup" value="Los Angeles (LAX)" placeholder="City or Airport">
+            <ul class="autocomplete-dropdown" id="dropdown-car-pickup">
+              <li class="autocomplete-item" onclick="selectLocation('car-pickup', 'Los Angeles (LAX)')">
+                <div><div class="autocomplete-city">Los Angeles, USA</div><div class="autocomplete-airport">Los Angeles Intl</div></div>
+                <span class="autocomplete-code-pill">LAX</span>
+              </li>
+              <li class="autocomplete-item" onclick="selectLocation('car-pickup', 'San Francisco (SFO)')">
+                <div><div class="autocomplete-city">San Francisco, USA</div><div class="autocomplete-airport">San Francisco Intl</div></div>
+                <span class="autocomplete-code-pill">SFO</span>
+              </li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="input-group">
+            <label class="micro-label">RETURN LOCATION</label>
+            <input type="text" class="strip-input" value="Same as Pick-up" placeholder="City or Airport">
+          </div>
+          <div class="divider"></div>
+          <div class="input-group">
+            <label class="micro-label">PICK-UP DATE *</label>
+            <input type="date" class="strip-input" value="${getDefaultDate(1)}">
+          </div>
+          <div class="divider"></div>
+          <div class="input-group">
+            <label class="micro-label">RETURN DATE *</label>
+            <input type="date" class="strip-input" value="${getDefaultDate(5)}">
+          </div>
+          <button type="button" class="cta-btn" onclick="submitSearch('Car Rentals')">Search Cars ➔</button>
+        </div>
+      `,
+      flights: () => `
+        <div class="subnav-row">
+          <button type="button" class="subnav-btn ${isRoundTrip ? 'active' : ''}" onclick="setTripType(true)">Round Trip</button>
+          <button type="button" class="subnav-btn ${!isRoundTrip ? 'active' : ''}" onclick="setTripType(false)">One Way</button>
+        </div>
+        <h2 class="section-heading">Search Worldwide Flights</h2>
+        <p class="section-subheading">Exclusive airline consolidator fares across 900+ global air carriers.</p>
+        <div class="input-strip" id="input-strip-el">
+          <div class="input-group" onclick="showAutocomplete('flight-origin')">
+            <label class="micro-label">DEPARTING FROM *</label>
+            <input type="text" class="strip-input" id="flight-origin" value="New York (JFK)" placeholder="Origin Airport">
+            <ul class="autocomplete-dropdown" id="dropdown-flight-origin">
+              <li class="autocomplete-item" onclick="selectLocation('flight-origin', 'New York (JFK)')">
+                <div><div class="autocomplete-city">New York, USA</div><div class="autocomplete-airport">John F Kennedy Intl</div></div>
+                <span class="autocomplete-code-pill">JFK</span>
+              </li>
+              <li class="autocomplete-item" onclick="selectLocation('flight-origin', 'London (LHR)')">
+                <div><div class="autocomplete-city">London, UK</div><div class="autocomplete-airport">Heathrow Airport</div></div>
+                <span class="autocomplete-code-pill">LHR</span>
+              </li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="input-group" onclick="showAutocomplete('flight-dest')">
+            <label class="micro-label">FLYING TO *</label>
+            <input type="text" class="strip-input" id="flight-dest" value="Paris (CDG)" placeholder="Destination Airport">
+            <ul class="autocomplete-dropdown" id="dropdown-flight-dest">
+              <li class="autocomplete-item" onclick="selectLocation('flight-dest', 'Paris (CDG)')">
+                <div><div class="autocomplete-city">Paris, France</div><div class="autocomplete-airport">Charles de Gaulle</div></div>
+                <span class="autocomplete-code-pill">CDG</span>
+              </li>
+              <li class="autocomplete-item" onclick="selectLocation('flight-dest', 'Tokyo (HND)')">
+                <div><div class="autocomplete-city">Tokyo, Japan</div><div class="autocomplete-airport">Haneda Airport</div></div>
+                <span class="autocomplete-code-pill">HND</span>
+              </li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="input-group">
+            <label class="micro-label">DEPARTURE *</label>
+            <input type="date" class="strip-input" value="${getDefaultDate(7)}">
+          </div>
+          ${isRoundTrip ? `
+            <div class="divider"></div>
+            <div class="input-group">
+              <label class="micro-label">RETURN *</label>
+              <input type="date" class="strip-input" value="${getDefaultDate(14)}">
+            </div>
+          ` : ''}
+          <div class="divider"></div>
+          <div class="input-group">
+            <label class="micro-label">PASSENGERS</label>
+            <select class="strip-input">
+              <option value="1">1 Passenger</option>
+              <option value="2" selected>2 Passengers</option>
+              <option value="3">3 Passengers</option>
+              <option value="4">4+ Passengers</option>
+            </select>
+          </div>
+          <button type="button" class="cta-btn" onclick="submitSearch('Flights')">Search Flights ➔</button>
+        </div>
+      `,
+      hotels: () => `
+        <h2 class="section-heading">Search Curated Hotels & Resorts</h2>
+        <p class="section-subheading">Access over 1.2M 5-star properties, boutique villas, and luxury resorts.</p>
+        <div class="input-strip" id="input-strip-el">
+          <div class="input-group" onclick="showAutocomplete('hotel-dest')">
+            <label class="micro-label">DESTINATION / PROPERTY *</label>
+            <input type="text" class="strip-input" id="hotel-dest" value="Tokyo, Japan" placeholder="City or Resort">
+            <ul class="autocomplete-dropdown" id="dropdown-hotel-dest">
+              <li class="autocomplete-item" onclick="selectLocation('hotel-dest', 'Tokyo, Japan')">
+                <div><div class="autocomplete-city">Tokyo, Japan</div><div class="autocomplete-airport">Kanto Region</div></div>
+                <span class="autocomplete-code-pill">TYO</span>
+              </li>
+              <li class="autocomplete-item" onclick="selectLocation('hotel-dest', 'Dubai, UAE')">
+                <div><div class="autocomplete-city">Dubai, UAE</div><div class="autocomplete-airport">Downtown & Marina</div></div>
+                <span class="autocomplete-code-pill">DXB</span>
+              </li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="input-group">
+            <label class="micro-label">CHECK-IN *</label>
+            <input type="date" class="strip-input" value="${getDefaultDate(3)}">
+          </div>
+          <div class="divider"></div>
+          <div class="input-group">
+            <label class="micro-label">CHECK-OUT *</label>
+            <input type="date" class="strip-input" value="${getDefaultDate(7)}">
+          </div>
+          <div class="divider"></div>
+          <div class="input-group">
+            <label class="micro-label">ROOMS & GUESTS</label>
+            <select class="strip-input">
+              <option value="1-1">1 Room, 1 Guest</option>
+              <option value="1-2" selected>1 Room, 2 Guests</option>
+              <option value="2-4">2 Rooms, 4 Guests</option>
+            </select>
+          </div>
+          <button type="button" class="cta-btn" onclick="submitSearch('Hotels')">Search Hotels ➔</button>
+        </div>
+      `,
+      vacations: () => `
+        <h2 class="section-heading">Search Luxury Vacation Packages</h2>
+        <p class="section-subheading">All-inclusive guided expeditions, private safaris, and tropical hideaways.</p>
+        <div class="input-strip" id="input-strip-el">
+          <div class="input-group">
+            <label class="micro-label">PACKAGE EXPERIENCE / REGION *</label>
+            <input type="text" class="strip-input" value="Costa Rica Rainforest & Beach" placeholder="Destination Region">
+          </div>
+          <div class="divider"></div>
+          <div class="input-group">
+            <label class="micro-label">TARGET DATE *</label>
+            <input type="date" class="strip-input" value="${getDefaultDate(21)}">
+          </div>
+          <div class="divider"></div>
+          <div class="input-group" style="position: relative;">
+            <label class="micro-label">GUEST ALLOCATION</label>
+            <button type="button" class="strip-input" style="text-align: left; background: transparent; border: none; display: flex; justify-content: space-between; align-items: center; padding: 0; cursor: pointer;" onclick="toggleVacayPopover(event)">
+              <span id="vacay-summary-text">${vacationAdults + vacationChildren} ${vacationAdults + vacationChildren === 1 ? 'Guest' : 'Guests'} • $${formatPrice((vacationAdults * 2150) + (vacationChildren * 1290))} Total</span>
+              <span style="font-size: 10px; margin-left: 6px;">▼</span>
+            </button>
+
+            <!-- Interactive Popover Dropdown -->
+            <div class="vacation-guest-popover" id="vacay-guest-popover" onclick="event.stopPropagation()">
+              <div class="vacay-pop-row">
+                <div class="vacay-pop-info">
+                  <h5>Adults (18+)</h5>
+                  <p>$2,150 / guest</p>
+                </div>
+                <div class="vacay-pop-counter">
+                  <button type="button" onclick="changeVacayCount('adults', -1)">-</button>
+                  <span id="pop-adults">${vacationAdults}</span>
+                  <button type="button" onclick="changeVacayCount('adults', 1)">+</button>
+                </div>
+              </div>
+              <div class="vacay-pop-row">
+                <div class="vacay-pop-info">
+                  <h5>Children (3-17)</h5>
+                  <p>$1,290 / guest</p>
+                </div>
+                <div class="vacay-pop-counter">
+                  <button type="button" onclick="changeVacayCount('children', -1)">-</button>
+                  <span id="pop-children">${vacationChildren}</span>
+                  <button type="button" onclick="changeVacayCount('children', 1)">+</button>
+                </div>
+              </div>
+              <div class="vacay-pop-total">
+                <span>Expedition Total:</span>
+                <strong id="pop-subtotal">$${formatPrice((vacationAdults * 2150) + (vacationChildren * 1290))}</strong>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="cta-btn" onclick="submitSearch('Vacations')">Search Availability ➔</button>
+        </div>
+      `,
+      jets: () => `
+        <div class="jet-progress">
+          <div class="jet-step ${jetStep >= 1 ? 'active' : ''}">1. Routing</div>
+          <div class="jet-line"></div>
+          <div class="jet-step ${jetStep >= 2 ? 'active' : ''}">2. Aircraft</div>
+          <div class="jet-line"></div>
+          <div class="jet-step ${jetStep >= 3 ? 'active' : ''}">3. VIP Concierge</div>
+        </div>
+
+        ${jetStep === 1 ? `
+          <h2 class="section-heading">Step 1: Mission Routing & Schedule</h2>
+          <p class="section-subheading">On-demand heavy, midsize, and light jet availability with private VIP FBO handling.</p>
+          <div class="input-strip" id="input-strip-el">
+            <div class="input-group">
+              <label class="micro-label">DEPARTURE FBO *</label>
+              <input type="text" class="strip-input" value="New Delhi (DEL / VIDP)" placeholder="FBO Airport">
+            </div>
+            <div class="divider"></div>
+            <div class="input-group">
+              <label class="micro-label">DESTINATION FBO *</label>
+              <input type="text" class="strip-input" value="Dubai Al Maktoum (DWC)" placeholder="Destination FBO">
+            </div>
+            <div class="divider"></div>
+            <div class="input-group">
+              <label class="micro-label">DEPARTURE DATE *</label>
+              <input type="date" class="strip-input" value="${getDefaultDate(4)}">
+            </div>
+            <div class="divider"></div>
+            <div class="input-group">
+              <label class="micro-label">PASSENGERS</label>
+              <select class="strip-input">
+                <option value="5-8" selected>5 to 8 Passengers</option>
+                <option value="1-4">1 to 4 Passengers</option>
+                <option value="9-14">9 to 14 Passengers</option>
+              </select>
+            </div>
+            <button type="button" class="cta-btn" onclick="setJetStep(2)">Continue ➔</button>
+          </div>
+        ` : jetStep === 2 ? `
+          <h2 class="section-heading">Step 2: Aircraft Fleet Class</h2>
+          <p class="section-subheading">Select your aircraft category, luggage tier, and onboard cabin preferences.</p>
+          <div class="input-strip" id="input-strip-el">
+            <div class="input-group" style="flex: 2;">
+              <label class="micro-label">AIRCRAFT SPECIFICATION & RANGE</label>
+              <select class="strip-input">
+                <option value="heavy" selected>Heavy Jet (Challenger 650 / 12 Pax)</option>
+                <option value="ultra-long">Ultra Long Range (Gulfstream G650ER / 14 Pax)</option>
+                <option value="super-mid">Super Midsize (Citation X+ / 8 Pax)</option>
+              </select>
+            </div>
+            <div class="divider"></div>
+            <div class="input-group">
+              <label class="micro-label">CATERING & AMENITIES</label>
+              <select class="strip-input">
+                <option value="standard" selected>Standard Premium Bar</option>
+                <option value="michelin">Michelin Fine Dining</option>
+              </select>
+            </div>
+            <button type="button" class="cta-btn" style="background:#334155; border-radius:0;" onclick="setJetStep(1)">Back</button>
+            <button type="button" class="cta-btn" onclick="setJetStep(3)">VIP Details ➔</button>
+          </div>
+        ` : `
+          <h2 class="section-heading">Step 3: VIP Manifest & Booking Request</h2>
+          <p class="section-subheading">Instant charter quote confirmation delivered to your primary contact.</p>
+          <div class="input-strip" id="input-strip-el">
+            <div class="input-group">
+              <label class="micro-label">PRIMARY PASSENGER *</label>
+              <input type="text" class="strip-input" value="Alexander Vance" placeholder="Full Name">
+            </div>
+            <div class="divider"></div>
+            <div class="input-group">
+              <label class="micro-label">SECURE VIP EMAIL *</label>
+              <input type="email" class="strip-input" value="alexander.vance@flyboro.com">
+            </div>
+            <div class="divider"></div>
+            <div class="input-group">
+              <label class="micro-label">PHONE / SIGNAL *</label>
+              <input type="tel" class="strip-input" value="+1 (555) 234-8890">
+            </div>
+            <button type="button" class="cta-btn" style="background:#334155; border-radius:0;" onclick="setJetStep(2)">Back</button>
+            <button type="button" class="cta-btn" onclick="submitSearch('Private Jet Charter')">Request Charter ➔</button>
+          </div>
+        `}
+      `
+    };
+
+    function render() {
+      const container = document.getElementById('card-body-content');
+      container.innerHTML = templates[activeProduct]();
+    }
+
+    function switchProduct(prod) {
+      activeProduct = prod;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === prod);
+      });
+      render();
+    }
+
+    function setTripType(roundTrip) {
+      isRoundTrip = roundTrip;
+      render();
+    }
+
+    function setJetStep(step) {
+      jetStep = step;
+      render();
+    }
+
+    function toggleVacayPopover(e) {
+      e.stopPropagation();
+      const pop = document.getElementById('vacay-guest-popover');
+      if (pop) pop.classList.toggle('is-open');
+    }
+
+    function changeVacayCount(type, delta) {
+      if (type === 'adults') {
+        vacationAdults = Math.max(1, Math.min(10, vacationAdults + delta));
+      } else {
+        vacationChildren = Math.max(0, Math.min(8, vacationChildren + delta));
+      }
+      const total = (vacationAdults * 2150) + (vacationChildren * 1290);
+      const totalGuests = vacationAdults + vacationChildren;
+      
+      const elAdults = document.getElementById('pop-adults');
+      const elChildren = document.getElementById('pop-children');
+      const elSubtotal = document.getElementById('pop-subtotal');
+      const elSummary = document.getElementById('vacay-summary-text');
+      
+      if (elAdults) elAdults.textContent = vacationAdults;
+      if (elChildren) elChildren.textContent = vacationChildren;
+      if (elSubtotal) elSubtotal.textContent = '$' + formatPrice(total);
+      if (elSummary) elSummary.textContent = `${totalGuests} ${totalGuests === 1 ? 'Guest' : 'Guests'} • $${formatPrice(total)} Total`;
+    }
+
+    function showAutocomplete(id) {
+      document.querySelectorAll('.autocomplete-dropdown').forEach(dd => dd.classList.remove('is-active'));
+      const dd = document.getElementById('dropdown-' + id);
+      if (dd) dd.classList.add('is-active');
+    }
+
+    function selectLocation(inputId, text) {
+      const input = document.getElementById(inputId);
+      if (input) input.value = text;
+      document.querySelectorAll('.autocomplete-dropdown').forEach(dd => dd.classList.remove('is-active'));
+    }
+
+    document.addEventListener('click', (e) => {
+      const pop = document.getElementById('vacay-guest-popover');
+      if (pop && !pop.contains(e.target) && !e.target.closest('#vacay-summary-text')) {
+        pop.classList.remove('is-open');
+      }
+      if (!e.target.closest('.input-group')) {
+        document.querySelectorAll('.autocomplete-dropdown').forEach(dd => dd.classList.remove('is-active'));
+      }
+    });
+
+    function setViewMode(mode) {
+      const wrapper = document.getElementById('hero-wrapper');
+      const btnDesk = document.getElementById('btn-desktop-view');
+      const btnMob = document.getElementById('btn-mobile-view');
+      
+      if (mode === 'mobile') {
+        wrapper.classList.add('mobile-preview');
+        btnMob.classList.add('active');
+        btnDesk.classList.remove('active');
+      } else {
+        wrapper.classList.remove('mobile-preview');
+        btnDesk.classList.add('active');
+        btnMob.classList.remove('active');
+      }
+    }
+
+    function submitSearch(productName) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      toastText.textContent = `Dispatched query for ${productName} to /api/search!`;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    function getDefaultDate(offsetDays) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      return d.toISOString().split('T')[0];
+    }
+
+    function formatPrice(num) {
+      return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
