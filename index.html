@@ -42,33 +42,33 @@
     </div>
   </header>
 
-  <!-- Hero & Multi-Product Dark Navy Glassmorphic Search Engine -->
+  <!-- Hero & Multi-Product Ultra-Compact Single-Strip Search Engine -->
   <main class="main-content" id="main-content">
     <section class="hero-search-wrapper" aria-label="Search Travel Products">
-      <!-- Exactly Sequenced Frosted Navigation Tabs -->
-      <nav class="search-tabs" role="tablist" aria-label="Product Lines">
-        <button class="tab-btn active" role="tab" id="tab-cars" aria-selected="true" data-theme="theme-car-rental" data-product="cars" onclick="switchTab(this, 'cars')">
-          <span>🚘</span> <span>Car Rentals</span>
-        </button>
-        <button class="tab-btn" role="tab" id="tab-flights" aria-selected="false" data-theme="theme-flights" data-product="flights" onclick="switchTab(this, 'flights')">
-          <span>✈️</span> <span>Flights</span>
-        </button>
-        <button class="tab-btn" role="tab" id="tab-hotels" aria-selected="false" data-theme="theme-hotels" data-product="hotels" onclick="switchTab(this, 'hotels')">
-          <span>🏨</span> <span>Hotels</span>
-        </button>
-        <button class="tab-btn" role="tab" id="tab-vacations" aria-selected="false" data-theme="theme-vacations" data-product="vacations" onclick="switchTab(this, 'vacations')">
-          <span>🌴</span> <span>Vacations</span>
-        </button>
-        <button class="tab-btn" role="tab" id="tab-jets" aria-selected="false" data-theme="theme-private-jets" data-product="jets" onclick="switchTab(this, 'jets')">
-          <span>🛩️</span> <span>Private Jets</span>
-        </button>
-      </nav>
-
-      <!-- Main Glassmorphism Container Form -->
-      <form id="flyboro-search-form" class="glass-card-container" id="search-card" novalidate>
+      <form id="flyboro-search-form" class="compact-card" novalidate>
         <input type="hidden" name="product_type" id="field-product-type" value="cars">
 
-        <div id="dynamic-content">
+        <!-- 1. Integrated Header Tabs -->
+        <div class="integrated-tabs" role="tablist" aria-label="Product Lines">
+          <button type="button" class="tab-btn active" role="tab" id="tab-cars" aria-selected="true" data-theme="theme-car-rental" data-product="cars" onclick="switchTab(this, 'cars')">
+            <span>🚘</span> <span>Car Rentals</span>
+          </button>
+          <button type="button" class="tab-btn" role="tab" id="tab-flights" aria-selected="false" data-theme="theme-flights" data-product="flights" onclick="switchTab(this, 'flights')">
+            <span>✈️</span> <span>Flights</span>
+          </button>
+          <button type="button" class="tab-btn" role="tab" id="tab-hotels" aria-selected="false" data-theme="theme-hotels" data-product="hotels" onclick="switchTab(this, 'hotels')">
+            <span>🏨</span> <span>Hotels</span>
+          </button>
+          <button type="button" class="tab-btn" role="tab" id="tab-vacations" aria-selected="false" data-theme="theme-vacations" data-product="vacations" onclick="switchTab(this, 'vacations')">
+            <span>🌴</span> <span>Vacations</span>
+          </button>
+          <button type="button" class="tab-btn" role="tab" id="tab-jets" aria-selected="false" data-theme="theme-private-jets" data-product="jets" onclick="switchTab(this, 'jets')">
+            <span>🛩️</span> <span>Private Jets</span>
+          </button>
+        </div>
+
+        <!-- 5. Tightened Layout Padding applied to Body -->
+        <div class="card-body" id="dynamic-content">
           <!-- Injected dynamically by flyboro-engine.js -->
         </div>
       </form>
