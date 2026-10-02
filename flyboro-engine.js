@@ -43,6 +43,14 @@
     }
   };
 
+  // Persistent in-memory state across tab switches
+  const portalState = {
+    flights: { adults: 1, children: 0, infants: 0, cabin: 'Economy', tripType: 'roundtrip' },
+    hotels: { adults: 2, children: 0, rooms: 1 },
+    vacations: { adults: 1, children: 0, adultPrice: 2150, childPrice: 1290, flex: 'exact' },
+    jets: { passengers: 4, step: 1 }
+  };
+
   /**
    * Converts a base USD price to target currency and formats using Intl.NumberFormat
    */
@@ -92,11 +100,16 @@
     }
   };
 
-  // Dynamic Form Field Templates (Ultra-Compact Single-Strip Search Engine)
+  // Dynamic Form Field Templates (Ultra-Compact Luxury Single-Strip Search Engine)
   const FORM_TEMPLATES = {
     cars: `
-      <h2 class="section-heading" id="engine-headline">Reserve Premium Car Rentals Worldwide</h2>
-      <p class="section-subheading" id="engine-subheadline">Partnered with Carnect for direct fleet availability, zero hidden fees, and instant vouchers.</p>
+      <div class="card-header-row">
+        <div>
+          <h2 class="section-heading" id="engine-headline">Reserve Premium Car Rentals Worldwide</h2>
+          <p class="section-subheading" id="engine-subheadline">Partnered with Carnect for direct fleet availability, zero hidden fees, and instant vouchers.</p>
+        </div>
+        <div class="social-proof-badge">★ 4.9 <span>(1,200+ Fleets)</span></div>
+      </div>
       
       <div class="input-strip">
         <div class="input-group" onclick="this.querySelector('input').focus()">
@@ -126,14 +139,19 @@
           </select>
         </div>
         <button type="submit" class="cta-btn" id="btn-submit-search">
-          <span class="btn-text">Search Availability</span>
+          <span class="btn-text">Search Cars ➔</span>
           <span class="btn-spinner" aria-hidden="true"></span>
         </button>
       </div>
     `,
     flights: `
-      <h2 class="section-heading" id="engine-headline">Compare & Book Commercial Airline Flights</h2>
-      <p class="section-subheading" id="engine-subheadline">Real-time global GDS ticketing powered by RateHawk with flexible fare options.</p>
+      <div class="card-header-row">
+        <div>
+          <h2 class="section-heading" id="engine-headline">Compare & Book Commercial Airline Flights</h2>
+          <p class="section-subheading" id="engine-subheadline">Real-time global GDS ticketing powered by RateHawk with flexible fare options.</p>
+        </div>
+        <div class="social-proof-badge">★ 4.9 <span>(3,500+ Routes)</span></div>
+      </div>
       
       <div class="subnav-row" role="radiogroup" aria-label="Flight Trip Type">
         <button type="button" class="subnav-btn active" data-trip="roundtrip">Round-Trip ⇄</button>
@@ -169,24 +187,74 @@
           <input type="date" id="input-flight-ret" name="end_date" class="strip-input" required data-label="Return Date">
         </div>
         <div class="divider"></div>
-        <div class="input-group" onclick="this.querySelector('select').focus()">
-          <label class="micro-label">PASSENGERS</label>
-          <select id="input-passengers" name="passengers" class="strip-input" data-label="Cabin & Passengers">
-            <option value="1-economy" selected>1 Adult, Economy</option>
-            <option value="2-business">2 Adults, Business</option>
-            <option value="2-economy">2 Adults, Economy</option>
-            <option value="1-first">1 Adult, First Class</option>
-          </select>
+        
+        <!-- Flight Passenger & Cabin Popover -->
+        <div class="input-group popover-container">
+          <label class="micro-label">PASSENGERS & CABIN</label>
+          <button type="button" class="strip-input" id="flight-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="display:flex; justify-content:space-between; align-items:center;">
+            <span id="flight-btn-label">1 Traveler, Economy</span>
+            <span style="font-size: 10px; color: #94A3B8;">▼</span>
+          </button>
+
+          <input type="hidden" name="adults" id="input-flight-adults" value="1">
+          <input type="hidden" name="children" id="input-flight-children" value="0">
+          <input type="hidden" name="infants" id="input-flight-infants" value="0">
+          <input type="hidden" name="cabin" id="input-flight-cabin" value="Economy">
+
+          <div id="flight-popover" class="popover-menu" role="dialog" aria-label="Flight Passengers and Cabin">
+            <div class="stepper-row">
+              <div class="stepper-info"><h4>Adults</h4><p>12+ years</p></div>
+              <div class="stepper-controls">
+                <button type="button" class="stepper-btn" data-step-type="adults" data-delta="-1" aria-label="Decrease Adults">-</button>
+                <span class="stepper-val" id="val-flight-adults">1</span>
+                <button type="button" class="stepper-btn" data-step-type="adults" data-delta="1" aria-label="Increase Adults">+</button>
+              </div>
+            </div>
+            <div class="stepper-row">
+              <div class="stepper-info"><h4>Children</h4><p>2–11 years</p></div>
+              <div class="stepper-controls">
+                <button type="button" class="stepper-btn" data-step-type="children" data-delta="-1" aria-label="Decrease Children">-</button>
+                <span class="stepper-val" id="val-flight-children">0</span>
+                <button type="button" class="stepper-btn" data-step-type="children" data-delta="1" aria-label="Increase Children">+</button>
+              </div>
+            </div>
+            <div class="stepper-row">
+              <div class="stepper-info"><h4>Infants</h4><p>Under 2 years</p></div>
+              <div class="stepper-controls">
+                <button type="button" class="stepper-btn" data-step-type="infants" data-delta="-1" aria-label="Decrease Infants">-</button>
+                <span class="stepper-val" id="val-flight-infants">0</span>
+                <button type="button" class="stepper-btn" data-step-type="infants" data-delta="1" aria-label="Increase Infants">+</button>
+              </div>
+            </div>
+            <div class="popover-footer" style="flex-direction:column; align-items:flex-start; gap:8px;">
+              <span style="font-size: 0.72rem; color: #94A3B8; font-weight:700;">CABIN CLASS</span>
+              <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                <select class="strip-input" id="select-flight-cabin" style="background:#0B1120; padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.12); width:auto;">
+                  <option value="Economy">Economy</option>
+                  <option value="Premium Economy">Premium Economy</option>
+                  <option value="Business Class">Business Class</option>
+                  <option value="First Class">First Class</option>
+                </select>
+                <button type="button" class="btn-popover-done" onclick="window.closeAllPopovers()">Done</button>
+              </div>
+            </div>
+          </div>
         </div>
+
         <button type="submit" class="cta-btn" id="btn-submit-search">
-          <span class="btn-text">Search Availability</span>
+          <span class="btn-text">Search Flights ➔</span>
           <span class="btn-spinner" aria-hidden="true"></span>
         </button>
       </div>
     `,
     hotels: `
-      <h2 class="section-heading" id="engine-headline">Curated 5-Star Luxury Hotels & Private Resorts</h2>
-      <p class="section-subheading" id="engine-subheadline">Direct Hotelbeds portfolio integration offering premier hospitality perks and best rates.</p>
+      <div class="card-header-row">
+        <div>
+          <h2 class="section-heading" id="engine-headline">Curated 5-Star Luxury Hotels & Private Resorts</h2>
+          <p class="section-subheading" id="engine-subheadline">Direct Hotelbeds portfolio integration offering premier hospitality perks and best rates.</p>
+        </div>
+        <div class="social-proof-badge">★ 5.0 <span>(850+ Resorts)</span></div>
+      </div>
       
       <div class="input-strip">
         <div class="input-group" onclick="this.querySelector('input').focus()">
@@ -207,23 +275,65 @@
           <input type="date" id="input-hotel-out" name="end_date" class="strip-input" required data-label="Check-out Date">
         </div>
         <div class="divider"></div>
-        <div class="input-group" onclick="this.querySelector('select').focus()">
+        
+        <!-- Hotels Occupancy Popover -->
+        <div class="input-group popover-container">
           <label class="micro-label">GUESTS & ROOMS</label>
-          <select id="input-hotel-rooms" name="guests" class="strip-input" data-label="Guests & Rooms">
-            <option value="2-1" selected>2 Guests, 1 Suite</option>
-            <option value="1-1">1 Guest, 1 Room</option>
-            <option value="4-2">4 Guests, 2 Villa Suites</option>
-          </select>
+          <button type="button" class="strip-input" id="hotel-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="display:flex; justify-content:space-between; align-items:center;">
+            <span id="hotel-btn-label">2 Guests, 1 Room</span>
+            <span style="font-size: 10px; color: #94A3B8;">▼</span>
+          </button>
+
+          <input type="hidden" name="adults" id="input-hotel-adults" value="2">
+          <input type="hidden" name="children" id="input-hotel-children" value="0">
+          <input type="hidden" name="rooms" id="input-hotel-rooms" value="1">
+
+          <div id="hotel-popover" class="popover-menu" role="dialog" aria-label="Hotel Guests and Rooms">
+            <div class="stepper-row">
+              <div class="stepper-info"><h4>Adults</h4><p>18+ years</p></div>
+              <div class="stepper-controls">
+                <button type="button" class="stepper-btn" data-hotel-step="adults" data-delta="-1" aria-label="Decrease Adults">-</button>
+                <span class="stepper-val" id="val-hotel-adults">2</span>
+                <button type="button" class="stepper-btn" data-hotel-step="adults" data-delta="1" aria-label="Increase Adults">+</button>
+              </div>
+            </div>
+            <div class="stepper-row">
+              <div class="stepper-info"><h4>Children</h4><p>0–17 years</p></div>
+              <div class="stepper-controls">
+                <button type="button" class="stepper-btn" data-hotel-step="children" data-delta="-1" aria-label="Decrease Children">-</button>
+                <span class="stepper-val" id="val-hotel-children">0</span>
+                <button type="button" class="stepper-btn" data-hotel-step="children" data-delta="1" aria-label="Increase Children">+</button>
+              </div>
+            </div>
+            <div class="stepper-row">
+              <div class="stepper-info"><h4>Rooms</h4><p>Suites / Rooms</p></div>
+              <div class="stepper-controls">
+                <button type="button" class="stepper-btn" data-hotel-step="rooms" data-delta="-1" aria-label="Decrease Rooms">-</button>
+                <span class="stepper-val" id="val-hotel-rooms">1</span>
+                <button type="button" class="stepper-btn" data-hotel-step="rooms" data-delta="1" aria-label="Increase Rooms">+</button>
+              </div>
+            </div>
+            <div class="popover-footer">
+              <span style="font-size:0.75rem; color:#94A3B8;">Occupancy configured</span>
+              <button type="button" class="btn-popover-done" onclick="window.closeAllPopovers()">Done</button>
+            </div>
+          </div>
         </div>
+
         <button type="submit" class="cta-btn" id="btn-submit-search">
-          <span class="btn-text">Search Availability</span>
+          <span class="btn-text">Search Hotels ➔</span>
           <span class="btn-spinner" aria-hidden="true"></span>
         </button>
       </div>
     `,
     vacations: `
-      <h2 class="section-heading" id="engine-headline">Handcrafted Adventure & All-Inclusive Escapes</h2>
-      <p class="section-subheading" id="engine-subheadline">Immersive excursions, beachfront bundles, and curated regional expeditions.</p>
+      <div class="card-header-row">
+        <div>
+          <h2 class="section-heading" id="engine-headline">Handcrafted Adventure & All-Inclusive Escapes</h2>
+          <p class="section-subheading" id="engine-subheadline">Immersive excursions, beachfront bundles, and curated regional expeditions.</p>
+        </div>
+        <div class="social-proof-badge">★ 4.9 <span>(2,400+ Expeditions)</span></div>
+      </div>
       
       <div class="subnav-row" role="group" aria-label="Date Flexibility">
         <button type="button" class="subnav-btn active" id="vacay-flex-exact" data-flex="exact">Exact Day</button>
@@ -246,46 +356,52 @@
         <div class="divider"></div>
         
         <!-- Compact Passenger Counter inside the single strip -->
-        <div class="input-group" style="position: relative;">
+        <div class="input-group popover-container">
           <label class="micro-label">GUEST ALLOCATION</label>
-          <button type="button" class="strip-input" id="vacay-popover-trigger" style="text-align: left; background: transparent; border: none; display: flex; justify-content: space-between; align-items: center; padding: 0;">
+          <button type="button" class="strip-input" id="vacay-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="display:flex; justify-content:space-between; align-items:center;">
             <span id="vacay-summary-text">1 Guest • $2,150 Total</span>
-            <span style="font-size: 10px; margin-left: 6px;">▼</span>
+            <span style="font-size: 10px; color: #94A3B8;">▼</span>
           </button>
 
+          <input type="hidden" name="adults" id="input-vacay-adults" value="1">
+          <input type="hidden" name="children" id="input-vacay-children" value="0">
+
           <!-- Guest Allocation Popover Dropdown -->
-          <div class="vacation-guest-popover" id="vacay-guest-popover" role="dialog" aria-label="Guest Allocation">
-            <div class="vacay-pop-row">
-              <div class="vacay-pop-info">
-                <h5>Adults (18+)</h5>
+          <div class="popover-menu" id="vacay-guest-popover" role="dialog" aria-label="Guest Allocation">
+            <div class="stepper-row">
+              <div class="stepper-info">
+                <h4>Adults (18+)</h4>
                 <p>$2,150 / guest</p>
               </div>
-              <div class="vacay-pop-counter">
-                <button type="button" class="btn-step-minus" data-target="vacay-adults" data-min="1" aria-label="Decrease Adults">-</button>
-                <span id="vacay-adults">1</span>
-                <button type="button" class="btn-step-plus" data-target="vacay-adults" data-max="10" aria-label="Increase Adults">+</button>
+              <div class="stepper-controls">
+                <button type="button" class="stepper-btn btn-step-minus" data-target="vacay-adults" data-min="1" aria-label="Decrease Adults">-</button>
+                <span class="stepper-val" id="vacay-adults">1</span>
+                <button type="button" class="stepper-btn btn-step-plus" data-target="vacay-adults" data-max="10" aria-label="Increase Adults">+</button>
               </div>
             </div>
-            <div class="vacay-pop-row">
-              <div class="vacay-pop-info">
-                <h5>Children (3-17)</h5>
+            <div class="stepper-row">
+              <div class="stepper-info">
+                <h4>Children (3-17)</h4>
                 <p>$1,290 / guest</p>
               </div>
-              <div class="vacay-pop-counter">
-                <button type="button" class="btn-step-minus" data-target="vacay-children" data-min="0" aria-label="Decrease Children">-</button>
-                <span id="vacay-children">0</span>
-                <button type="button" class="btn-step-plus" data-target="vacay-children" data-max="8" aria-label="Increase Children">+</button>
+              <div class="stepper-controls">
+                <button type="button" class="stepper-btn btn-step-minus" data-target="vacay-children" data-min="0" aria-label="Decrease Children">-</button>
+                <span class="stepper-val" id="vacay-children">0</span>
+                <button type="button" class="stepper-btn btn-step-plus" data-target="vacay-children" data-max="8" aria-label="Increase Children">+</button>
               </div>
             </div>
-            <div class="vacay-pop-total">
-              <span>Expedition Total:</span>
-              <strong id="vacay-live-subtotal">$2,150.00</strong>
+            <div class="popover-footer">
+              <div>
+                <span style="font-size: 0.72rem; color: #94A3B8; display:block;">Estimated Total:</span>
+                <strong id="vacay-live-subtotal" style="color: #FF6D00; font-weight: 700; font-size: 1.05rem;">$2,150.00</strong>
+              </div>
+              <button type="button" class="btn-popover-done" onclick="window.closeAllPopovers()">Done</button>
             </div>
           </div>
         </div>
 
         <button type="submit" class="cta-btn" id="btn-submit-search">
-          <span class="btn-text">Search Availability</span>
+          <span class="btn-text">Search Packages ➔</span>
           <span class="btn-spinner" aria-hidden="true"></span>
         </button>
       </div>
@@ -303,8 +419,13 @@
       <div class="jet-wizard-slides">
         <!-- Step 1: Routing -->
         <fieldset class="wizard-step-slide is-active" data-step="1" style="border: none; margin: 0; padding: 0;">
-          <h2 class="section-heading" id="engine-headline">Step 1: Mission Routing & Schedule</h2>
-          <p class="section-subheading" id="engine-subheadline">On-demand heavy, midsize, and light jet availability with private VIP FBO handling.</p>
+          <div class="card-header-row">
+            <div>
+              <h2 class="section-heading" id="engine-headline">Step 1: Mission Routing & Schedule</h2>
+              <p class="section-subheading" id="engine-subheadline">On-demand heavy, midsize, and light jet availability with private VIP FBO handling.</p>
+            </div>
+            <div class="social-proof-badge">★ 5.0 <span>(VIP Concierge)</span></div>
+          </div>
           
           <div class="input-strip">
             <div class="input-group" onclick="this.querySelector('input').focus()">
@@ -328,23 +449,46 @@
               <input type="date" id="input-jet-date" name="start_date" class="strip-input" required data-label="Charter Departure Date">
             </div>
             <div class="divider"></div>
-            <div class="input-group" onclick="this.querySelector('select').focus()">
-              <label class="micro-label">PASSENGERS</label>
-              <select id="input-jet-passengers" name="passengers" class="strip-input" data-label="Passengers">
-                <option value="5-8" selected>5 to 8 Passengers</option>
-                <option value="1-4">1 to 4 Passengers</option>
-                <option value="9-14">9 to 14 Passengers</option>
-                <option value="15+">15+ Group Charter</option>
-              </select>
+            
+            <!-- Jet Passenger Popover -->
+            <div class="input-group popover-container">
+              <label class="micro-label">ESTIMATED PASSENGERS</label>
+              <button type="button" class="strip-input" id="jet-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="jet-btn-label">4 VIP Passengers</span>
+                <span style="font-size: 10px; color: #94A3B8;">▼</span>
+              </button>
+
+              <input type="hidden" name="passengers" id="input-jet-passengers" value="4">
+
+              <div id="jet-popover" class="popover-menu" role="dialog" aria-label="Charter Passengers">
+                <div class="stepper-row">
+                  <div class="stepper-info"><h4>Charter Passengers</h4><p>Max capacity: 18</p></div>
+                  <div class="stepper-controls">
+                    <button type="button" class="stepper-btn" id="btn-jet-minus" aria-label="Decrease Passengers">-</button>
+                    <span class="stepper-val" id="val-jet-passengers">4</span>
+                    <button type="button" class="stepper-btn" id="btn-jet-plus" aria-label="Increase Passengers">+</button>
+                  </div>
+                </div>
+                <div class="popover-footer">
+                  <span style="font-size:0.75rem; color:#94A3B8;">Cabin manifest</span>
+                  <button type="button" class="btn-popover-done" onclick="window.closeAllPopovers()">Done</button>
+                </div>
+              </div>
             </div>
+
             <button type="button" class="cta-btn btn-wizard-next" data-next="2">Continue ➔</button>
           </div>
         </fieldset>
 
         <!-- Step 2: Aircraft Category -->
         <fieldset class="wizard-step-slide" data-step="2" style="border: none; margin: 0; padding: 0; display: none;">
-          <h2 class="section-heading">Step 2: Aircraft Fleet Class</h2>
-          <p class="section-subheading">Select your aircraft category, luggage tier, and onboard cabin preferences.</p>
+          <div class="card-header-row">
+            <div>
+              <h2 class="section-heading">Step 2: Aircraft Fleet Class</h2>
+              <p class="section-subheading">Select your aircraft category, luggage tier, and onboard cabin preferences.</p>
+            </div>
+            <div class="social-proof-badge">★ 5.0 <span>(VIP Concierge)</span></div>
+          </div>
           
           <div class="input-strip">
             <div class="input-group" style="flex: 2;">
@@ -381,8 +525,13 @@
 
         <!-- Step 3: VIP Concierge Contact -->
         <fieldset class="wizard-step-slide" data-step="3" style="border: none; margin: 0; padding: 0; display: none;">
-          <h2 class="section-heading">Step 3: Dedicated VIP Concierge Handling</h2>
-          <p class="section-subheading">Submit your direct contact details for a confidential, guaranteed charter quote.</p>
+          <div class="card-header-row">
+            <div>
+              <h2 class="section-heading">Step 3: Dedicated VIP Concierge Handling</h2>
+              <p class="section-subheading">Submit your direct contact details for a confidential, guaranteed charter quote.</p>
+            </div>
+            <div class="social-proof-badge">★ 5.0 <span>(VIP Concierge)</span></div>
+          </div>
           
           <div class="input-strip">
             <div class="input-group">
@@ -687,7 +836,67 @@
     // Render initial form fields for default Car Rentals
     renderProductFields('cars');
     renderPopularDestinations('cars');
+
+    // Align sliding indicator on initial load
+    setTimeout(() => {
+      const defaultBtn = document.querySelector('.tab-btn.active, .tab-pill.active');
+      updateTabIndicator(defaultBtn);
+    }, 50);
   }
+
+  // Dynamic Tab Active Indicator & Background Cross-Fader
+  function updateTabIndicator(activeBtn) {
+    const indicator = document.getElementById('tabIndicator');
+    if (!indicator) return;
+    const btn = activeBtn || document.querySelector('.tab-btn.active, .tab-pill.active');
+    if (btn) {
+      indicator.style.left = `${btn.offsetLeft}px`;
+      indicator.style.width = `${btn.offsetWidth}px`;
+    }
+  }
+
+  function updateBackgroundLayer(targetProduct) {
+    const layers = document.querySelectorAll('.bg-layer');
+    layers.forEach(layer => layer.classList.remove('active'));
+    const targetBg = document.getElementById(`bg-${targetProduct}`);
+    if (targetBg) {
+      if (targetBg.dataset.bg && !targetBg.style.backgroundImage) {
+        targetBg.style.backgroundImage = targetBg.dataset.bg;
+      }
+      targetBg.classList.add('active');
+    }
+  }
+
+  function prefetchTabBackground(productKey) {
+    const layer = document.getElementById(`bg-${productKey}`);
+    if (layer && layer.dataset.bg && !layer.style.backgroundImage) {
+      layer.style.backgroundImage = layer.dataset.bg;
+    }
+  }
+
+  // Universal Popover Dismissal
+  window.closeAllPopovers = function () {
+    document.querySelectorAll('.popover-menu').forEach(menu => {
+      menu.classList.remove('show');
+      menu.classList.remove('is-open');
+    });
+    document.querySelectorAll('[aria-expanded="true"]').forEach(el => {
+      el.setAttribute('aria-expanded', 'false');
+    });
+  };
+
+  // Global Outside-Click & Escape Dismissals
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.popover-container')) {
+      window.closeAllPopovers();
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      window.closeAllPopovers();
+    }
+  });
 
   function setupCurrencySelector() {
     if (!DOM.currencySelector) return;
@@ -729,7 +938,10 @@
     if (activeEl) {
       activeEl.classList.add('active');
       activeEl.setAttribute('aria-selected', 'true');
+      updateTabIndicator(activeEl);
     }
+
+    updateBackgroundLayer(targetProduct);
 
     const meta = PRODUCT_METADATA[targetProduct] || PRODUCT_METADATA.cars;
     if (DOM.body && meta) {
@@ -759,7 +971,7 @@
   };
 
   /**
-   * Product Tabs: Zero-Lag Theme Swap
+   * Product Tabs: Zero-Lag Theme Swap & Hover Prefetching
    */
   function setupProductTabs() {
     DOM.tabPills = document.querySelectorAll('.tab-btn, .tab-pill');
@@ -771,6 +983,16 @@
           window.switchTab(this, targetProduct);
         }
       });
+
+      pill.addEventListener('mouseenter', function () {
+        const prod = this.getAttribute('data-product');
+        if (prod) prefetchTabBackground(prod);
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      const activeBtn = document.querySelector('.tab-btn.active, .tab-pill.active');
+      updateTabIndicator(activeBtn);
     });
   }
 
@@ -923,10 +1145,14 @@
       setupCarsDurationBadge();
     } else if (productKey === 'flights') {
       setupTripTypeToggle();
+      setupFlightPassengerPopover();
+    } else if (productKey === 'hotels') {
+      setupHotelOccupancyPopover();
     } else if (productKey === 'vacations') {
       setupVacationControls();
     } else if (productKey === 'jets') {
       setupJetWizard();
+      setupJetPassengerPopover();
     }
   }
 
@@ -1004,6 +1230,158 @@
   }
 
   /**
+   * Product Flow 2b: Flight Passenger & Cabin Popover
+   */
+  function setupFlightPassengerPopover() {
+    const trigger = DOM.dynamicFields.querySelector('#flight-popover-trigger');
+    const popover = DOM.dynamicFields.querySelector('#flight-popover');
+    const label = DOM.dynamicFields.querySelector('#flight-btn-label');
+    const cabinSelect = DOM.dynamicFields.querySelector('#select-flight-cabin');
+
+    const hiddenAdults = DOM.dynamicFields.querySelector('#input-flight-adults');
+    const hiddenChildren = DOM.dynamicFields.querySelector('#input-flight-children');
+    const hiddenInfants = DOM.dynamicFields.querySelector('#input-flight-infants');
+    const hiddenCabin = DOM.dynamicFields.querySelector('#input-flight-cabin');
+
+    const elAdults = DOM.dynamicFields.querySelector('#val-flight-adults');
+    const elChildren = DOM.dynamicFields.querySelector('#val-flight-children');
+    const elInfants = DOM.dynamicFields.querySelector('#val-flight-infants');
+
+    if (!trigger || !popover) return;
+
+    if (portalState.flights) {
+      if (elAdults) elAdults.textContent = portalState.flights.adults;
+      if (elChildren) elChildren.textContent = portalState.flights.children;
+      if (elInfants) elInfants.textContent = portalState.flights.infants;
+      if (cabinSelect) cabinSelect.value = portalState.flights.cabin;
+      if (hiddenAdults) hiddenAdults.value = portalState.flights.adults;
+      if (hiddenChildren) hiddenChildren.value = portalState.flights.children;
+      if (hiddenInfants) hiddenInfants.value = portalState.flights.infants;
+      if (hiddenCabin) hiddenCabin.value = portalState.flights.cabin;
+      updateLabel();
+    }
+
+    function updateLabel() {
+      const total = portalState.flights.adults + portalState.flights.children + portalState.flights.infants;
+      if (label) {
+        label.textContent = `${total} Traveler${total > 1 ? 's' : ''}, ${portalState.flights.cabin}`;
+      }
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = popover.classList.contains('show');
+      window.closeAllPopovers();
+      if (!isOpen) {
+        popover.classList.add('show');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    popover.addEventListener('click', (e) => e.stopPropagation());
+
+    DOM.dynamicFields.querySelectorAll('[data-step-type]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const type = btn.getAttribute('data-step-type');
+        const delta = parseInt(btn.getAttribute('data-delta'), 10);
+        if (type === 'adults') {
+          portalState.flights.adults = Math.max(1, portalState.flights.adults + delta);
+          if (elAdults) elAdults.textContent = portalState.flights.adults;
+          if (hiddenAdults) hiddenAdults.value = portalState.flights.adults;
+        } else if (type === 'children') {
+          portalState.flights.children = Math.max(0, portalState.flights.children + delta);
+          if (elChildren) elChildren.textContent = portalState.flights.children;
+          if (hiddenChildren) hiddenChildren.value = portalState.flights.children;
+        } else if (type === 'infants') {
+          portalState.flights.infants = Math.max(0, portalState.flights.infants + delta);
+          if (elInfants) elInfants.textContent = portalState.flights.infants;
+          if (hiddenInfants) hiddenInfants.value = portalState.flights.infants;
+        }
+        updateLabel();
+      });
+    });
+
+    if (cabinSelect) {
+      cabinSelect.addEventListener('change', () => {
+        portalState.flights.cabin = cabinSelect.value;
+        if (hiddenCabin) hiddenCabin.value = cabinSelect.value;
+        updateLabel();
+      });
+    }
+  }
+
+  /**
+   * Product Flow 3: Hotels Occupancy Popover
+   */
+  function setupHotelOccupancyPopover() {
+    const trigger = DOM.dynamicFields.querySelector('#hotel-popover-trigger');
+    const popover = DOM.dynamicFields.querySelector('#hotel-popover');
+    const label = DOM.dynamicFields.querySelector('#hotel-btn-label');
+
+    const hiddenAdults = DOM.dynamicFields.querySelector('#input-hotel-adults');
+    const hiddenChildren = DOM.dynamicFields.querySelector('#input-hotel-children');
+    const hiddenRooms = DOM.dynamicFields.querySelector('#input-hotel-rooms');
+
+    const elAdults = DOM.dynamicFields.querySelector('#val-hotel-adults');
+    const elChildren = DOM.dynamicFields.querySelector('#val-hotel-children');
+    const elRooms = DOM.dynamicFields.querySelector('#val-hotel-rooms');
+
+    if (!trigger || !popover) return;
+
+    if (portalState.hotels) {
+      if (elAdults) elAdults.textContent = portalState.hotels.adults;
+      if (elChildren) elChildren.textContent = portalState.hotels.children;
+      if (elRooms) elRooms.textContent = portalState.hotels.rooms;
+      if (hiddenAdults) hiddenAdults.value = portalState.hotels.adults;
+      if (hiddenChildren) hiddenChildren.value = portalState.hotels.children;
+      if (hiddenRooms) hiddenRooms.value = portalState.hotels.rooms;
+      updateLabel();
+    }
+
+    function updateLabel() {
+      const totalGuests = portalState.hotels.adults + portalState.hotels.children;
+      if (label) {
+        label.textContent = `${totalGuests} Guest${totalGuests > 1 ? 's' : ''}, ${portalState.hotels.rooms} Room${portalState.hotels.rooms > 1 ? 's' : ''}`;
+      }
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = popover.classList.contains('show');
+      window.closeAllPopovers();
+      if (!isOpen) {
+        popover.classList.add('show');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    popover.addEventListener('click', (e) => e.stopPropagation());
+
+    DOM.dynamicFields.querySelectorAll('[data-hotel-step]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const type = btn.getAttribute('data-hotel-step');
+        const delta = parseInt(btn.getAttribute('data-delta'), 10);
+        if (type === 'adults') {
+          portalState.hotels.adults = Math.max(1, portalState.hotels.adults + delta);
+          if (elAdults) elAdults.textContent = portalState.hotels.adults;
+          if (hiddenAdults) hiddenAdults.value = portalState.hotels.adults;
+        } else if (type === 'children') {
+          portalState.hotels.children = Math.max(0, portalState.hotels.children + delta);
+          if (elChildren) elChildren.textContent = portalState.hotels.children;
+          if (hiddenChildren) hiddenChildren.value = portalState.hotels.children;
+        } else if (type === 'rooms') {
+          portalState.hotels.rooms = Math.max(1, portalState.hotels.rooms + delta);
+          if (elRooms) elRooms.textContent = portalState.hotels.rooms;
+          if (hiddenRooms) hiddenRooms.value = portalState.hotels.rooms;
+        }
+        updateLabel();
+      });
+    });
+  }
+
+  /**
    * Product Flow 4: Vacations Date Flexibility & Live Stepper Subtotal
    */
   function setupVacationControls() {
@@ -1048,17 +1426,17 @@
     if (popoverTrigger && guestPopover) {
       popoverTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
-        guestPopover.classList.toggle('is-open');
+        const isOpen = guestPopover.classList.contains('show') || guestPopover.classList.contains('is-open');
+        window.closeAllPopovers();
+        if (!isOpen) {
+          guestPopover.classList.add('show');
+          guestPopover.classList.add('is-open');
+          popoverTrigger.setAttribute('aria-expanded', 'true');
+        }
       });
 
       guestPopover.addEventListener('click', (e) => {
         e.stopPropagation();
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!guestPopover.contains(e.target) && e.target !== popoverTrigger) {
-          guestPopover.classList.remove('is-open');
-        }
       });
     }
 
@@ -1067,6 +1445,14 @@
       const kidsEl = DOM.dynamicFields.querySelector('#vacay-children');
       const adults = adultsEl ? parseInt(adultsEl.textContent, 10) || 1 : 1;
       const kids = kidsEl ? parseInt(kidsEl.textContent, 10) || 0 : 0;
+
+      portalState.vacations.adults = adults;
+      portalState.vacations.children = kids;
+      const hiddenAdults = DOM.dynamicFields.querySelector('#input-vacay-adults');
+      const hiddenChildren = DOM.dynamicFields.querySelector('#input-vacay-children');
+      if (hiddenAdults) hiddenAdults.value = adults;
+      if (hiddenChildren) hiddenChildren.value = kids;
+
       const total = (adults * 2150) + (kids * 1290);
       if (subtotalEl) {
         subtotalEl.textContent = formatCurrency(total);
@@ -1078,7 +1464,8 @@
     }
 
     minusBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
         const targetId = btn.getAttribute('data-target');
         const min = parseInt(btn.getAttribute('data-min') || '0', 10);
         const countEl = DOM.dynamicFields.querySelector(`#${targetId}`);
@@ -1093,7 +1480,8 @@
     });
 
     plusBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
         const targetId = btn.getAttribute('data-target');
         const max = parseInt(btn.getAttribute('data-max') || '10', 10);
         const countEl = DOM.dynamicFields.querySelector(`#${targetId}`);
@@ -1166,19 +1554,102 @@
     });
   }
 
+  /**
+   * Product Flow 5b: Private Jet Passenger Popover
+   */
+  function setupJetPassengerPopover() {
+    const trigger = DOM.dynamicFields.querySelector('#jet-popover-trigger');
+    const popover = DOM.dynamicFields.querySelector('#jet-popover');
+    const label = DOM.dynamicFields.querySelector('#jet-btn-label');
+    const hiddenPassengers = DOM.dynamicFields.querySelector('#input-jet-passengers');
+    const elVal = DOM.dynamicFields.querySelector('#val-jet-passengers');
+    const btnMinus = DOM.dynamicFields.querySelector('#btn-jet-minus');
+    const btnPlus = DOM.dynamicFields.querySelector('#btn-jet-plus');
+
+    if (!trigger || !popover) return;
+
+    if (portalState.jets) {
+      if (elVal) elVal.textContent = portalState.jets.passengers;
+      if (hiddenPassengers) hiddenPassengers.value = portalState.jets.passengers;
+      updateLabel();
+    }
+
+    function updateLabel() {
+      if (label) {
+        label.textContent = `${portalState.jets.passengers} VIP Passenger${portalState.jets.passengers > 1 ? 's' : ''}`;
+      }
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = popover.classList.contains('show');
+      window.closeAllPopovers();
+      if (!isOpen) {
+        popover.classList.add('show');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    popover.addEventListener('click', (e) => e.stopPropagation());
+
+    if (btnMinus) {
+      btnMinus.addEventListener('click', (e) => {
+        e.preventDefault();
+        portalState.jets.passengers = Math.max(1, portalState.jets.passengers - 1);
+        if (elVal) elVal.textContent = portalState.jets.passengers;
+        if (hiddenPassengers) hiddenPassengers.value = portalState.jets.passengers;
+        updateLabel();
+      });
+    }
+
+    if (btnPlus) {
+      btnPlus.addEventListener('click', (e) => {
+        e.preventDefault();
+        portalState.jets.passengers = Math.min(18, portalState.jets.passengers + 1);
+        if (elVal) elVal.textContent = portalState.jets.passengers;
+        if (hiddenPassengers) hiddenPassengers.value = portalState.jets.passengers;
+        updateLabel();
+      });
+    }
+  }
+
   function setSmartDefaultDates() {
     const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
     const plus3 = new Date(today);
     plus3.setDate(plus3.getDate() + 3);
     const plus10 = new Date(today);
     plus10.setDate(plus10.getDate() + 10);
 
-    const start = DOM.dynamicFields.querySelector('input[name="start_date"]');
-    const end = DOM.dynamicFields.querySelector('input[name="end_date"]');
-
     const fmt = d => d.toISOString().split('T')[0];
-    if (start && start.type === 'date') start.value = fmt(plus3);
-    if (end && end.type === 'date') end.value = fmt(plus10);
+
+    const startInputs = DOM.dynamicFields.querySelectorAll('input[type="date"][name="start_date"], input[type="date"][id*="pickup"], input[type="date"][id*="dep"]');
+    const endInputs = DOM.dynamicFields.querySelectorAll('input[type="date"][name="end_date"], input[type="date"][id*="return"], input[type="date"][id*="ret"], input[type="date"][id*="out"]');
+
+    startInputs.forEach(start => {
+      start.min = todayStr;
+      if (!start.value) start.value = fmt(plus3);
+    });
+
+    endInputs.forEach(end => {
+      end.min = fmt(plus3);
+      if (!end.value) end.value = fmt(plus10);
+    });
+
+    // Synchronize start date changes to update end date minimum constraint
+    startInputs.forEach(start => {
+      start.addEventListener('change', function () {
+        if (!this.value) return;
+        endInputs.forEach(end => {
+          end.min = this.value;
+          if (end.value && end.value < this.value) {
+            const nextDay = new Date(this.value);
+            nextDay.setDate(nextDay.getDate() + 3);
+            end.value = fmt(nextDay);
+          }
+        });
+      });
+    });
   }
 
   /**

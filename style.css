@@ -245,38 +245,96 @@ select.currency-selector option {
 /* --------------------------------------------------------------------------
    5. ULTRA-COMPACT HERO SECTION & SINGLE-STRIP CONNECTED SEARCH ENGINE
    -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   5. ULTRA-COMPACT LUXURY HERO SECTION & CONNECTED SEARCH ENGINE
+   -------------------------------------------------------------------------- */
 .hero-search-wrapper {
   position: relative;
   width: 100%;
-  min-height: 520px;
-  padding: 60px 20px 40px;
-  background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+  min-height: 580px;
+  padding: 40px 20px 60px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
-/* ULTRA-COMPACT MAIN CARD */
-.compact-card {
-  background: #1E293B; /* Dark slate */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+/* Dynamic Background Cross-Fade Layers */
+.bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 1080px;
-  overflow: hidden; /* Keeps integrated tabs flush with top border */
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+.bg-layer.active {
+  opacity: 1;
+}
+
+/* Background Overlay for Contrast & Text Legibility */
+.bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(11, 17, 32, 0.65) 0%, rgba(11, 17, 32, 0.88) 100%);
+  z-index: 2;
+}
+
+/* Luxury Hero Headline Container */
+.hero-title-container {
   position: relative;
   z-index: 10;
-  box-sizing: border-box;
+  text-align: center;
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+.hero-title {
+  font-size: clamp(1.8rem, 3.8vw, 3rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.8px;
+  margin-bottom: 10px;
+  color: #FFFFFF;
+}
+.hero-subtitle {
+  font-size: 0.95rem;
+  color: #94A3B8;
+  font-weight: 500;
 }
 
-/* 1. Integrated Header Tabs */
+/* ULTRA-COMPACT LUXURY CARD */
+.compact-card {
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 1100px;
+  position: relative;
+  z-index: 10;
+  overflow: visible; /* Prevents popover & autocomplete dropdown clipping */
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* 1. Integrated Header Tabs with Sliding Active Indicator */
 .integrated-tabs {
+  position: relative;
   display: flex;
-  background: #0F172A; /* Darker slate for contrast */
+  background: rgba(11, 17, 32, 0.85);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px 20px 0 0;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -284,42 +342,60 @@ select.currency-selector option {
   display: none;
 }
 
+.tab-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: #FF6D00;
+  box-shadow: 0 0 12px #FF6D00;
+  border-radius: 3px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 3;
+}
+
 .tab-btn {
+  position: relative;
+  z-index: 2;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
   color: #94A3B8;
-  padding: 14px 24px;
-  font-weight: 600;
+  padding: 16px 24px;
+  font-weight: 700;
   font-size: 0.875rem;
+  font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.2s ease;
   white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: inherit;
 }
 
 .tab-btn:hover {
   color: #F8FAFC;
-  background: rgba(255, 255, 255, 0.03);
 }
 
 .tab-btn.active {
   color: #FFFFFF;
-  border-bottom-color: #FF6D00;
-  background: rgba(255, 255, 255, 0.05);
 }
 
-/* 5. Tightened Layout Padding */
+/* 2. Card Body */
 .card-body {
-  padding: 20px 24px; /* Reduced padding to p-5 equivalent */
+  padding: 24px 28px;
+}
+
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .section-heading {
-  font-size: 1.125rem; /* text-lg */
-  font-weight: 600; /* font-semibold */
+  font-size: 1.15rem;
+  font-weight: 700;
   color: #FFFFFF;
   margin-bottom: 4px;
 }
@@ -327,47 +403,69 @@ select.currency-selector option {
 .section-subheading {
   font-size: 0.8125rem;
   color: #94A3B8;
-  margin-bottom: 16px; /* Tighter gap before inputs */
+  margin: 0;
+}
+
+.social-proof-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 5px 14px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #FFC107;
+}
+.social-proof-badge span {
+  color: #CBD5E1;
+  font-weight: 500;
 }
 
 /* Sub-Navigation for specific tabs */
 .subnav-row {
   display: flex;
-  gap: 16px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 .subnav-btn {
-  background: transparent;
-  border: none;
-  font-size: 0.8125rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 5px 16px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #64748B;
+  color: #94A3B8;
   cursor: pointer;
-  transition: color 0.2s;
-  padding: 0;
+  transition: all 0.2s;
   font-family: inherit;
 }
 .subnav-btn:hover {
-  color: #94A3B8;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.1);
 }
 .subnav-btn.active {
-  color: #FFFFFF;
+  background: rgba(255, 109, 0, 0.15);
+  border-color: #FF6D00;
+  color: #FF6D00;
 }
 
-/* 2. SINGLE CONNECTED INPUT STRIP */
+/* 3. SINGLE CONNECTED PILL INPUT STRIP */
 .input-strip {
   display: flex;
-  background: #0F172A;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 9999px; /* Pill shape */
+  background: #0B1120;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
   align-items: center;
-  transition: all 0.3s;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
   position: relative;
 }
 
 .input-strip:focus-within {
   border-color: #FF6D00;
-  box-shadow: 0 0 0 3px rgba(255, 109, 0, 0.2);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 109, 0, 0.3);
 }
 
 .input-group {
@@ -375,29 +473,35 @@ select.currency-selector option {
   flex-direction: column;
   flex: 1;
   padding: 8px 20px;
-  cursor: text;
+  cursor: pointer;
   position: relative;
+  transition: background 0.2s;
   min-width: 0;
+}
+
+.input-group:hover {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* Vertical Interior Dividers */
 .divider {
   width: 1px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.1); /* divide-slate-700/50 */
+  height: 32px;
+  background: rgba(255, 255, 255, 0.12);
   flex-shrink: 0;
 }
 
 .micro-label { 
-  font-size: 9px; 
-  font-weight: 700; 
+  font-size: 8.5px; 
+  font-weight: 800; 
   color: #94A3B8; 
   text-transform: uppercase; 
-  letter-spacing: 0.5px; 
+  letter-spacing: 0.6px; 
   margin-bottom: 2px; 
   display: flex;
   align-items: center;
   gap: 6px;
+  pointer-events: none;
 }
 
 .micro-label .badge {
@@ -412,13 +516,16 @@ select.currency-selector option {
 .strip-input { 
   border: none; 
   background: transparent; 
-  font-size: 0.95rem; 
+  font-size: 0.9rem; 
   font-weight: 600; 
   color: #FFFFFF; 
   outline: none; 
   width: 100%; 
   cursor: pointer; 
   font-family: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .strip-input::placeholder {
@@ -427,7 +534,11 @@ select.currency-selector option {
 
 .strip-input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
+  opacity: 0.6;
   cursor: pointer;
+}
+.strip-input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 select.strip-input {
@@ -449,13 +560,13 @@ select.strip-input option {
   background: #FF6D00;
   color: #FFFFFF;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   padding: 0 32px;
   border: none;
   border-radius: 0 9999px 9999px 0; /* Snaps flush to right edge */
   cursor: pointer;
   align-self: stretch; /* Fills exact height of the input strip */
-  transition: background-color 0.2s, transform 0.2s;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
@@ -467,9 +578,11 @@ select.strip-input option {
 
 .cta-btn:hover {
   background: #E66200;
+  box-shadow: 0 0 25px rgba(255, 109, 0, 0.5);
+  transform: scale(1.02);
 }
 .cta-btn:active {
-  transform: scale(0.99);
+  transform: scale(0.98);
 }
 
 /* Autocomplete inside input-group */
@@ -479,11 +592,11 @@ select.strip-input option {
   left: 0;
   right: 0;
   min-width: 260px;
-  background: #0F172A;
+  background: #0B1120;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+  z-index: 1050;
   list-style: none;
   padding: 6px;
   margin: 0;
@@ -540,7 +653,7 @@ select.strip-input option {
   font-size: 0.7rem;
   font-weight: 700;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  z-index: 1001;
+  z-index: 1060;
   white-space: nowrap;
 }
 .input-group input.has-error,
@@ -548,7 +661,106 @@ select.strip-input option {
   color: #EF4444;
 }
 
-/* Vacation Passenger Counter Popover inside Strip */
+/* 5. UNIVERSAL POPOVER MENUS & STEPPERS */
+.popover-container {
+  position: relative;
+}
+
+.popover-menu {
+  display: block;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: #1E293B;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  padding: 18px;
+  width: 320px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 15px rgba(255, 109, 0, 0.15);
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.96);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.popover-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.stepper-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.stepper-info h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0;
+}
+.stepper-info p {
+  font-size: 0.72rem;
+  color: #94A3B8;
+  margin: 0;
+}
+
+.stepper-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0B1120;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 3px 10px;
+}
+.stepper-btn {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0 4px;
+  line-height: 1;
+}
+.stepper-btn:hover {
+  color: #FF6D00;
+}
+.stepper-val {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #FFFFFF;
+  width: 18px;
+  text-align: center;
+}
+
+.popover-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.btn-popover-done {
+  background: #FF6D00;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+.btn-popover-done:hover {
+  background: #E66200;
+}
+
+/* Vacation Specific Legacy Popover Support */
 .vacation-guest-popover {
   position: absolute;
   top: calc(100% + 8px);
@@ -559,70 +771,11 @@ select.strip-input option {
   border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   padding: 16px;
-  z-index: 1000;
+  z-index: 1050;
   display: none;
 }
 .vacation-guest-popover.is-open {
   display: block;
-}
-.vacay-pop-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-.vacay-pop-info h5 {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin: 0;
-}
-.vacay-pop-info p {
-  font-size: 0.75rem;
-  color: #94A3B8;
-  margin: 0;
-}
-.vacay-pop-counter {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 4px 10px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
-}
-.vacay-pop-counter button {
-  background: transparent;
-  border: none;
-  font-size: 1.1rem;
-  color: #FFFFFF;
-  cursor: pointer;
-  line-height: 1;
-}
-.vacay-pop-counter button:hover {
-  color: #FF6D00;
-}
-.vacay-pop-counter span {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  width: 18px;
-  text-align: center;
-}
-.vacay-pop-total {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.vacay-pop-total span {
-  font-size: 0.8rem;
-  color: #94A3B8;
-}
-.vacay-pop-total strong {
-  color: #FF6D00;
-  font-size: 0.95rem;
 }
 
 /* Private Jets Minimal Progress Bar */
@@ -630,56 +783,60 @@ select.strip-input option {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .jet-step {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #64748B;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 .jet-step.active {
   color: #FF6D00;
 }
 .jet-line {
   height: 2px;
-  width: 40px;
-  background: rgba(255, 255, 255, 0.1);
+  width: 32px;
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 2px;
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .hero-search-wrapper {
-    padding: 40px 16px;
+    padding: 30px 16px;
     min-height: auto;
+  }
+  .hero-title {
+    font-size: 1.8rem;
   }
   .input-strip {
     flex-direction: column;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
     align-items: stretch;
   }
   .input-group {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 18px;
     width: 100%;
   }
   .divider {
     display: none;
   }
   .cta-btn {
-    border-radius: 0;
+    border-radius: 0 0 16px 16px;
     padding: 16px;
-    height: auto;
+    justify-content: center;
     width: 100%;
   }
+  .popover-menu,
   .vacation-guest-popover {
+    width: 100%;
     right: auto;
     left: 0;
-    width: 100%;
   }
 }
 
