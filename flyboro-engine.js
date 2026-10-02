@@ -28,7 +28,7 @@
 
   // State & Multi-Currency Localization
   const state = {
-    activeProduct: 'cars',
+    activeProduct: 'flights',
     abortController: null,
     currentResults: null,
     originalResults: null,
@@ -102,456 +102,470 @@
 
   // Dynamic Form Field Templates (Ultra-Compact Luxury Single-Strip Search Engine)
   const FORM_TEMPLATES = {
-    cars: `
-      <div class="card-header-row">
-        <div>
-          <h2 class="section-heading" id="engine-headline">Reserve Premium Car Rentals Worldwide</h2>
-          <p class="section-subheading" id="engine-subheadline">Partnered with Carnect for direct fleet availability, zero hidden fees, and instant vouchers.</p>
-        </div>
-        <div class="social-proof-badge">★ 4.9 <span>(1,200+ Fleets)</span></div>
-      </div>
-      
-      <div class="input-strip">
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">PICK-UP LOCATION *</label>
-          <div class="input-wrapper">
-            <input type="text" id="input-pickup-location" name="location" class="strip-input location-autocomplete" placeholder="City or airport (e.g. DEL, MIA)" value="Miami (MIA)" required autocomplete="off" data-label="Pick-up Location">
-            <ul class="autocomplete-dropdown" role="listbox"></ul>
-          </div>
-        </div>
-        <div class="divider"></div>
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">PICK-UP DATE * <span class="badge" id="car-duration-badge">⏱ <span id="car-duration-text">7 Days</span></span></label>
-          <input type="date" id="input-pickup-date" name="start_date" class="strip-input" required data-label="Pick-up Date">
-        </div>
-        <div class="divider"></div>
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">DROP-OFF DATE *</label>
-          <input type="date" id="input-return-date" name="end_date" class="strip-input" required data-label="Drop-off Date">
-        </div>
-        <div class="divider"></div>
-        <div class="input-group" onclick="this.querySelector('select').focus()">
-          <label class="micro-label">DRIVER AGE</label>
-          <select id="input-driver-age" name="driver_age" class="strip-input" data-label="Driver Age">
-            <option value="25+" selected>25 to 69 Years (Standard)</option>
-            <option value="21-24">Under 25 Years</option>
-            <option value="70+">70+ Years</option>
-          </select>
-        </div>
-        <button type="submit" class="cta-btn" id="btn-submit-search">
-          <span class="btn-text">Search Cars ➔</span>
-          <span class="btn-spinner" aria-hidden="true"></span>
-        </button>
-      </div>
-    `,
     flights: `
-      <div class="card-header-row">
-        <div>
-          <h2 class="section-heading" id="engine-headline">Compare & Book Commercial Airline Flights</h2>
-          <p class="section-subheading" id="engine-subheadline">Real-time global GDS ticketing powered by RateHawk with flexible fare options.</p>
-        </div>
-        <div class="social-proof-badge">★ 4.9 <span>(3,500+ Routes)</span></div>
+      <div class="card-header-block">
+        <h2 class="card-title">Compare & Book Commercial Airline Flights</h2>
+        <p class="card-subtitle">Real-time global GDS ticketing powered by RateHawk with flexible fare options.</p>
       </div>
-      
-      <div class="subnav-row" role="radiogroup" aria-label="Flight Trip Type">
-        <button type="button" class="subnav-btn active" data-trip="roundtrip">Round-Trip ⇄</button>
-        <button type="button" class="subnav-btn" data-trip="oneway">One-Way →</button>
-        <button type="button" class="subnav-btn" data-trip="multicity">Multi-City ✈</button>
+
+      <div class="trip-segment-bar" role="radiogroup" aria-label="Flight Trip Type">
+        <button type="button" class="segment-btn active" data-trip="roundtrip">Round-Trip ⇄</button>
+        <button type="button" class="segment-btn" data-trip="oneway">One-Way ➔</button>
+        <button type="button" class="segment-btn" data-trip="multicity">Multi-City ✈</button>
       </div>
       <input type="hidden" name="trip_type" id="flight-trip-type" value="roundtrip">
 
-      <div class="input-strip">
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">FLYING FROM *</label>
-          <div class="input-wrapper">
-            <input type="text" id="input-origin" name="origin" class="strip-input location-autocomplete" placeholder="Origin (e.g. DEL, JFK)" value="New Delhi (DEL)" required autocomplete="off" data-label="Flying From">
-            <ul class="autocomplete-dropdown" role="listbox"></ul>
+      <div class="form-grid-row">
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-flight-origin">FLYING FROM *</label>
+          <div class="field-input-box">
+            <input type="text" id="input-flight-origin" name="origin" class="location-autocomplete" placeholder="City or airport (e.g. DEL, JFK)" value="New Delhi (DEL)" required autocomplete="off" data-label="Flying From">
+            <span style="font-size:10px; color:#94A3B8;">📍</span>
+          </div>
+          <ul class="autocomplete-menu autocomplete-dropdown" role="listbox"></ul>
+        </div>
+
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-destination">FLYING TO *</label>
+          <div class="field-input-box">
+            <input type="text" id="input-destination" name="destination" class="location-autocomplete" placeholder="Destination (e.g. LHR, DXB)" value="London (LHR)" required autocomplete="off" data-label="Flying To">
+            <span style="font-size:10px; color:#94A3B8;">📍</span>
+          </div>
+          <ul class="autocomplete-menu autocomplete-dropdown" role="listbox"></ul>
+        </div>
+
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-flight-dep">DEPARTURE DATE *</label>
+          <div class="field-input-box">
+            <input type="date" id="input-flight-dep" name="start_date" required data-label="Departure Date">
           </div>
         </div>
-        <div class="divider"></div>
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">FLYING TO *</label>
-          <div class="input-wrapper">
-            <input type="text" id="input-destination" name="destination" class="strip-input location-autocomplete" placeholder="Destination (e.g. LHR, DXB)" value="London (LHR)" required autocomplete="off" data-label="Flying To">
-            <ul class="autocomplete-dropdown" role="listbox"></ul>
+
+        <div class="input-field-container" id="flight-return-group">
+          <label class="field-micro-label" for="input-flight-ret">RETURN DATE *</label>
+          <div class="field-input-box">
+            <input type="date" id="input-flight-ret" name="end_date" required data-label="Return Date">
           </div>
         </div>
-        <div class="divider"></div>
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">DEPARTURE DATE *</label>
-          <input type="date" id="input-flight-dep" name="start_date" class="strip-input" required data-label="Departure Date">
-        </div>
-        <div class="divider" id="flight-return-divider"></div>
-        <div class="input-group" id="flight-return-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">RETURN DATE *</label>
-          <input type="date" id="input-flight-ret" name="end_date" class="strip-input" required data-label="Return Date">
-        </div>
-        <div class="divider"></div>
-        
-        <!-- Flight Passenger & Cabin Popover -->
-        <div class="input-group popover-container">
-          <label class="micro-label">PASSENGERS & CABIN</label>
-          <button type="button" class="strip-input" id="flight-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="display:flex; justify-content:space-between; align-items:center;">
+      </div>
+
+      <div class="form-bottom-row">
+        <div class="input-field-container popover-container" style="min-width: 260px;">
+          <label class="field-micro-label">CABIN & PASSENGERS</label>
+          <div class="field-input-box" id="flight-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="cursor:pointer;">
             <span id="flight-btn-label">1 Traveler, Economy</span>
-            <span style="font-size: 10px; color: #94A3B8;">▼</span>
-          </button>
+            <span style="font-size:10px; color:#64748B;">▼</span>
+          </div>
 
           <input type="hidden" name="adults" id="input-flight-adults" value="1">
           <input type="hidden" name="children" id="input-flight-children" value="0">
           <input type="hidden" name="infants" id="input-flight-infants" value="0">
           <input type="hidden" name="cabin" id="input-flight-cabin" value="Economy">
 
-          <div id="flight-popover" class="popover-menu" role="dialog" aria-label="Flight Passengers and Cabin">
+          <div id="flight-popover" class="popover-dropdown popover-menu" role="dialog" aria-label="Flight Passengers and Cabin">
             <div class="stepper-row">
-              <div class="stepper-info"><h4>Adults</h4><p>12+ years</p></div>
-              <div class="stepper-controls">
-                <button type="button" class="stepper-btn" data-step-type="adults" data-delta="-1" aria-label="Decrease Adults">-</button>
-                <span class="stepper-val" id="val-flight-adults">1</span>
-                <button type="button" class="stepper-btn" data-step-type="adults" data-delta="1" aria-label="Increase Adults">+</button>
-              </div>
-            </div>
-            <div class="stepper-row">
-              <div class="stepper-info"><h4>Children</h4><p>2–11 years</p></div>
-              <div class="stepper-controls">
-                <button type="button" class="stepper-btn" data-step-type="children" data-delta="-1" aria-label="Decrease Children">-</button>
-                <span class="stepper-val" id="val-flight-children">0</span>
-                <button type="button" class="stepper-btn" data-step-type="children" data-delta="1" aria-label="Increase Children">+</button>
+              <div class="stepper-desc"><h5>Adults</h5><p>12+ years</p></div>
+              <div class="stepper-actions">
+                <button type="button" class="btn-counter" data-step-type="adults" data-delta="-1" aria-label="Decrease Adults">-</button>
+                <span class="stepper-num" id="val-flight-adults">1</span>
+                <button type="button" class="btn-counter" data-step-type="adults" data-delta="1" aria-label="Increase Adults">+</button>
               </div>
             </div>
             <div class="stepper-row">
-              <div class="stepper-info"><h4>Infants</h4><p>Under 2 years</p></div>
-              <div class="stepper-controls">
-                <button type="button" class="stepper-btn" data-step-type="infants" data-delta="-1" aria-label="Decrease Infants">-</button>
-                <span class="stepper-val" id="val-flight-infants">0</span>
-                <button type="button" class="stepper-btn" data-step-type="infants" data-delta="1" aria-label="Increase Infants">+</button>
-              </div>
-            </div>
-            <div class="popover-footer" style="flex-direction:column; align-items:flex-start; gap:8px;">
-              <span style="font-size: 0.72rem; color: #94A3B8; font-weight:700;">CABIN CLASS</span>
-              <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                <select class="strip-input" id="select-flight-cabin" style="background:#0B1120; padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.12); width:auto;">
-                  <option value="Economy">Economy</option>
-                  <option value="Premium Economy">Premium Economy</option>
-                  <option value="Business Class">Business Class</option>
-                  <option value="First Class">First Class</option>
-                </select>
-                <button type="button" class="btn-popover-done" onclick="window.closeAllPopovers()">Done</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" class="cta-btn" id="btn-submit-search">
-          <span class="btn-text">Search Flights ➔</span>
-          <span class="btn-spinner" aria-hidden="true"></span>
-        </button>
-      </div>
-    `,
-    hotels: `
-      <div class="card-header-row">
-        <div>
-          <h2 class="section-heading" id="engine-headline">Curated 5-Star Luxury Hotels & Private Resorts</h2>
-          <p class="section-subheading" id="engine-subheadline">Direct Hotelbeds portfolio integration offering premier hospitality perks and best rates.</p>
-        </div>
-        <div class="social-proof-badge">★ 5.0 <span>(850+ Resorts)</span></div>
-      </div>
-      
-      <div class="input-strip">
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">DESTINATION / RESORT *</label>
-          <div class="input-wrapper">
-            <input type="text" id="input-hotel-dest" name="location" class="strip-input location-autocomplete" placeholder="City or hotel (e.g. CDG, DXB)" value="Paris (CDG)" required autocomplete="off" data-label="Destination / Resort">
-            <ul class="autocomplete-dropdown" role="listbox"></ul>
-          </div>
-        </div>
-        <div class="divider"></div>
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">CHECK-IN DATE *</label>
-          <input type="date" id="input-hotel-in" name="start_date" class="strip-input" required data-label="Check-in Date">
-        </div>
-        <div class="divider"></div>
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">CHECK-OUT DATE *</label>
-          <input type="date" id="input-hotel-out" name="end_date" class="strip-input" required data-label="Check-out Date">
-        </div>
-        <div class="divider"></div>
-        
-        <!-- Hotels Occupancy Popover -->
-        <div class="input-group popover-container">
-          <label class="micro-label">GUESTS & ROOMS</label>
-          <button type="button" class="strip-input" id="hotel-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="display:flex; justify-content:space-between; align-items:center;">
-            <span id="hotel-btn-label">2 Guests, 1 Room</span>
-            <span style="font-size: 10px; color: #94A3B8;">▼</span>
-          </button>
-
-          <input type="hidden" name="adults" id="input-hotel-adults" value="2">
-          <input type="hidden" name="children" id="input-hotel-children" value="0">
-          <input type="hidden" name="rooms" id="input-hotel-rooms" value="1">
-
-          <div id="hotel-popover" class="popover-menu" role="dialog" aria-label="Hotel Guests and Rooms">
-            <div class="stepper-row">
-              <div class="stepper-info"><h4>Adults</h4><p>18+ years</p></div>
-              <div class="stepper-controls">
-                <button type="button" class="stepper-btn" data-hotel-step="adults" data-delta="-1" aria-label="Decrease Adults">-</button>
-                <span class="stepper-val" id="val-hotel-adults">2</span>
-                <button type="button" class="stepper-btn" data-hotel-step="adults" data-delta="1" aria-label="Increase Adults">+</button>
+              <div class="stepper-desc"><h5>Children</h5><p>2–11 years</p></div>
+              <div class="stepper-actions">
+                <button type="button" class="btn-counter" data-step-type="children" data-delta="-1" aria-label="Decrease Children">-</button>
+                <span class="stepper-num" id="val-flight-children">0</span>
+                <button type="button" class="btn-counter" data-step-type="children" data-delta="1" aria-label="Increase Children">+</button>
               </div>
             </div>
             <div class="stepper-row">
-              <div class="stepper-info"><h4>Children</h4><p>0–17 years</p></div>
-              <div class="stepper-controls">
-                <button type="button" class="stepper-btn" data-hotel-step="children" data-delta="-1" aria-label="Decrease Children">-</button>
-                <span class="stepper-val" id="val-hotel-children">0</span>
-                <button type="button" class="stepper-btn" data-hotel-step="children" data-delta="1" aria-label="Increase Children">+</button>
+              <div class="stepper-desc"><h5>Infants</h5><p>Under 2 years</p></div>
+              <div class="stepper-actions">
+                <button type="button" class="btn-counter" data-step-type="infants" data-delta="-1" aria-label="Decrease Infants">-</button>
+                <span class="stepper-num" id="val-flight-infants">0</span>
+                <button type="button" class="btn-counter" data-step-type="infants" data-delta="1" aria-label="Increase Infants">+</button>
               </div>
             </div>
-            <div class="stepper-row">
-              <div class="stepper-info"><h4>Rooms</h4><p>Suites / Rooms</p></div>
-              <div class="stepper-controls">
-                <button type="button" class="stepper-btn" data-hotel-step="rooms" data-delta="-1" aria-label="Decrease Rooms">-</button>
-                <span class="stepper-val" id="val-hotel-rooms">1</span>
-                <button type="button" class="stepper-btn" data-hotel-step="rooms" data-delta="1" aria-label="Increase Rooms">+</button>
-              </div>
-            </div>
-            <div class="popover-footer">
-              <span style="font-size:0.75rem; color:#94A3B8;">Occupancy configured</span>
+            <div style="margin-top: 12px; display:flex; justify-content:space-between; align-items:center;">
+              <select id="select-flight-cabin" style="padding:4px 8px; border-radius:6px; border:1px solid #CBD5E1; font-size:0.8rem; background:#F8FAFC; color:#0F172A; font-family:inherit;">
+                <option value="Economy">Economy</option>
+                <option value="Premium Economy">Premium Economy</option>
+                <option value="Business Class">Business Class</option>
+                <option value="First Class">First Class</option>
+              </select>
               <button type="button" class="btn-popover-done" onclick="window.closeAllPopovers()">Done</button>
             </div>
           </div>
         </div>
 
-        <button type="submit" class="cta-btn" id="btn-submit-search">
+        <button type="submit" class="btn-search-availability" id="btn-submit-search">
+          <span class="btn-text">Search Availability ➔</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+    `,
+
+    cars: `
+      <div class="card-header-block">
+        <h2 class="card-title">Reserve Premium Car Rentals Worldwide</h2>
+        <p class="card-subtitle">Partnered with Carnect for direct fleet availability, zero hidden fees, and instant vouchers.</p>
+      </div>
+
+      <div class="form-grid-row">
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-pickup-location">PICK-UP LOCATION *</label>
+          <div class="field-input-box">
+            <input type="text" id="input-pickup-location" name="location" class="location-autocomplete" placeholder="City or airport (e.g. MIA, DEL)" value="Miami (MIA)" required autocomplete="off" data-label="Pick-up Location">
+            <span style="font-size:10px; color:#94A3B8;">📍</span>
+          </div>
+          <ul class="autocomplete-menu autocomplete-dropdown" role="listbox"></ul>
+        </div>
+
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-pickup-date">PICK-UP DATE *</label>
+          <div class="field-input-box">
+            <input type="date" id="input-pickup-date" name="start_date" required data-label="Pick-up Date">
+          </div>
+        </div>
+
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-return-date">DROP-OFF DATE *</label>
+          <div class="field-input-box">
+            <input type="date" id="input-return-date" name="end_date" required data-label="Drop-off Date">
+          </div>
+        </div>
+
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-driver-age">DRIVER AGE</label>
+          <div class="field-input-box">
+            <select id="input-driver-age" name="driver_age" data-label="Driver Age">
+              <option value="25+" selected>25 to 69 Years (Standard)</option>
+              <option value="21-24">Under 25 Years</option>
+              <option value="70+">70+ Years</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-bottom-row">
+        <div style="font-size:0.85rem; color:#64748B;">
+          Duration: <strong style="color:#0B1E36;" id="car-duration-badge">⏱ <span id="car-duration-text">5 Days</span></strong> • Unlimited Mileage Included
+        </div>
+        <button type="submit" class="btn-search-availability" id="btn-submit-search">
+          <span class="btn-text">Search Cars ➔</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+    `,
+
+    hotels: `
+      <div class="card-header-block">
+        <h2 class="card-title">Curated 5-Star Luxury Hotels & Private Resorts</h2>
+        <p class="card-subtitle">Direct Hotelbeds portfolio integration offering premier hospitality perks and best rates.</p>
+      </div>
+
+      <div class="form-grid-row">
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-hotel-dest">DESTINATION / RESORT *</label>
+          <div class="field-input-box">
+            <input type="text" id="input-hotel-dest" name="location" class="location-autocomplete" placeholder="City or hotel (e.g. CDG, DXB)" value="Paris (CDG)" required autocomplete="off" data-label="Destination / Resort">
+            <span style="font-size:10px; color:#94A3B8;">🏨</span>
+          </div>
+          <ul class="autocomplete-menu autocomplete-dropdown" role="listbox"></ul>
+        </div>
+
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-hotel-in">CHECK-IN DATE *</label>
+          <div class="field-input-box">
+            <input type="date" id="input-hotel-in" name="start_date" required data-label="Check-in Date">
+          </div>
+        </div>
+
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-hotel-out">CHECK-OUT DATE *</label>
+          <div class="field-input-box">
+            <input type="date" id="input-hotel-out" name="end_date" required data-label="Check-out Date">
+          </div>
+        </div>
+
+        <div class="input-field-container popover-container">
+          <label class="field-micro-label">GUESTS & ROOMS</label>
+          <div class="field-input-box" id="hotel-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="cursor:pointer;">
+            <span id="hotel-btn-label">2 Guests, 1 Room</span>
+            <span style="font-size:10px; color:#64748B;">▼</span>
+          </div>
+
+          <input type="hidden" name="adults" id="input-hotel-adults" value="2">
+          <input type="hidden" name="children" id="input-hotel-children" value="0">
+          <input type="hidden" name="rooms" id="input-hotel-rooms" value="1">
+
+          <div id="hotel-popover" class="popover-dropdown popover-menu" role="dialog" aria-label="Hotel Guests and Rooms">
+            <div class="stepper-row">
+              <div class="stepper-desc"><h5>Adults</h5><p>18+ years</p></div>
+              <div class="stepper-actions">
+                <button type="button" class="btn-counter" data-hotel-step="adults" data-delta="-1" aria-label="Decrease Adults">-</button>
+                <span class="stepper-num" id="val-hotel-adults">2</span>
+                <button type="button" class="btn-counter" data-hotel-step="adults" data-delta="1" aria-label="Increase Adults">+</button>
+              </div>
+            </div>
+            <div class="stepper-row">
+              <div class="stepper-desc"><h5>Children</h5><p>0–17 years</p></div>
+              <div class="stepper-actions">
+                <button type="button" class="btn-counter" data-hotel-step="children" data-delta="-1" aria-label="Decrease Children">-</button>
+                <span class="stepper-num" id="val-hotel-children">0</span>
+                <button type="button" class="btn-counter" data-hotel-step="children" data-delta="1" aria-label="Increase Children">+</button>
+              </div>
+            </div>
+            <div class="stepper-row">
+              <div class="stepper-desc"><h5>Rooms</h5><p>Suites / Rooms</p></div>
+              <div class="stepper-actions">
+                <button type="button" class="btn-counter" data-hotel-step="rooms" data-delta="-1" aria-label="Decrease Rooms">-</button>
+                <span class="stepper-num" id="val-hotel-rooms">1</span>
+                <button type="button" class="btn-counter" data-hotel-step="rooms" data-delta="1" aria-label="Increase Rooms">+</button>
+              </div>
+            </div>
+            <div style="margin-top: 12px; text-align:right;">
+              <button type="button" class="btn-popover-done" onclick="window.closeAllPopovers()">Done</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-bottom-row">
+        <div style="font-size:0.85rem; color:#64748B;">
+          ★ 5.0 Rating • 850+ Verified Global Luxury Properties
+        </div>
+        <button type="submit" class="btn-search-availability" id="btn-submit-search">
           <span class="btn-text">Search Hotels ➔</span>
           <span class="btn-spinner" aria-hidden="true"></span>
         </button>
       </div>
     `,
+
     vacations: `
-      <div class="card-header-row">
-        <div>
-          <h2 class="section-heading" id="engine-headline">Handcrafted Adventure & All-Inclusive Escapes</h2>
-          <p class="section-subheading" id="engine-subheadline">Immersive excursions, beachfront bundles, and curated regional expeditions.</p>
-        </div>
-        <div class="social-proof-badge">★ 4.9 <span>(2,400+ Expeditions)</span></div>
-      </div>
-      
-      <div class="subnav-row" role="group" aria-label="Date Flexibility">
-        <button type="button" class="subnav-btn active" id="vacay-flex-exact" data-flex="exact">Exact Day</button>
-        <button type="button" class="subnav-btn" id="vacay-flex-month" data-flex="month">Anytime This Month</button>
+      <div class="card-header-block">
+        <h2 class="card-title">Handcrafted Adventure & All-Inclusive Escapes</h2>
+        <p class="card-subtitle">Immersive excursions, beachfront bundles, and curated regional expeditions.</p>
       </div>
 
-      <div class="input-strip">
-        <div class="input-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label">PACKAGE EXPERIENCE / REGION *</label>
-          <div class="input-wrapper">
-            <input type="text" id="input-vacation-dest" name="location" class="strip-input location-autocomplete" placeholder="Destination Region" value="Costa Rica (SJO)" required autocomplete="off" data-label="Package Experience">
-            <ul class="autocomplete-dropdown" role="listbox"></ul>
+      <div class="trip-segment-bar" role="group" aria-label="Date Flexibility">
+        <button type="button" class="segment-btn active" id="vacay-flex-exact" data-flex="exact">Exact Day</button>
+        <button type="button" class="segment-btn" id="vacay-flex-month" data-flex="month">Anytime This Month</button>
+      </div>
+
+      <div class="form-grid-row three-col">
+        <div class="input-field-container">
+          <label class="field-micro-label" for="input-vacation-dest">PACKAGE EXPERIENCE / REGION *</label>
+          <div class="field-input-box">
+            <input type="text" id="input-vacation-dest" name="location" class="location-autocomplete" placeholder="Destination Region" value="Costa Rica (SJO)" required autocomplete="off" data-label="Package Experience">
+            <span style="font-size:10px; color:#94A3B8;">🌴</span>
+          </div>
+          <ul class="autocomplete-menu autocomplete-dropdown" role="listbox"></ul>
+        </div>
+
+        <div class="input-field-container" id="vacation-date-group">
+          <label class="field-micro-label" id="vacation-date-label" for="input-vacation-start">TARGET DATE *</label>
+          <div class="field-input-box">
+            <input type="date" id="input-vacation-start" name="start_date" required data-label="Target Date">
           </div>
         </div>
-        <div class="divider"></div>
-        <div class="input-group" id="vacation-date-group" onclick="this.querySelector('input').focus()">
-          <label class="micro-label" id="vacation-date-label">TARGET DATE *</label>
-          <input type="date" id="input-vacation-start" name="start_date" class="strip-input" required data-label="Target Date">
-        </div>
-        <div class="divider"></div>
-        
-        <!-- Compact Passenger Counter inside the single strip -->
-        <div class="input-group popover-container">
-          <label class="micro-label">GUEST ALLOCATION</label>
-          <button type="button" class="strip-input" id="vacay-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="display:flex; justify-content:space-between; align-items:center;">
+
+        <div class="input-field-container popover-container">
+          <label class="field-micro-label">GUESTS ALLOCATION</label>
+          <div class="field-input-box" id="vacay-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="cursor:pointer;">
             <span id="vacay-summary-text">1 Guest • $2,150 Total</span>
-            <span style="font-size: 10px; color: #94A3B8;">▼</span>
-          </button>
+            <span style="font-size:10px; color:#64748B;">▼</span>
+          </div>
 
           <input type="hidden" name="adults" id="input-vacay-adults" value="1">
           <input type="hidden" name="children" id="input-vacay-children" value="0">
 
-          <!-- Guest Allocation Popover Dropdown -->
-          <div class="popover-menu" id="vacay-guest-popover" role="dialog" aria-label="Guest Allocation">
+          <div class="popover-dropdown popover-menu" id="vacay-guest-popover" role="dialog" aria-label="Guest Allocation">
             <div class="stepper-row">
-              <div class="stepper-info">
-                <h4>Adults (18+)</h4>
-                <p>$2,150 / guest</p>
-              </div>
-              <div class="stepper-controls">
-                <button type="button" class="stepper-btn btn-step-minus" data-target="vacay-adults" data-min="1" aria-label="Decrease Adults">-</button>
-                <span class="stepper-val" id="vacay-adults">1</span>
-                <button type="button" class="stepper-btn btn-step-plus" data-target="vacay-adults" data-max="10" aria-label="Increase Adults">+</button>
+              <div class="stepper-desc"><h5>Adults (18+)</h5><p>$2,150 / guest</p></div>
+              <div class="stepper-actions">
+                <button type="button" class="btn-counter btn-step-minus" data-target="vacay-adults" data-min="1" aria-label="Decrease Adults">-</button>
+                <span class="stepper-num" id="vacay-adults">1</span>
+                <button type="button" class="btn-counter btn-step-plus" data-target="vacay-adults" data-max="10" aria-label="Increase Adults">+</button>
               </div>
             </div>
             <div class="stepper-row">
-              <div class="stepper-info">
-                <h4>Children (3-17)</h4>
-                <p>$1,290 / guest</p>
-              </div>
-              <div class="stepper-controls">
-                <button type="button" class="stepper-btn btn-step-minus" data-target="vacay-children" data-min="0" aria-label="Decrease Children">-</button>
-                <span class="stepper-val" id="vacay-children">0</span>
-                <button type="button" class="stepper-btn btn-step-plus" data-target="vacay-children" data-max="8" aria-label="Increase Children">+</button>
+              <div class="stepper-desc"><h5>Children (3–17)</h5><p>$1,290 / guest</p></div>
+              <div class="stepper-actions">
+                <button type="button" class="btn-counter btn-step-minus" data-target="vacay-children" data-min="0" aria-label="Decrease Children">-</button>
+                <span class="stepper-num" id="vacay-children">0</span>
+                <button type="button" class="btn-counter btn-step-plus" data-target="vacay-children" data-max="8" aria-label="Increase Children">+</button>
               </div>
             </div>
-            <div class="popover-footer">
+            <div style="margin-top: 12px; display:flex; justify-content:space-between; align-items:center;">
               <div>
-                <span style="font-size: 0.72rem; color: #94A3B8; display:block;">Estimated Total:</span>
+                <span style="font-size: 0.72rem; color: #64748B; display:block;">Estimated Total:</span>
                 <strong id="vacay-live-subtotal" style="color: #FF6D00; font-weight: 700; font-size: 1.05rem;">$2,150.00</strong>
               </div>
               <button type="button" class="btn-popover-done" onclick="window.closeAllPopovers()">Done</button>
             </div>
           </div>
         </div>
+      </div>
 
-        <button type="submit" class="cta-btn" id="btn-submit-search">
+      <div class="form-bottom-row">
+        <div style="font-size:0.85rem; color:#64748B;">
+          All-inclusive: 5-star lodging, resort transfers, guided excursions.
+        </div>
+        <button type="submit" class="btn-search-availability" id="btn-submit-search">
           <span class="btn-text">Search Packages ➔</span>
           <span class="btn-spinner" aria-hidden="true"></span>
         </button>
       </div>
     `,
+
     jets: `
-      <!-- Minimal Jet Progress Bar -->
-      <div class="jet-progress">
-        <div class="jet-step active" data-step="1">1. Routing</div>
-        <div class="jet-line"></div>
-        <div class="jet-step" data-step="2">2. Aircraft</div>
-        <div class="jet-line"></div>
-        <div class="jet-step" data-step="3">3. VIP Concierge</div>
+      <div class="card-header-block">
+        <h2 class="card-title">Bespoke Private Charter Jets & Empty Legs</h2>
+        <p class="card-subtitle">On-demand heavy, midsize, and light jet availability with private VIP FBO handling.</p>
+      </div>
+
+      <div class="jet-wizard-steps">
+        <span class="jet-wizard-step active" data-step="1">1. Routing & Schedule</span>
+        <span class="jet-wizard-step" data-step="2">➔ 2. Aircraft Fleet</span>
+        <span class="jet-wizard-step" data-step="3">➔ 3. VIP Concierge</span>
       </div>
 
       <div class="jet-wizard-slides">
         <!-- Step 1: Routing -->
         <fieldset class="wizard-step-slide is-active" data-step="1" style="border: none; margin: 0; padding: 0;">
-          <div class="card-header-row">
-            <div>
-              <h2 class="section-heading" id="engine-headline">Step 1: Mission Routing & Schedule</h2>
-              <p class="section-subheading" id="engine-subheadline">On-demand heavy, midsize, and light jet availability with private VIP FBO handling.</p>
+          <div class="form-grid-row">
+            <div class="input-field-container">
+              <label class="field-micro-label" for="input-jet-origin">DEPARTURE FBO *</label>
+              <div class="field-input-box">
+                <input type="text" id="input-jet-origin" name="origin" class="location-autocomplete" placeholder="Airport FBO (e.g. DEL, TEB)" value="New Delhi (DEL)" required autocomplete="off" data-label="Departure FBO">
+                <span style="font-size:10px; color:#94A3B8;">🛩️</span>
+              </div>
+              <ul class="autocomplete-menu autocomplete-dropdown" role="listbox"></ul>
             </div>
-            <div class="social-proof-badge">★ 5.0 <span>(VIP Concierge)</span></div>
-          </div>
-          
-          <div class="input-strip">
-            <div class="input-group" onclick="this.querySelector('input').focus()">
-              <label class="micro-label">DEPARTURE FBO *</label>
-              <div class="input-wrapper">
-                <input type="text" id="input-jet-origin" name="origin" class="strip-input location-autocomplete" placeholder="Airport FBO (e.g. DEL, TEB)" value="New Delhi (DEL)" required autocomplete="off" data-label="Departure FBO">
-                <ul class="autocomplete-dropdown" role="listbox"></ul>
+
+            <div class="input-field-container">
+              <label class="field-micro-label" for="input-jet-dest">DESTINATION FBO *</label>
+              <div class="field-input-box">
+                <input type="text" id="input-jet-dest" name="destination" class="location-autocomplete" placeholder="Airport FBO (e.g. DXB, VNY)" value="Dubai (DXB)" required autocomplete="off" data-label="Destination FBO">
+                <span style="font-size:10px; color:#94A3B8;">🛩️</span>
+              </div>
+              <ul class="autocomplete-menu autocomplete-dropdown" role="listbox"></ul>
+            </div>
+
+            <div class="input-field-container">
+              <label class="field-micro-label" for="input-jet-date">DEPARTURE DATE *</label>
+              <div class="field-input-box">
+                <input type="date" id="input-jet-date" name="start_date" required data-label="Charter Departure Date">
               </div>
             </div>
-            <div class="divider"></div>
-            <div class="input-group" onclick="this.querySelector('input').focus()">
-              <label class="micro-label">DESTINATION FBO *</label>
-              <div class="input-wrapper">
-                <input type="text" id="input-jet-dest" name="destination" class="strip-input location-autocomplete" placeholder="Airport FBO (e.g. DXB, VNY)" value="Dubai (DXB)" required autocomplete="off" data-label="Destination FBO">
-                <ul class="autocomplete-dropdown" role="listbox"></ul>
-              </div>
-            </div>
-            <div class="divider"></div>
-            <div class="input-group" onclick="this.querySelector('input').focus()">
-              <label class="micro-label">DEPARTURE DATE *</label>
-              <input type="date" id="input-jet-date" name="start_date" class="strip-input" required data-label="Charter Departure Date">
-            </div>
-            <div class="divider"></div>
-            
-            <!-- Jet Passenger Popover -->
-            <div class="input-group popover-container">
-              <label class="micro-label">ESTIMATED PASSENGERS</label>
-              <button type="button" class="strip-input" id="jet-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="display:flex; justify-content:space-between; align-items:center;">
+
+            <div class="input-field-container popover-container">
+              <label class="field-micro-label">ESTIMATED PASSENGERS</label>
+              <div class="field-input-box" id="jet-popover-trigger" aria-haspopup="dialog" aria-expanded="false" style="cursor:pointer;">
                 <span id="jet-btn-label">4 VIP Passengers</span>
-                <span style="font-size: 10px; color: #94A3B8;">▼</span>
-              </button>
+                <span style="font-size:10px; color:#64748B;">▼</span>
+              </div>
 
               <input type="hidden" name="passengers" id="input-jet-passengers" value="4">
 
-              <div id="jet-popover" class="popover-menu" role="dialog" aria-label="Charter Passengers">
+              <div id="jet-popover" class="popover-dropdown popover-menu" role="dialog" aria-label="Charter Passengers">
                 <div class="stepper-row">
-                  <div class="stepper-info"><h4>Charter Passengers</h4><p>Max capacity: 18</p></div>
-                  <div class="stepper-controls">
-                    <button type="button" class="stepper-btn" id="btn-jet-minus" aria-label="Decrease Passengers">-</button>
-                    <span class="stepper-val" id="val-jet-passengers">4</span>
-                    <button type="button" class="stepper-btn" id="btn-jet-plus" aria-label="Increase Passengers">+</button>
+                  <div class="stepper-desc"><h5>Charter Passengers</h5><p>Max capacity: 18</p></div>
+                  <div class="stepper-actions">
+                    <button type="button" class="btn-counter" id="btn-jet-minus" aria-label="Decrease Passengers">-</button>
+                    <span class="stepper-num" id="val-jet-passengers">4</span>
+                    <button type="button" class="btn-counter" id="btn-jet-plus" aria-label="Increase Passengers">+</button>
                   </div>
                 </div>
-                <div class="popover-footer">
-                  <span style="font-size:0.75rem; color:#94A3B8;">Cabin manifest</span>
+                <div style="margin-top: 12px; text-align:right;">
                   <button type="button" class="btn-popover-done" onclick="window.closeAllPopovers()">Done</button>
                 </div>
               </div>
             </div>
+          </div>
 
-            <button type="button" class="cta-btn btn-wizard-next" data-next="2">Continue ➔</button>
+          <div class="form-bottom-row">
+            <div style="font-size:0.85rem; color:#64748B;">
+              ARGUS Platinum & Wyvern Wingman certified air carriers.
+            </div>
+            <button type="button" class="btn-search-availability btn-wizard-next" data-next="2">
+              Continue to Fleet ➔
+            </button>
           </div>
         </fieldset>
 
         <!-- Step 2: Aircraft Category -->
         <fieldset class="wizard-step-slide" data-step="2" style="border: none; margin: 0; padding: 0; display: none;">
-          <div class="card-header-row">
-            <div>
-              <h2 class="section-heading">Step 2: Aircraft Fleet Class</h2>
-              <p class="section-subheading">Select your aircraft category, luggage tier, and onboard cabin preferences.</p>
+          <div class="form-grid-row three-col">
+            <div class="input-field-container">
+              <label class="field-micro-label" for="input-jet-cabin">AIRCRAFT CLASS & RANGE</label>
+              <div class="field-input-box">
+                <select id="input-jet-cabin" name="aircraft_category" data-label="Aircraft Category">
+                  <option value="heavy" selected>Heavy Jet (Challenger 650 / 12 Pax)</option>
+                  <option value="ultra-long">Ultra Long Range (Gulfstream G650ER / 14 Pax)</option>
+                  <option value="super-mid">Super Midsize (Citation X+ / 8 Pax)</option>
+                  <option value="light">Light Jet (Phenom 300E / 6 Pax)</option>
+                </select>
+              </div>
             </div>
-            <div class="social-proof-badge">★ 5.0 <span>(VIP Concierge)</span></div>
+
+            <div class="input-field-container">
+              <label class="field-micro-label" for="input-jet-luggage">BAGGAGE CAPACITY</label>
+              <div class="field-input-box">
+                <select id="input-jet-luggage" name="luggage_tier" data-label="Baggage Capacity">
+                  <option value="standard" selected>Standard VIP Luggage (Up to 12 pieces)</option>
+                  <option value="excess">Excess Baggage & Equipment</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="input-field-container">
+              <label class="field-micro-label" for="input-jet-pets">PETS IN CABIN</label>
+              <div class="field-input-box">
+                <select id="input-jet-pets" name="pets_allowed" data-label="Pets">
+                  <option value="no" selected>No Pets</option>
+                  <option value="yes">Yes (Pet Cabin Prep)</option>
+                </select>
+              </div>
+            </div>
           </div>
-          
-          <div class="input-strip">
-            <div class="input-group" style="flex: 2;">
-              <label class="micro-label">AIRCRAFT SPECIFICATION & RANGE</label>
-              <select id="input-jet-cabin" name="aircraft_category" class="strip-input" data-label="Aircraft Category">
-                <option value="heavy" selected>Heavy Jet (Challenger 650 / 12 Pax)</option>
-                <option value="ultra-long">Ultra Long Range (Gulfstream G650ER / 14 Pax)</option>
-                <option value="super-mid">Super Midsize (Citation X+ / 8 Pax)</option>
-                <option value="light">Light Jet (Phenom 300E / 6 Pax)</option>
-              </select>
-            </div>
-            <div class="divider"></div>
-            <div class="input-group">
-              <label class="micro-label">BAGGAGE CAPACITY</label>
-              <select id="input-jet-luggage" name="luggage_tier" class="strip-input" data-label="Baggage Capacity">
-                <option value="standard" selected>Standard VIP Luggage (Up to 12 pieces)</option>
-                <option value="excess">Excess Baggage & Equipment</option>
-              </select>
-            </div>
-            <div class="divider"></div>
-            <div class="input-group">
-              <label class="micro-label">PETS IN CABIN</label>
-              <select id="input-jet-pets" name="pets_allowed" class="strip-input" data-label="Pets">
-                <option value="no" selected>No Pets</option>
-                <option value="yes">Yes (Pet Cabin Prep)</option>
-              </select>
-            </div>
-            <button type="button" class="cta-btn btn-wizard-next" data-next="3">Continue ➔</button>
-          </div>
-          <div style="margin-top: 10px;">
-            <button type="button" class="subnav-btn btn-wizard-prev" data-prev="1">← Back to Routing</button>
+
+          <div class="form-bottom-row">
+            <button type="button" class="btn-header-secondary btn-wizard-prev" data-prev="1">← Back to Routing</button>
+            <button type="button" class="btn-search-availability btn-wizard-next" data-next="3">VIP Details ➔</button>
           </div>
         </fieldset>
 
         <!-- Step 3: VIP Concierge Contact -->
         <fieldset class="wizard-step-slide" data-step="3" style="border: none; margin: 0; padding: 0; display: none;">
-          <div class="card-header-row">
-            <div>
-              <h2 class="section-heading">Step 3: Dedicated VIP Concierge Handling</h2>
-              <p class="section-subheading">Submit your direct contact details for a confidential, guaranteed charter quote.</p>
+          <div class="form-grid-row three-col">
+            <div class="input-field-container">
+              <label class="field-micro-label" for="input-jet-contact-name">PRINCIPAL NAME *</label>
+              <div class="field-input-box">
+                <input type="text" id="input-jet-contact-name" name="client_name" placeholder="Lord Harrington" value="Executive Travel Group" required data-label="Principal Name">
+              </div>
             </div>
-            <div class="social-proof-badge">★ 5.0 <span>(VIP Concierge)</span></div>
+
+            <div class="input-field-container">
+              <label class="field-micro-label" for="input-jet-contact-phone">SECURE PHONE *</label>
+              <div class="field-input-box">
+                <input type="tel" id="input-jet-contact-phone" name="client_phone" placeholder="+1-555-0199" value="+1-555-0199" required data-label="Contact Phone">
+              </div>
+            </div>
+
+            <div class="input-field-container">
+              <label class="field-micro-label" for="input-jet-catering">SPECIAL REQUESTS</label>
+              <div class="field-input-box">
+                <input type="text" id="input-jet-catering" name="catering_notes" placeholder="e.g. Dom Pérignon, ramp access">
+              </div>
+            </div>
           </div>
-          
-          <div class="input-strip">
-            <div class="input-group">
-              <label class="micro-label">PRINCIPAL NAME *</label>
-              <input type="text" id="input-jet-contact-name" name="client_name" class="strip-input" placeholder="Lord Harrington" value="Executive Travel Group" required data-label="Principal Name">
-            </div>
-            <div class="divider"></div>
-            <div class="input-group">
-              <label class="micro-label">SECURE PHONE *</label>
-              <input type="tel" id="input-jet-contact-phone" name="client_phone" class="strip-input" placeholder="+1-555-0199" value="+1-555-0199" required data-label="Contact Phone">
-            </div>
-            <div class="divider"></div>
-            <div class="input-group" style="flex: 2;">
-              <label class="micro-label">SPECIAL REQUESTS</label>
-              <input type="text" id="input-jet-catering" name="catering_notes" class="strip-input" placeholder="e.g. Dom Pérignon, ramp access">
-            </div>
-            <button type="submit" class="cta-btn" id="btn-submit-jet-wizard">Request Quote ✈️</button>
-          </div>
-          <div style="margin-top: 10px;">
-            <button type="button" class="subnav-btn btn-wizard-prev" data-prev="2">← Back to Aircraft</button>
+
+          <div class="form-bottom-row">
+            <button type="button" class="btn-header-secondary btn-wizard-prev" data-prev="2">← Back to Aircraft</button>
+            <button type="submit" class="btn-search-availability" id="btn-submit-jet-wizard">Request Quote ✈️</button>
           </div>
         </fieldset>
       </div>
@@ -834,8 +848,8 @@
     setupFooterAccordions();
 
     // Render initial form fields for default Car Rentals
-    renderProductFields('cars');
-    renderPopularDestinations('cars');
+    renderProductFields('flights');
+    renderPopularDestinations('flights');
 
     // Align sliding indicator on initial load
     setTimeout(() => {
@@ -1184,7 +1198,7 @@
    * Product Flow 2: Flight Segmented Control
    */
   function setupTripTypeToggle() {
-    const subnavBtns = DOM.dynamicFields.querySelectorAll('.subnav-btn[data-trip]');
+    const subnavBtns = DOM.dynamicFields.querySelectorAll('.subnav-btn[data-trip], .segment-btn[data-trip]');
     const tripTypeInput = DOM.dynamicFields.querySelector('#flight-trip-type');
     const returnGroup = document.getElementById('flight-return-group');
     const returnDivider = document.getElementById('flight-return-divider');

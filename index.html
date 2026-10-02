@@ -42,48 +42,32 @@
     </div>
   </header>
 
-  <!-- Hero & Multi-Product Ultra-Compact Single-Strip Search Engine -->
+  <!-- Hero Search Engine: Clean High-Speed Architecture -->
   <main class="main-content" id="main-content">
-    <section class="hero-search-wrapper" aria-label="Search Travel Products">
-      <!-- Dynamic Product Cross-Fade Background Layers -->
-      <div id="bg-cars" class="bg-layer active" style="background-image: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1920&q=80');"></div>
-      <div id="bg-flights" class="bg-layer" data-bg="url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80')"></div>
-      <div id="bg-hotels" class="bg-layer" data-bg="url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1920&q=80')"></div>
-      <div id="bg-vacations" class="bg-layer" data-bg="url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80')"></div>
-      <div id="bg-jets" class="bg-layer" data-bg="url('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1920&q=80')"></div>
-      <div class="bg-overlay"></div>
+    <section class="clean-hero-wrapper" aria-label="Search Travel Products">
+      <!-- Elevated Tab Bar sitting directly on top of the card -->
+      <nav class="tabs-wrapper" id="tabContainer" role="tablist" aria-label="Product Categories">
+        <button type="button" class="tab-pill" role="tab" id="tab-cars" aria-selected="false" data-theme="theme-car-rental" data-product="cars" onclick="switchTab(this, 'cars')">
+          <span class="tab-icon">🚘</span> Car Rentals
+        </button>
+        <button type="button" class="tab-pill active" role="tab" id="tab-flights" aria-selected="true" data-theme="theme-flights" data-product="flights" onclick="switchTab(this, 'flights')">
+          <span class="tab-icon">✈️</span> Flights
+        </button>
+        <button type="button" class="tab-pill" role="tab" id="tab-hotels" aria-selected="false" data-theme="theme-hotels" data-product="hotels" onclick="switchTab(this, 'hotels')">
+          <span class="tab-icon">🏨</span> Hotels
+        </button>
+        <button type="button" class="tab-pill" role="tab" id="tab-vacations" aria-selected="false" data-theme="theme-vacations" data-product="vacations" onclick="switchTab(this, 'vacations')">
+          <span class="tab-icon">🌴</span> Vacations
+        </button>
+        <button type="button" class="tab-pill" role="tab" id="tab-jets" aria-selected="false" data-theme="theme-private-jets" data-product="jets" onclick="switchTab(this, 'jets')">
+          <span class="tab-icon">🛩️</span> Private Jets
+        </button>
+      </nav>
 
-      <!-- Luxury Hero Headline Container -->
-      <div class="hero-title-container">
-        <h1 class="hero-title">Explore The World In Ultimate Luxury</h1>
-        <p class="hero-subtitle">Curated commercial flights, private charters, 5-star resorts, and custom expeditions.</p>
-      </div>
-
-      <form id="flyboro-search-form" class="compact-card" novalidate>
-        <input type="hidden" name="product_type" id="field-product-type" value="cars">
-
-        <!-- 1. Integrated Header Tabs with Sliding Active Indicator -->
-        <div class="integrated-tabs" id="tabContainer" role="tablist" aria-label="Product Lines">
-          <div class="tab-indicator" id="tabIndicator"></div>
-          <button type="button" class="tab-btn active" role="tab" id="tab-cars" aria-selected="true" data-theme="theme-car-rental" data-product="cars" onclick="switchTab(this, 'cars')">
-            <span>🚘</span> <span>Car Rentals</span>
-          </button>
-          <button type="button" class="tab-btn" role="tab" id="tab-flights" aria-selected="false" data-theme="theme-flights" data-product="flights" onclick="switchTab(this, 'flights')">
-            <span>✈️</span> <span>Flights</span>
-          </button>
-          <button type="button" class="tab-btn" role="tab" id="tab-hotels" aria-selected="false" data-theme="theme-hotels" data-product="hotels" onclick="switchTab(this, 'hotels')">
-            <span>🏨</span> <span>Hotels</span>
-          </button>
-          <button type="button" class="tab-btn" role="tab" id="tab-vacations" aria-selected="false" data-theme="theme-vacations" data-product="vacations" onclick="switchTab(this, 'vacations')">
-            <span>🌴</span> <span>Vacations</span>
-          </button>
-          <button type="button" class="tab-btn" role="tab" id="tab-jets" aria-selected="false" data-theme="theme-private-jets" data-product="jets" onclick="switchTab(this, 'jets')">
-            <span>🛩️</span> <span>Private Jets</span>
-          </button>
-        </div>
-
-        <!-- 5. Tightened Layout Padding applied to Body -->
-        <div class="card-body" id="dynamic-content">
+      <!-- Primary White Search Card with 6px Navy Blue Top Accent -->
+      <form id="flyboro-search-form" class="clean-search-card" novalidate>
+        <input type="hidden" name="product_type" id="field-product-type" value="flights">
+        <div id="dynamic-content">
           <!-- Injected dynamically by flyboro-engine.js -->
         </div>
       </form>

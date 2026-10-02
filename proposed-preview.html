@@ -3,548 +3,652 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flyboro Luxury Travel Portal — Proposed Search Engine Preview</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Flyboro — Clean High-Speed Architecture Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* Reset & Base */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; 
-      background-color: #0B1120; 
-      color: #F8FAFC; 
+    body {
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #F1F5F9;
+      color: #0F172A;
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Top Review Controller Bar */
+    /* Reviewer Toolbar */
     .review-toolbar {
-      background: #0B1120;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 12px 20px;
+      background: #0B1E36;
+      color: #FFFFFF;
+      padding: 10px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
-      z-index: 100;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
-    .toolbar-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: #FFFFFF;
+    .toolbar-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
     }
     .toolbar-badge {
-      background: rgba(255, 109, 0, 0.15);
-      border: 1px solid rgba(255, 109, 0, 0.4);
-      color: #FF6D00;
+      background: #FF6D00;
+      color: #FFFFFF;
       padding: 2px 8px;
-      border-radius: 9999px;
-      font-size: 0.72rem;
+      border-radius: 999px;
       font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
     }
-    .toolbar-controls {
+    .viewport-controls {
       display: flex;
       gap: 8px;
     }
-    .view-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #CBD5E1;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 0.8rem;
+    .btn-vp {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .view-btn.active {
+    .btn-vp.active {
       background: #FF6D00;
       border-color: #FF6D00;
-      color: #FFFFFF;
     }
 
-    /* Dynamic Background Cross-Fade Wrapper */
-    .hero-wrapper {
-      position: relative;
-      width: 100%;
-      min-height: 580px;
-      padding: 30px 20px 60px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow: hidden;
-      transition: max-width 0.3s ease;
-    }
-    .hero-wrapper.mobile-mode {
-      max-width: 480px;
-      margin: 20px auto;
-      border-radius: 24px;
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
-      padding: 24px 14px;
-      min-height: auto;
-    }
-
-    .bg-layer {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 1;
-    }
-    .bg-layer.active { opacity: 1; }
-
-    .bg-overlay {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(180deg, rgba(11, 17, 32, 0.65) 0%, rgba(11, 17, 32, 0.88) 100%);
-      z-index: 2;
-    }
-
-    /* Consumer Navbar */
-    .navbar {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      max-width: 1100px;
+    /* Site Header */
+    .site-header {
+      background: #FFFFFF;
+      border-bottom: 1px solid #E2E8F0;
+      padding: 14px 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 20px;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 9999px;
-      margin-bottom: 28px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
-    .brand-logo { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.5px; color: #FFFFFF; }
-    .brand-logo span { color: #FF6D00; }
-    .nav-links { display: flex; gap: 20px; list-style: none; }
-    .nav-link { color: #94A3B8; text-decoration: none; font-size: 0.82rem; font-weight: 600; transition: color 0.2s; }
-    .nav-link:hover { color: #FFFFFF; }
-    .nav-actions { display: flex; align-items: center; gap: 10px; }
-    .nav-btn-ghost { background: transparent; border: none; color: #F8FAFC; font-weight: 600; font-size: 0.82rem; cursor: pointer; padding: 6px 12px; }
-    .nav-btn-pill { 
-      background: #FF6D00; color: #FFFFFF; font-weight: 700; font-size: 0.82rem; 
-      padding: 8px 18px; border: none; border-radius: 9999px; cursor: pointer; transition: all 0.2s;
-      box-shadow: 0 4px 14px rgba(255, 109, 0, 0.35);
-    }
-    .nav-btn-pill:hover { background: #E66200; transform: translateY(-1px); }
-
-    /* Hero Headline */
-    .hero-title-container { position: relative; z-index: 10; text-align: center; max-width: 700px; margin-bottom: 24px; }
-    .hero-title { font-size: clamp(1.6rem, 3.5vw, 2.6rem); font-weight: 800; line-height: 1.2; letter-spacing: -0.8px; margin-bottom: 8px; color: #FFFFFF; }
-    .hero-subtitle { font-size: 0.9rem; color: #94A3B8; font-weight: 500; }
-
-    /* Frosted Glass Widget Card */
-    .main-card {
-      position: relative;
-      z-index: 10;
-      background: rgba(15, 23, 42, 0.82);
-      backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 20px;
-      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.2);
-      width: 100%;
-      max-width: 1100px;
-      overflow: visible;
-      transition: all 0.3s ease;
-    }
-
-    /* Integrated Tabs with Animated Indicator */
-    .integrated-tabs {
-      position: relative;
+    .header-left {
       display: flex;
-      background: rgba(11, 17, 32, 0.85);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px 20px 0 0;
+      align-items: center;
+      gap: 18px;
+    }
+    .brand-logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #FF6D00;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .brand-logo span {
+      color: #0B1E36;
+    }
+    .mode-pill {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 0.78rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mode-pill strong {
+      color: #0F172A;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: #059669;
+      font-weight: 600;
+      background: #ECFDF5;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #A7F3D0;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: #10B981;
+      border-radius: 50%;
+    }
+    .btn-header-secondary {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #0F172A;
+      cursor: pointer;
+    }
+    .btn-header-primary {
+      background: #FF6D00;
+      border: none;
+      color: #FFFFFF;
+      padding: 7px 18px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255, 109, 0, 0.25);
+    }
+
+    /* Main Canvas Wrapper */
+    .page-viewport-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 20px 80px 20px;
+      transition: max-width 0.3s ease;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .page-viewport-container.mobile-mode {
+      max-width: 440px;
+      padding: 20px 10px;
+    }
+
+    /* Elevated Tab Bar */
+    .tabs-wrapper {
+      width: 100%;
+      max-width: 1020px;
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      padding-left: 12px;
       overflow-x: auto;
       scrollbar-width: none;
     }
-    .integrated-tabs::-webkit-scrollbar { display: none; }
-
-    .tab-btn {
+    .tabs-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+    .tab-pill {
+      background: transparent;
+      border: 1px solid transparent;
+      border-bottom: none;
+      color: #475569;
+      padding: 10px 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: 10px 10px 0 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease-in-out;
+      white-space: nowrap;
+    }
+    .tab-pill:hover {
+      color: #0F172A;
+      background: rgba(255, 255, 255, 0.6);
+    }
+    .tab-pill.active {
+      background: #FFFFFF;
+      color: #0B1E36;
+      border-color: #E2E8F0;
+      font-weight: 700;
+      box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.03);
       position: relative;
       z-index: 2;
+    }
+    .tab-pill.active .tab-icon {
+      color: #0284C7;
+    }
+
+    /* Primary Search Widget Card (Pure White with 6px Navy Blue Top Accent) */
+    .clean-search-card {
+      width: 100%;
+      max-width: 1020px;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-top: 6px solid #0B1E36;
+      border-radius: 0 12px 14px 14px;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+      padding: 32px 36px 36px 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Card Content Elements */
+    .card-header-block {
+      margin-bottom: 22px;
+    }
+    .card-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0B1E36;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+    .card-subtitle {
+      font-size: 0.88rem;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    /* Trip Type Segmented Selector */
+    .trip-segment-bar {
+      display: inline-flex;
+      background: #F1F5F9;
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid #E2E8F0;
+      margin-bottom: 22px;
+      gap: 2px;
+    }
+    .segment-btn {
       background: transparent;
       border: none;
-      color: #94A3B8;
-      padding: 15px 24px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      font-family: inherit;
+      color: #64748B;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 6px;
       cursor: pointer;
-      transition: color 0.2s ease;
-      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .segment-btn.active {
+      background: #FFFFFF;
+      color: #0B1E36;
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Form Fields Grid */
+    .form-grid-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .form-grid-row.two-col {
+      grid-template-columns: 2fr 1fr;
+    }
+    .form-grid-row.three-col {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .input-field-container {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .field-micro-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .field-input-box {
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      height: 48px;
+      padding: 0 14px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #0F172A;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.15s;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .field-input-box:focus,
+    .field-input-box:focus-within {
+      background: #FFFFFF;
+      border-color: #0B1E36;
+      box-shadow: 0 0 0 3px rgba(11, 30, 54, 0.08);
+    }
+    .field-input-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #0F172A;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    /* Second Row Controls & Primary CTA */
+    .form-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-search-availability {
+      background: #FF6D00;
+      border: none;
+      color: #FFFFFF;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 13px 34px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(255, 109, 0, 0.35);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 48px;
+    }
+    .btn-search-availability:hover {
+      background: #E66200;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(255, 109, 0, 0.42);
+    }
+
+    /* Interactive Popover Menu */
+    .popover-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: 280px;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 10px;
+      box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.12);
+      padding: 16px;
+      z-index: 50;
+      display: none;
+    }
+    .popover-dropdown.is-open {
+      display: block;
+      animation: fadeIn 0.15s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .stepper-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .stepper-row:last-child {
+      border-bottom: none;
+    }
+    .stepper-desc h5 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #0F172A;
+    }
+    .stepper-desc p {
+      font-size: 0.72rem;
+      color: #64748B;
+    }
+    .stepper-actions {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .tab-btn:hover { color: #F8FAFC; }
-    .tab-btn.active { color: #FFFFFF; }
-
-    .tab-indicator {
-      position: absolute;
-      bottom: 0;
-      height: 3px;
-      background: #FF6D00;
-      box-shadow: 0 0 12px #FF6D00;
-      border-radius: 3px;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 3;
+    .btn-counter {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid #CBD5E1;
+      background: #F8FAFC;
+      color: #0F172A;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .btn-counter:hover {
+      background: #E2E8F0;
+    }
+    .stepper-num {
+      font-size: 0.9rem;
+      font-weight: 700;
+      width: 20px;
+      text-align: center;
     }
 
-    /* Card Body */
-    .card-body { padding: 22px 26px; }
-    
-    .card-header-row {
+    /* Autocomplete Dropdown */
+    .autocomplete-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      z-index: 60;
+      display: none;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .autocomplete-menu.is-open {
+      display: block;
+    }
+    .autocomplete-item {
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    
-    .section-heading { font-size: 1.15rem; font-weight: 700; color: #FFFFFF; }
-    .section-subheading { font-size: 0.78rem; color: #94A3B8; margin-top: 2px; }
-
-    .social-proof-badge {
-      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 4px 12px;
-      border-radius: 9999px;
-      font-size: 0.72rem;
+      cursor: pointer;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .autocomplete-item:hover {
+      background: #F8FAFC;
+    }
+    .item-city {
+      font-size: 0.88rem;
       font-weight: 700;
-      color: #FFC107;
+      color: #0B1E36;
     }
-    .social-proof-badge span { color: #CBD5E1; font-weight: 500; }
+    .item-name {
+      font-size: 0.75rem;
+      color: #64748B;
+    }
+    .item-code {
+      background: #E2E8F0;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #0F172A;
+    }
 
-    .subnav-row { display: flex; gap: 8px; margin-bottom: 12px; }
-    .subnav-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); padding: 4px 14px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: #94A3B8; cursor: pointer; transition: all 0.2s; font-family: inherit; }
-    .subnav-btn.active { background: rgba(255, 109, 0, 0.15); border-color: #FF6D00; color: #FF6D00; }
-
-    /* Connected Pill Input Strip */
-    .input-strip {
+    /* Trust & Ecosystem Section Below */
+    .trust-ecosystem-section {
+      width: 100%;
+      max-width: 1020px;
+      margin-top: 36px;
+      text-align: center;
+    }
+    .trust-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #FF6D00;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .trust-headline {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0B1E36;
+      margin-bottom: 20px;
+    }
+    .marquee-grid {
       display: flex;
-      background: #0B1120;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 9999px;
-      align-items: center;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
-      position: relative;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
     }
-    .input-strip:focus-within { 
-      border-color: #FF6D00; 
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 109, 0, 0.3); 
+    .partner-pill {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
-    .input-group { 
-      display: flex; flex-direction: column; flex: 1; padding: 8px 20px; cursor: pointer; position: relative;
-      transition: background 0.2s;
-      min-width: 0;
+    /* Feedback Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0B1E36;
+      color: #FFFFFF;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 1000;
     }
-    .input-group:hover { background: rgba(255, 255, 255, 0.03); }
-    .divider { width: 1px; height: 32px; background: rgba(255, 255, 255, 0.12); flex-shrink: 0; }
-    .micro-label { font-size: 8.5px; font-weight: 800; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 2px; }
-    .strip-input { 
-      border: none; background: transparent; font-size: 0.88rem; font-weight: 600; color: #FFFFFF; outline: none; width: 100%; cursor: pointer; text-align: left; font-family: inherit;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    .toast-msg.show {
+      display: block;
+      animation: fadeIn 0.2s;
     }
-    .strip-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; }
-    select.strip-input option { background: #1E293B; color: #FFFFFF; }
 
-    /* Pill CTA Button with Glow */
-    .cta-btn {
-      background: #FF6D00; color: #FFFFFF; font-weight: 700; font-size: 0.9rem; padding: 0 32px;
-      border: none; border-radius: 0 9999px 9999px 0; cursor: pointer; align-self: stretch; 
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); white-space: nowrap;
-      display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; font-family: inherit;
+    /* Mobile Responsive Overrides */
+    @media (max-width: 820px) {
+      .clean-search-card {
+        padding: 24px 20px;
+      }
+      .form-grid-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .form-bottom-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn-search-availability {
+        width: 100%;
+        justify-content: center;
+      }
     }
-    .cta-btn:hover { background: #E66200; box-shadow: 0 0 25px rgba(255, 109, 0, 0.5); transform: scale(1.02); }
-    .cta-btn:active { transform: scale(0.98); }
-
-    /* Animated Stepper Popover Menu */
-    .popover-container { position: relative; }
-    .popover-menu {
-      display: block; position: absolute; top: calc(100% + 10px); right: 0; background: #1E293B;
-      border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 16px; padding: 18px; width: 320px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 15px rgba(255, 109, 0, 0.15); z-index: 50;
-      opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.96);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .popover-menu.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-    
-    .stepper-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .stepper-info h4 { font-size: 0.85rem; font-weight: 600; color: #FFFFFF; }
-    .stepper-info p { font-size: 0.72rem; color: #94A3B8; }
-    
-    .stepper-controls { display: flex; align-items: center; gap: 10px; background: #0B1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 3px 10px; }
-    .stepper-btn { background: transparent; border: none; color: #94A3B8; font-size: 1.15rem; cursor: pointer; transition: color 0.2s; padding: 0 4px; line-height: 1; }
-    .stepper-btn:hover { color: #FF6D00; }
-    .stepper-val { font-weight: 700; font-size: 0.9rem; color: #FFFFFF; width: 18px; text-align: center; }
-    
-    .popover-footer { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .btn-popover-done {
-      background: #FF6D00; color: #FFFFFF; border: none; border-radius: 6px; padding: 5px 14px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: background 0.15s;
-    }
-    .btn-popover-done:hover { background: #E66200; }
-
-    .jet-progress { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .jet-step { font-size: 0.78rem; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 6px; }
-    .jet-step.active { color: #FF6D00; }
-    .jet-line { height: 2px; width: 32px; background: rgba(255,255,255,0.12); }
-
-    /* Autocomplete Dropdown Preview */
-    .autocomplete-dropdown {
-      position: absolute; top: calc(100% + 6px); left: 0; width: 280px; background: #0B1120;
-      border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; box-shadow: 0 15px 30px rgba(0,0,0,0.7);
-      z-index: 60; list-style: none; padding: 6px; display: none;
-    }
-    .autocomplete-dropdown.show { display: block; }
-    .autocomplete-item { padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-    .autocomplete-item:hover { background: rgba(255, 255, 255, 0.08); }
-    .ac-city { font-size: 0.82rem; font-weight: 600; color: #FFFFFF; }
-    .ac-sub { font-size: 0.7rem; color: #94A3B8; }
-    .ac-pill { background: rgba(255, 109, 0, 0.2); color: #FF6D00; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
-
-    /* Toast */
-    .preview-toast {
-      position: fixed; bottom: 20px; right: 20px; background: #0F172A; border: 1px solid #FF6D00;
-      color: #FFFFFF; padding: 10px 18px; border-radius: 8px; font-size: 0.82rem; font-weight: 600;
-      transform: translateY(80px); opacity: 0; transition: all 0.25s ease; z-index: 1000;
-    }
-    .preview-toast.show { transform: translateY(0); opacity: 1; }
-
-    /* Mobile Preview Modes */
-    .hero-wrapper.mobile-mode .nav-links { display: none; }
-    .hero-wrapper.mobile-mode .input-strip { flex-direction: column; border-radius: 16px; overflow: hidden; }
-    .hero-wrapper.mobile-mode .divider { display: none; }
-    .hero-wrapper.mobile-mode .input-group { border-bottom: 1px solid rgba(255, 255, 255, 0.08); width: 100%; padding: 12px 16px; }
-    .hero-wrapper.mobile-mode .cta-btn { border-radius: 0 0 16px 16px; padding: 14px; justify-content: center; width: 100%; }
-    .hero-wrapper.mobile-mode .popover-menu { width: 100%; right: auto; left: 0; }
   </style>
 </head>
 <body>
 
-  <!-- Top Controller Bar for Reviewer -->
+  <!-- Reviewer Toolbar -->
   <div class="review-toolbar">
-    <div class="toolbar-title">
-      <span>Flyboro Proposed Luxury Architecture</span>
-      <span class="toolbar-badge">Cross-Fade + Sliding Indicator</span>
+    <div class="toolbar-left">
+      <span class="toolbar-badge">ARCHITECT REVIEW</span>
+      <span><strong>Clean High-Speed Architecture</strong> (Light Canvas • 6px Navy Top Accent • 0ms Wallpaper Latency)</span>
     </div>
-    <div class="toolbar-controls">
-      <button class="view-btn active" id="btn-desktop" onclick="setMode('desktop')">🖥️ Desktop Pill</button>
-      <button class="view-btn" id="btn-mobile" onclick="setMode('mobile')">📱 Mobile Stacking</button>
-    </div>
-  </div>
-
-  <div class="hero-wrapper" id="heroWrapper">
-    <!-- DYNAMIC TAB BACKGROUND LAYERS -->
-    <div id="bg-cars" class="bg-layer active" style="background-image: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1920&q=80');"></div>
-    <div id="bg-flights" class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80');"></div>
-    <div id="bg-hotels" class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1920&q=80');"></div>
-    <div id="bg-vacations" class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80');"></div>
-    <div id="bg-jets" class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1920&q=80');"></div>
-    <div class="bg-overlay"></div>
-
-    <!-- NAVBAR -->
-    <header class="navbar">
-      <div class="brand-logo">FLY<span>BORO</span></div>
-      <ul class="nav-links">
-        <li><a href="#" class="nav-link">Destinations</a></li>
-        <li><a href="#" class="nav-link">Fleet & Jets</a></li>
-        <li><a href="#" class="nav-link">Experiences</a></li>
-        <li><a href="#" class="nav-link">Manage Booking</a></li>
-      </ul>
-      <div class="nav-actions">
-        <button class="nav-btn-ghost">Sign In</button>
-        <button class="nav-btn-pill">Sign Up</button>
-      </div>
-    </header>
-
-    <!-- HERO TITLE BLOCK -->
-    <div class="hero-title-container">
-      <h1 class="hero-title">Explore The World In Ultimate Luxury</h1>
-      <p class="hero-subtitle">Curated commercial flights, private charters, 5-star resorts, and custom expeditions.</p>
-    </div>
-
-    <!-- MAIN WIDGET -->
-    <div class="main-card">
-      <div class="integrated-tabs" id="tabContainer">
-        <div class="tab-indicator" id="tabIndicator"></div>
-        <button class="tab-btn active" onclick="switchTab(this, 'cars')">🚘 Car Rentals</button>
-        <button class="tab-btn" onclick="switchTab(this, 'flights')">✈️ Flights</button>
-        <button class="tab-btn" onclick="switchTab(this, 'hotels')">🏨 Hotels</button>
-        <button class="tab-btn" onclick="switchTab(this, 'vacations')">🌴 Vacations</button>
-        <button class="tab-btn" onclick="switchTab(this, 'jets')">🛩️ Private Jets</button>
-      </div>
-
-      <div class="card-body" id="dynamic-content">
-        <!-- Injected below -->
-      </div>
+    <div class="viewport-controls">
+      <button class="btn-vp active" id="btn-desktop" onclick="setMode('desktop')">🖥️ Desktop</button>
+      <button class="btn-vp" id="btn-mobile" onclick="setMode('mobile')">📱 Mobile</button>
     </div>
   </div>
 
-  <div class="preview-toast" id="toast">Dispatched query to /api/search</div>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-left">
+      <a href="#" class="brand-logo">FLY<span>BORO</span></a>
+      <div class="mode-pill" id="header-mode-pill">
+        Current Mode: <strong id="mode-text">Commercial Flights (Trust & Efficiency)</strong>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-badge"><span class="status-dot"></span> Vercel Edge Ready</div>
+      <button class="btn-header-secondary">Manage Booking</button>
+      <button class="btn-header-secondary">USD ($)</button>
+      <button class="btn-header-secondary">Sign In</button>
+      <button class="btn-header-primary">Sign Up</button>
+    </div>
+  </header>
+
+  <!-- Main Viewport Container -->
+  <main class="page-viewport-container" id="pageContainer">
+
+    <!-- Tab Bar sitting directly on top of the card -->
+    <nav class="tabs-wrapper" aria-label="Product Categories">
+      <button class="tab-pill" data-tab="cars" onclick="switchProduct('cars')">
+        <span class="tab-icon">🚘</span> Car Rentals
+      </button>
+      <button class="tab-pill active" data-tab="flights" onclick="switchProduct('flights')">
+        <span class="tab-icon">✈️</span> Flights
+      </button>
+      <button class="tab-pill" data-tab="hotels" onclick="switchProduct('hotels')">
+        <span class="tab-icon">🏨</span> Hotels
+      </button>
+      <button class="tab-pill" data-tab="vacations" onclick="switchProduct('vacations')">
+        <span class="tab-icon">🌴</span> Vacations
+      </button>
+      <button class="tab-pill" data-tab="jets" onclick="switchProduct('jets')">
+        <span class="tab-icon">🛩️</span> Private Jets
+      </button>
+    </nav>
+
+    <!-- Main Card with 6px Navy Blue Top Accent -->
+    <section class="clean-search-card" id="searchCard">
+      <div id="dynamic-product-content">
+        <!-- Injected dynamically below -->
+      </div>
+    </section>
+
+    <!-- Ecosystem Marquee -->
+    <section class="trust-ecosystem-section">
+      <div class="trust-eyebrow">TRUSTED GLOBAL ECOSYSTEM</div>
+      <div class="trust-headline">Official Suppliers & Global Integration Partners</div>
+      <div class="marquee-grid">
+        <div class="partner-pill">✈️ RateHawk GDS</div>
+        <div class="partner-pill">🏨 Hotelbeds Portfolio</div>
+        <div class="partner-pill">🚘 Carnect Direct Fleets</div>
+        <div class="partner-pill">🛩️ ARGUS & Wyvern VIP FBO</div>
+        <div class="partner-pill">🔒 Stripe Elements TLS 1.3</div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="toast-msg" id="toastMsg">Search dispatched to /api/search</div>
 
   <script>
-    let portalState = {
-      activeTab: 'cars',
-      flights: { adults: 1, children: 0, infants: 0, cabin: 'Economy', tripType: 'round' },
+    // State
+    const state = {
+      product: 'flights',
+      tripType: 'roundtrip',
+      flights: { adults: 1, children: 0, infants: 0, cabin: 'Economy' },
       hotels: { adults: 2, children: 0, rooms: 1 },
       vacations: { adults: 1, children: 0, adultPrice: 2150, childPrice: 1290, flex: 'exact' },
       jets: { passengers: 4, step: 1 }
     };
-
-    function updateTabIndicator(activeBtn) {
-      const indicator = document.getElementById('tabIndicator');
-      if (activeBtn && indicator) {
-        indicator.style.left = `${activeBtn.offsetLeft}px`;
-        indicator.style.width = `${activeBtn.offsetWidth}px`;
-      }
-    }
-
-    function togglePopover(popoverId, event) {
-      if (event) event.stopPropagation();
-      const targetPopover = document.getElementById(popoverId);
-      
-      document.querySelectorAll('.popover-menu').forEach(menu => {
-        if (menu.id !== popoverId) menu.classList.remove('show');
-      });
-
-      if (targetPopover) targetPopover.classList.toggle('show');
-    }
-
-    function closeAllPopovers() {
-      document.querySelectorAll('.popover-menu').forEach(menu => menu.classList.remove('show'));
-    }
-
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.popover-container')) {
-        closeAllPopovers();
-      }
-      if (!e.target.closest('.input-group')) {
-        document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.remove('show'));
-      }
-    });
-
-    // Flight Steppers
-    function updateFlightGuests(type, delta) {
-      let s = portalState.flights;
-      if (type === 'adults') s.adults = Math.max(1, s.adults + delta);
-      if (type === 'children') s.children = Math.max(0, s.children + delta);
-      if (type === 'infants') s.infants = Math.max(0, s.infants + delta);
-
-      const elA = document.getElementById('val-flight-adults');
-      const elC = document.getElementById('val-flight-children');
-      const elI = document.getElementById('val-flight-infants');
-      const elLabel = document.getElementById('flight-btn-label');
-
-      if (elA) elA.innerText = s.adults;
-      if (elC) elC.innerText = s.children;
-      if (elI) elI.innerText = s.infants;
-
-      const total = s.adults + s.children + s.infants;
-      if (elLabel) elLabel.innerText = `${total} Traveler${total > 1 ? 's' : ''}, ${s.cabin}`;
-    }
-
-    function setFlightCabin(cabinName) {
-      portalState.flights.cabin = cabinName;
-      const s = portalState.flights;
-      const total = s.adults + s.children + s.infants;
-      const elLabel = document.getElementById('flight-btn-label');
-      if (elLabel) elLabel.innerText = `${total} Traveler${total > 1 ? 's' : ''}, ${cabinName}`;
-    }
-
-    function setTripType(type) {
-      portalState.flights.tripType = type;
-      renderTab('flights');
-    }
-
-    // Hotel Steppers
-    function updateHotelGuests(type, delta) {
-      let s = portalState.hotels;
-      if (type === 'adults') s.adults = Math.max(1, s.adults + delta);
-      if (type === 'children') s.children = Math.max(0, s.children + delta);
-      if (type === 'rooms') s.rooms = Math.max(1, s.rooms + delta);
-
-      const elA = document.getElementById('val-hotel-adults');
-      const elC = document.getElementById('val-hotel-children');
-      const elR = document.getElementById('val-hotel-rooms');
-      const elLabel = document.getElementById('hotel-btn-label');
-
-      if (elA) elA.innerText = s.adults;
-      if (elC) elC.innerText = s.children;
-      if (elR) elR.innerText = s.rooms;
-
-      const totalGuests = s.adults + s.children;
-      if (elLabel) elLabel.innerText = `${totalGuests} Guest${totalGuests > 1 ? 's' : ''}, ${s.rooms} Room${s.rooms > 1 ? 's' : ''}`;
-    }
-
-    // Vacation Steppers
-    function updateVacationGuests(type, delta) {
-      let s = portalState.vacations;
-      if (type === 'adults') s.adults = Math.max(1, s.adults + delta);
-      if (type === 'children') s.children = Math.max(0, s.children + delta);
-
-      const elA = document.getElementById('val-vac-adults');
-      const elC = document.getElementById('val-vac-children');
-      const elLabel = document.getElementById('vac-btn-label');
-      const elTotal = document.getElementById('vac-total-price');
-
-      if (elA) elA.innerText = s.adults;
-      if (elC) elC.innerText = s.children;
-
-      const totalGuests = s.adults + s.children;
-      const totalPrice = (s.adults * s.adultPrice) + (s.children * s.childPrice);
-
-      if (elLabel) elLabel.innerText = `${totalGuests} Guest${totalGuests > 1 ? 's' : ''} • $${totalPrice.toLocaleString()} Total`;
-      if (elTotal) elTotal.innerText = `$${totalPrice.toLocaleString()}.00`;
-    }
-
-    // Jet Steppers
-    function updateJetPassengers(delta) {
-      let s = portalState.jets;
-      s.passengers = Math.max(1, Math.min(18, s.passengers + delta));
-      const elVal = document.getElementById('val-jet-passengers');
-      const elLabel = document.getElementById('jet-btn-label');
-      if (elVal) elVal.innerText = s.passengers;
-      if (elLabel) elLabel.innerText = `${s.passengers} VIP Passenger${s.passengers > 1 ? 's' : ''}`;
-    }
-
-    function setJetStep(step) {
-      portalState.jets.step = step;
-      renderTab('jets');
-    }
-
-    function showAutocomplete(id) {
-      document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.remove('show'));
-      const ac = document.getElementById('ac-' + id);
-      if (ac) ac.classList.add('show');
-    }
-
-    function selectAirport(inputId, text) {
-      const inp = document.getElementById(inputId);
-      if (inp) inp.value = text;
-      document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.remove('show'));
-    }
-
-    function triggerToast(action) {
-      const toast = document.getElementById('toast');
-      toast.innerText = `🔍 Dispatched ${action} search to /api/search`;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
 
     function getFutureDate(days) {
       const d = new Date();
@@ -552,450 +656,512 @@
       return d.toISOString().split('T')[0];
     }
 
-    const tabTemplates = {
-      cars: () => `
-        <div class="card-header-row">
-          <div>
-            <h2 class="section-heading">Reserve Premium Car Rentals Worldwide</h2>
-            <p class="section-subheading">Direct fleet availability, zero hidden fees, and instant vouchers.</p>
-          </div>
-          <div class="social-proof-badge">★ 4.9 <span>(1,200+ Fleets)</span></div>
+    const METADATA = {
+      cars: {
+        title: 'Reserve Premium Car Rentals Worldwide',
+        subtitle: 'Direct fleet availability, zero hidden fees, and instant vouchers.',
+        mode: 'Car Rentals (Trust & Efficiency)'
+      },
+      flights: {
+        title: 'Compare & Book Commercial Airline Flights',
+        subtitle: 'Real-time global GDS ticketing powered by RateHawk with flexible fare options.',
+        mode: 'Commercial Flights (Trust & Efficiency)'
+      },
+      hotels: {
+        title: 'Curated 5-Star Luxury Hotels & Private Resorts',
+        subtitle: 'Direct Hotelbeds portfolio integration offering premier hospitality perks and best rates.',
+        mode: 'Hotels & Resorts (Luxury & Relaxation)'
+      },
+      vacations: {
+        title: 'Handcrafted Adventure & All-Inclusive Escapes',
+        subtitle: 'Immersive excursions, beachfront bundles, and curated regional expeditions.',
+        mode: 'Vacation Packages (Action & Adventure)'
+      },
+      jets: {
+        title: 'Bespoke Private Charter Jets & Empty Legs',
+        subtitle: 'On-demand heavy, midsize, and light jet availability with private VIP FBO handling.',
+        mode: 'Private Jets (Exclusive Concierge)'
+      }
+    };
+
+    // Product Templates
+    const TEMPLATES = {
+      flights: () => `
+        <div class="card-header-block">
+          <h2 class="card-title">Compare & Book Commercial Airline Flights</h2>
+          <p class="card-subtitle">Real-time global GDS ticketing powered by RateHawk with flexible fare options.</p>
         </div>
-        <div class="input-strip">
-          <div class="input-group" onclick="showAutocomplete('car-pickup')">
-            <label class="micro-label">PICK-UP LOCATION *</label>
-            <input type="text" class="strip-input" id="car-pickup" value="Miami (MIA)" />
-            <ul class="autocomplete-dropdown" id="ac-car-pickup">
-              <li class="autocomplete-item" onclick="selectAirport('car-pickup', 'Miami (MIA)')">
-                <div><div class="ac-city">Miami, USA</div><div class="ac-sub">Miami International Airport</div></div>
-                <span class="ac-pill">MIA</span>
-              </li>
-              <li class="autocomplete-item" onclick="selectAirport('car-pickup', 'Orlando (MCO)')">
-                <div><div class="ac-city">Orlando, USA</div><div class="ac-sub">Orlando International Airport</div></div>
-                <span class="ac-pill">MCO</span>
-              </li>
-            </ul>
+
+        <div class="trip-segment-bar">
+          <button class="segment-btn ${state.tripType === 'roundtrip' ? 'active' : ''}" onclick="setTripType('roundtrip')">Round-Trip ⇄</button>
+          <button class="segment-btn ${state.tripType === 'oneway' ? 'active' : ''}" onclick="setTripType('oneway')">One-Way ➔</button>
+          <button class="segment-btn ${state.tripType === 'multicity' ? 'active' : ''}" onclick="setTripType('multicity')">Multi-City ✈</button>
+        </div>
+
+        <div class="form-grid-row">
+          <div class="input-field-container">
+            <label class="field-micro-label">FLYING FROM *</label>
+            <div class="field-input-box" onclick="toggleDropdown('ac-from')">
+              <input type="text" id="fl-from" value="New Delhi (DEL)" />
+              <span style="font-size:10px; color:#94A3B8;">📍</span>
+            </div>
+            <div class="autocomplete-menu" id="ac-from">
+              <div class="autocomplete-item" onclick="selectAirport('fl-from', 'New Delhi (DEL)', 'ac-from')">
+                <div><div class="item-city">New Delhi, India</div><div class="item-name">Indira Gandhi International</div></div>
+                <span class="item-code">DEL</span>
+              </div>
+              <div class="autocomplete-item" onclick="selectAirport('fl-from', 'Mumbai (BOM)', 'ac-from')">
+                <div><div class="item-city">Mumbai, India</div><div class="item-name">Chhatrapati Shivaji Maharaj</div></div>
+                <span class="item-code">BOM</span>
+              </div>
+            </div>
           </div>
-          <div class="divider"></div>
-          <div class="input-group">
-            <label class="micro-label">PICK-UP DATE *</label>
-            <input type="date" class="strip-input" value="${getFutureDate(2)}" />
+
+          <div class="input-field-container">
+            <label class="field-micro-label">FLYING TO *</label>
+            <div class="field-input-box" onclick="toggleDropdown('ac-to')">
+              <input type="text" id="fl-to" value="London (LHR)" />
+              <span style="font-size:10px; color:#94A3B8;">📍</span>
+            </div>
+            <div class="autocomplete-menu" id="ac-to">
+              <div class="autocomplete-item" onclick="selectAirport('fl-to', 'London (LHR)', 'ac-to')">
+                <div><div class="item-city">London, UK</div><div class="item-name">Heathrow International</div></div>
+                <span class="item-code">LHR</span>
+              </div>
+              <div class="autocomplete-item" onclick="selectAirport('fl-to', 'New York (JFK)', 'ac-to')">
+                <div><div class="item-city">New York, USA</div><div class="item-name">John F. Kennedy</div></div>
+                <span class="item-code">JFK</span>
+              </div>
+            </div>
           </div>
-          <div class="divider"></div>
-          <div class="input-group">
-            <label class="micro-label">DROP-OFF DATE *</label>
-            <input type="date" class="strip-input" value="${getFutureDate(7)}" />
+
+          <div class="input-field-container">
+            <label class="field-micro-label">DEPARTURE DATE *</label>
+            <div class="field-input-box">
+              <input type="date" id="fl-dep" value="${getFutureDate(2)}" min="${getFutureDate(0)}" onchange="syncReturnMin(this.value, 'fl-ret')" />
+            </div>
           </div>
-          <div class="divider"></div>
-          <div class="input-group">
-            <label class="micro-label">DRIVER AGE</label>
-            <select class="strip-input">
-              <option>25 to 69 Years</option>
-              <option>Under 25 Years</option>
-            </select>
+
+          ${state.tripType !== 'oneway' ? `
+          <div class="input-field-container" id="fl-ret-container">
+            <label class="field-micro-label">RETURN DATE *</label>
+            <div class="field-input-box">
+              <input type="date" id="fl-ret" value="${getFutureDate(9)}" min="${getFutureDate(2)}" />
+            </div>
           </div>
-          <button type="button" class="cta-btn" onclick="triggerToast('Car Rentals')">Search Cars ➔</button>
+          ` : ''}
+        </div>
+
+        <div class="form-bottom-row">
+          <div class="input-field-container" style="min-width: 260px;">
+            <label class="field-micro-label">CABIN & PASSENGERS</label>
+            <div class="field-input-box" onclick="toggleDropdown('pop-flight-passengers')" style="cursor:pointer;">
+              <span id="label-flight-passengers">
+                ${state.flights.adults + state.flights.children + state.flights.infants} Traveler${(state.flights.adults + state.flights.children + state.flights.infants) > 1 ? 's' : ''}, ${state.flights.cabin}
+              </span>
+              <span style="font-size:10px; color:#64748B;">▼</span>
+            </div>
+
+            <!-- Popover -->
+            <div class="popover-dropdown" id="pop-flight-passengers" onclick="event.stopPropagation()">
+              <div class="stepper-row">
+                <div class="stepper-desc"><h5>Adults</h5><p>12+ years</p></div>
+                <div class="stepper-actions">
+                  <button type="button" class="btn-counter" onclick="updateFlightCounter('adults', -1)">-</button>
+                  <span class="stepper-num" id="val-fl-adults">${state.flights.adults}</span>
+                  <button type="button" class="btn-counter" onclick="updateFlightCounter('adults', 1)">+</button>
+                </div>
+              </div>
+              <div class="stepper-row">
+                <div class="stepper-desc"><h5>Children</h5><p>2–11 years</p></div>
+                <div class="stepper-actions">
+                  <button type="button" class="btn-counter" onclick="updateFlightCounter('children', -1)">-</button>
+                  <span class="stepper-num" id="val-fl-children">${state.flights.children}</span>
+                  <button type="button" class="btn-counter" onclick="updateFlightCounter('children', 1)">+</button>
+                </div>
+              </div>
+              <div class="stepper-row">
+                <div class="stepper-desc"><h5>Infants</h5><p>Under 2 years</p></div>
+                <div class="stepper-actions">
+                  <button type="button" class="btn-counter" onclick="updateFlightCounter('infants', -1)">-</button>
+                  <span class="stepper-num" id="val-fl-infants">${state.flights.infants}</span>
+                  <button type="button" class="btn-counter" onclick="updateFlightCounter('infants', 1)">+</button>
+                </div>
+              </div>
+              <div style="margin-top: 10px; display:flex; justify-content:space-between; align-items:center;">
+                <select id="fl-cabin-select" onchange="setFlightCabin(this.value)" style="padding:4px 8px; border-radius:6px; border:1px solid #CBD5E1; font-size:0.8rem; background:#F8FAFC;">
+                  <option value="Economy" ${state.flights.cabin === 'Economy' ? 'selected' : ''}>Economy</option>
+                  <option value="Premium Economy" ${state.flights.cabin === 'Premium Economy' ? 'selected' : ''}>Premium Economy</option>
+                  <option value="Business Class" ${state.flights.cabin === 'Business Class' ? 'selected' : ''}>Business Class</option>
+                  <option value="First Class" ${state.flights.cabin === 'First Class' ? 'selected' : ''}>First Class</option>
+                </select>
+                <button type="button" class="btn-header-secondary" onclick="closeAllDropdowns()">Done</button>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn-search-availability" onclick="triggerSearch('Flights')">
+            Search Availability ➔
+          </button>
         </div>
       `,
 
-      flights: () => `
-        <div class="card-header-row">
-          <div>
-            <h2 class="section-heading">Compare & Book Commercial Airline Flights</h2>
-            <p class="section-subheading">Real-time global GDS ticketing powered by RateHawk with flexible fare options.</p>
-          </div>
-          <div class="social-proof-badge">★ 4.9 <span>(3,500+ Routes)</span></div>
+      cars: () => `
+        <div class="card-header-block">
+          <h2 class="card-title">Reserve Premium Car Rentals Worldwide</h2>
+          <p class="card-subtitle">Direct fleet availability, zero hidden fees, and instant vouchers.</p>
         </div>
-        <div class="subnav-row">
-          <button type="button" class="subnav-btn ${portalState.flights.tripType === 'round' ? 'active' : ''}" onclick="setTripType('round')">Round-Trip ⇄</button>
-          <button type="button" class="subnav-btn ${portalState.flights.tripType === 'oneway' ? 'active' : ''}" onclick="setTripType('oneway')">One-Way →</button>
-          <button type="button" class="subnav-btn ${portalState.flights.tripType === 'multi' ? 'active' : ''}" onclick="setTripType('multi')">Multi-City ✈</button>
-        </div>
-        <div class="input-strip">
-          <div class="input-group" onclick="showAutocomplete('flight-orig')">
-            <label class="micro-label">FLYING FROM *</label>
-            <input type="text" class="strip-input" id="flight-orig" value="New Delhi (DEL)" />
-            <ul class="autocomplete-dropdown" id="ac-flight-orig">
-              <li class="autocomplete-item" onclick="selectAirport('flight-orig', 'New Delhi (DEL)')">
-                <div><div class="ac-city">New Delhi, India</div><div class="ac-sub">Indira Gandhi Intl</div></div>
-                <span class="ac-pill">DEL</span>
-              </li>
-              <li class="autocomplete-item" onclick="selectAirport('flight-orig', 'Dubai (DXB)')">
-                <div><div class="ac-city">Dubai, UAE</div><div class="ac-sub">Dubai International</div></div>
-                <span class="ac-pill">DXB</span>
-              </li>
-            </ul>
-          </div>
-          <div class="divider"></div>
-          <div class="input-group" onclick="showAutocomplete('flight-dest')">
-            <label class="micro-label">FLYING TO *</label>
-            <input type="text" class="strip-input" id="flight-dest" value="London (LHR)" />
-            <ul class="autocomplete-dropdown" id="ac-flight-dest">
-              <li class="autocomplete-item" onclick="selectAirport('flight-dest', 'London (LHR)')">
-                <div><div class="ac-city">London, UK</div><div class="ac-sub">Heathrow Airport</div></div>
-                <span class="ac-pill">LHR</span>
-              </li>
-              <li class="autocomplete-item" onclick="selectAirport('flight-dest', 'Paris (CDG)')">
-                <div><div class="ac-city">Paris, France</div><div class="ac-sub">Charles de Gaulle</div></div>
-                <span class="ac-pill">CDG</span>
-              </li>
-            </ul>
-          </div>
-          <div class="divider"></div>
-          <div class="input-group">
-            <label class="micro-label">DEPARTURE *</label>
-            <input type="date" class="strip-input" value="${getFutureDate(5)}" />
-          </div>
-          ${portalState.flights.tripType === 'round' ? `
-            <div class="divider"></div>
-            <div class="input-group">
-              <label class="micro-label">RETURN *</label>
-              <input type="date" class="strip-input" value="${getFutureDate(12)}" />
-            </div>
-          ` : ''}
-          <div class="divider"></div>
-          <div class="input-group popover-container">
-            <label class="micro-label">PASSENGERS & CABIN</label>
-            <button type="button" class="strip-input" onclick="togglePopover('flight-popover', event)" style="display:flex; justify-content:space-between; align-items:center;">
-              <span id="flight-btn-label">${portalState.flights.adults + portalState.flights.children + portalState.flights.infants} Traveler${(portalState.flights.adults + portalState.flights.children + portalState.flights.infants) > 1 ? 's' : ''}, ${portalState.flights.cabin}</span>
-              <span style="font-size: 10px; color: #94A3B8;">▼</span>
-            </button>
-            <div id="flight-popover" class="popover-menu" onclick="event.stopPropagation()">
-              <div class="stepper-row">
-                <div class="stepper-info"><h4>Adults</h4><p>12+ years</p></div>
-                <div class="stepper-controls">
-                  <button type="button" class="stepper-btn" onclick="updateFlightGuests('adults', -1)">-</button>
-                  <span class="stepper-val" id="val-flight-adults">${portalState.flights.adults}</span>
-                  <button type="button" class="stepper-btn" onclick="updateFlightGuests('adults', 1)">+</button>
-                </div>
-              </div>
-              <div class="stepper-row">
-                <div class="stepper-info"><h4>Children</h4><p>2–11 years</p></div>
-                <div class="stepper-controls">
-                  <button type="button" class="stepper-btn" onclick="updateFlightGuests('children', -1)">-</button>
-                  <span class="stepper-val" id="val-flight-children">${portalState.flights.children}</span>
-                  <button type="button" class="stepper-btn" onclick="updateFlightGuests('children', 1)">+</button>
-                </div>
-              </div>
-              <div class="stepper-row">
-                <div class="stepper-info"><h4>Infants</h4><p>Under 2 years</p></div>
-                <div class="stepper-controls">
-                  <button type="button" class="stepper-btn" onclick="updateFlightGuests('infants', -1)">-</button>
-                  <span class="stepper-val" id="val-flight-infants">${portalState.flights.infants}</span>
-                  <button type="button" class="stepper-btn" onclick="updateFlightGuests('infants', 1)">+</button>
-                </div>
-              </div>
-              <div class="popover-footer" style="flex-direction:column; align-items:flex-start; gap:8px;">
-                <span style="font-size: 0.72rem; color: #94A3B8; font-weight:700;">CABIN CLASS</span>
-                <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                  <select class="strip-input" style="background:#0B1120; padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.12); width:auto;" onchange="setFlightCabin(this.value)">
-                    <option value="Economy" ${portalState.flights.cabin === 'Economy' ? 'selected' : ''}>Economy</option>
-                    <option value="Premium Economy" ${portalState.flights.cabin === 'Premium Economy' ? 'selected' : ''}>Premium Economy</option>
-                    <option value="Business Class" ${portalState.flights.cabin === 'Business Class' ? 'selected' : ''}>Business Class</option>
-                    <option value="First Class" ${portalState.flights.cabin === 'First Class' ? 'selected' : ''}>First Class</option>
-                  </select>
-                  <button type="button" class="btn-popover-done" onclick="closeAllPopovers()">Done</button>
-                </div>
-              </div>
+
+        <div class="form-grid-row">
+          <div class="input-field-container">
+            <label class="field-micro-label">PICK-UP LOCATION *</label>
+            <div class="field-input-box">
+              <input type="text" value="Miami (MIA)" />
+              <span style="font-size:10px; color:#94A3B8;">📍</span>
             </div>
           </div>
-          <button type="button" class="cta-btn" onclick="triggerToast('Flights')">Search Flights ➔</button>
+          <div class="input-field-container">
+            <label class="field-micro-label">PICK-UP DATE *</label>
+            <div class="field-input-box">
+              <input type="date" value="${getFutureDate(2)}" min="${getFutureDate(0)}" />
+            </div>
+          </div>
+          <div class="input-field-container">
+            <label class="field-micro-label">DROP-OFF DATE *</label>
+            <div class="field-input-box">
+              <input type="date" value="${getFutureDate(7)}" min="${getFutureDate(2)}" />
+            </div>
+          </div>
+          <div class="input-field-container">
+            <label class="field-micro-label">DRIVER AGE</label>
+            <div class="field-input-box">
+              <select style="background:transparent; border:none; width:100%; font-family:inherit; font-weight:600; outline:none;">
+                <option>25 to 69 Years</option>
+                <option>Under 25 Years</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-bottom-row">
+          <div style="font-size:0.85rem; color:#64748B;">
+            Duration: <strong style="color:#0B1E36;" id="car-duration-badge">5 Days</strong> • Unlimited Mileage Included
+          </div>
+          <button type="button" class="btn-search-availability" onclick="triggerSearch('Car Rentals')">
+            Search Cars ➔
+          </button>
         </div>
       `,
 
       hotels: () => `
-        <div class="card-header-row">
-          <div>
-            <h2 class="section-heading">Curated 5-Star Luxury Hotels & Private Resorts</h2>
-            <p class="section-subheading">Direct portfolio integration offering premier hospitality perks and best rates.</p>
-          </div>
-          <div class="social-proof-badge">★ 5.0 <span>(850+ Resorts)</span></div>
+        <div class="card-header-block">
+          <h2 class="card-title">Curated 5-Star Luxury Hotels & Private Resorts</h2>
+          <p class="card-subtitle">Direct Hotelbeds portfolio integration offering premier hospitality perks and best rates.</p>
         </div>
-        <div class="input-strip">
-          <div class="input-group" onclick="showAutocomplete('hotel-dest')">
-            <label class="micro-label">DESTINATION / RESORT *</label>
-            <input type="text" class="strip-input" id="hotel-dest" value="Paris (CDG)" />
-            <ul class="autocomplete-dropdown" id="ac-hotel-dest">
-              <li class="autocomplete-item" onclick="selectAirport('hotel-dest', 'Paris, France (All Areas)')">
-                <div><div class="ac-city">Paris, France</div><div class="ac-sub">850 Luxury Properties</div></div>
-                <span class="ac-pill">PAR</span>
-              </li>
-              <li class="autocomplete-item" onclick="selectAirport('hotel-dest', 'Tokyo, Japan (Ginza)')">
-                <div><div class="ac-city">Tokyo, Japan</div><div class="ac-sub">Ginza & Roppongi</div></div>
-                <span class="ac-pill">TYO</span>
-              </li>
-            </ul>
+
+        <div class="form-grid-row">
+          <div class="input-field-container">
+            <label class="field-micro-label">DESTINATION / RESORT *</label>
+            <div class="field-input-box">
+              <input type="text" value="Paris, France (CDG)" />
+              <span style="font-size:10px; color:#94A3B8;">🏨</span>
+            </div>
           </div>
-          <div class="divider"></div>
-          <div class="input-group">
-            <label class="micro-label">CHECK-IN DATE *</label>
-            <input type="date" class="strip-input" value="${getFutureDate(3)}" />
+          <div class="input-field-container">
+            <label class="field-micro-label">CHECK-IN DATE *</label>
+            <div class="field-input-box">
+              <input type="date" value="${getFutureDate(3)}" min="${getFutureDate(0)}" />
+            </div>
           </div>
-          <div class="divider"></div>
-          <div class="input-group">
-            <label class="micro-label">CHECK-OUT DATE *</label>
-            <input type="date" class="strip-input" value="${getFutureDate(8)}" />
+          <div class="input-field-container">
+            <label class="field-micro-label">CHECK-OUT DATE *</label>
+            <div class="field-input-box">
+              <input type="date" value="${getFutureDate(7)}" min="${getFutureDate(3)}" />
+            </div>
           </div>
-          <div class="divider"></div>
-          <div class="input-group popover-container">
-            <label class="micro-label">GUESTS & ROOMS</label>
-            <button type="button" class="strip-input" onclick="togglePopover('hotel-popover', event)" style="display:flex; justify-content:space-between; align-items:center;">
-              <span id="hotel-btn-label">${portalState.hotels.adults + portalState.hotels.children} Guests, ${portalState.hotels.rooms} Room${portalState.hotels.rooms > 1 ? 's' : ''}</span>
-              <span style="font-size: 10px; color: #94A3B8;">▼</span>
-            </button>
-            <div id="hotel-popover" class="popover-menu" onclick="event.stopPropagation()">
+          <div class="input-field-container">
+            <label class="field-micro-label">OCCUPANCY</label>
+            <div class="field-input-box" onclick="toggleDropdown('pop-hotel-occupancy')" style="cursor:pointer;">
+              <span id="label-hotel-guests">${state.hotels.adults + state.hotels.children} Guests, ${state.hotels.rooms} Room</span>
+              <span style="font-size:10px; color:#64748B;">▼</span>
+            </div>
+
+            <div class="popover-dropdown" id="pop-hotel-occupancy" onclick="event.stopPropagation()">
               <div class="stepper-row">
-                <div class="stepper-info"><h4>Adults</h4><p>18+ years</p></div>
-                <div class="stepper-controls">
-                  <button type="button" class="stepper-btn" onclick="updateHotelGuests('adults', -1)">-</button>
-                  <span class="stepper-val" id="val-hotel-adults">${portalState.hotels.adults}</span>
-                  <button type="button" class="stepper-btn" onclick="updateHotelGuests('adults', 1)">+</button>
+                <div class="stepper-desc"><h5>Adults</h5><p>18+ years</p></div>
+                <div class="stepper-actions">
+                  <button type="button" class="btn-counter" onclick="updateHotelCounter('adults', -1)">-</button>
+                  <span class="stepper-num" id="val-ht-adults">${state.hotels.adults}</span>
+                  <button type="button" class="btn-counter" onclick="updateHotelCounter('adults', 1)">+</button>
                 </div>
               </div>
               <div class="stepper-row">
-                <div class="stepper-info"><h4>Children</h4><p>0–17 years</p></div>
-                <div class="stepper-controls">
-                  <button type="button" class="stepper-btn" onclick="updateHotelGuests('children', -1)">-</button>
-                  <span class="stepper-val" id="val-hotel-children">${portalState.hotels.children}</span>
-                  <button type="button" class="stepper-btn" onclick="updateHotelGuests('children', 1)">+</button>
+                <div class="stepper-desc"><h5>Children</h5><p>0–17 years</p></div>
+                <div class="stepper-actions">
+                  <button type="button" class="btn-counter" onclick="updateHotelCounter('children', -1)">-</button>
+                  <span class="stepper-num" id="val-ht-children">${state.hotels.children}</span>
+                  <button type="button" class="btn-counter" onclick="updateHotelCounter('children', 1)">+</button>
                 </div>
               </div>
               <div class="stepper-row">
-                <div class="stepper-info"><h4>Rooms</h4><p>Suites / Rooms</p></div>
-                <div class="stepper-controls">
-                  <button type="button" class="stepper-btn" onclick="updateHotelGuests('rooms', -1)">-</button>
-                  <span class="stepper-val" id="val-hotel-rooms">${portalState.hotels.rooms}</span>
-                  <button type="button" class="stepper-btn" onclick="updateHotelGuests('rooms', 1)">+</button>
+                <div class="stepper-desc"><h5>Rooms</h5><p>Suites / Rooms</p></div>
+                <div class="stepper-actions">
+                  <button type="button" class="btn-counter" onclick="updateHotelCounter('rooms', -1)">-</button>
+                  <span class="stepper-num" id="val-ht-rooms">${state.hotels.rooms}</span>
+                  <button type="button" class="btn-counter" onclick="updateHotelCounter('rooms', 1)">+</button>
                 </div>
               </div>
-              <div class="popover-footer">
-                <span style="font-size:0.75rem; color:#94A3B8;">Occupancy configured</span>
-                <button type="button" class="btn-popover-done" onclick="closeAllPopovers()">Done</button>
+              <div style="margin-top: 10px; text-align:right;">
+                <button type="button" class="btn-header-secondary" onclick="closeAllDropdowns()">Done</button>
               </div>
             </div>
           </div>
-          <button type="button" class="cta-btn" onclick="triggerToast('Hotels')">Search Hotels ➔</button>
+        </div>
+
+        <div class="form-bottom-row">
+          <div style="font-size:0.85rem; color:#64748B;">
+            ★ 5.0 Rating • 850+ Verified Global Luxury Properties
+          </div>
+          <button type="button" class="btn-search-availability" onclick="triggerSearch('Hotels')">
+            Search Hotels ➔
+          </button>
         </div>
       `,
 
       vacations: () => `
-        <div class="card-header-row">
-          <div>
-            <h2 class="section-heading">Handcrafted Adventure & All-Inclusive Escapes</h2>
-            <p class="section-subheading">Immersive excursions, beachfront bundles, and curated regional expeditions.</p>
-          </div>
-          <div class="social-proof-badge">★ 4.9 <span>(2,400+ Expeditions)</span></div>
+        <div class="card-header-block">
+          <h2 class="card-title">Handcrafted Adventure & All-Inclusive Escapes</h2>
+          <p class="card-subtitle">Immersive excursions, beachfront bundles, and curated regional expeditions.</p>
         </div>
-        <div class="subnav-row">
-          <button type="button" class="subnav-btn ${portalState.vacations.flex === 'exact' ? 'active' : ''}" onclick="portalState.vacations.flex='exact'; renderTab('vacations');">Exact Day</button>
-          <button type="button" class="subnav-btn ${portalState.vacations.flex === 'month' ? 'active' : ''}" onclick="portalState.vacations.flex='month'; renderTab('vacations');">Anytime This Month</button>
-        </div>
-        <div class="input-strip">
-          <div class="input-group">
-            <label class="micro-label">PACKAGE EXPERIENCE / REGION *</label>
-            <input type="text" class="strip-input" value="Costa Rica (SJO)" />
+
+        <div class="form-grid-row three-col">
+          <div class="input-field-container">
+            <label class="field-micro-label">PACKAGE EXPERIENCE / REGION *</label>
+            <div class="field-input-box">
+              <input type="text" value="Costa Rica Rainforest & Beach" />
+              <span style="font-size:10px; color:#94A3B8;">🌴</span>
+            </div>
           </div>
-          <div class="divider"></div>
-          <div class="input-group">
-            <label class="micro-label">TARGET DATE *</label>
-            <input type="${portalState.vacations.flex === 'month' ? 'month' : 'date'}" class="strip-input" value="${portalState.vacations.flex === 'month' ? '2026-10' : getFutureDate(14)}" />
+          <div class="input-field-container">
+            <label class="field-micro-label">TARGET TRAVEL DATE *</label>
+            <div class="field-input-box">
+              <input type="date" value="${getFutureDate(14)}" min="${getFutureDate(0)}" />
+            </div>
           </div>
-          <div class="divider"></div>
-          <div class="input-group popover-container">
-            <label class="micro-label">GUEST ALLOCATION</label>
-            <button type="button" class="strip-input" onclick="togglePopover('vacation-popover', event)" style="display:flex; justify-content:space-between; align-items:center;">
-              <span id="vac-btn-label">${portalState.vacations.adults + portalState.vacations.children} Guest${(portalState.vacations.adults + portalState.vacations.children) > 1 ? 's' : ''} • $${((portalState.vacations.adults * 2150) + (portalState.vacations.children * 1290)).toLocaleString()} Total</span>
-              <span style="font-size: 10px; color: #94A3B8;">▼</span>
-            </button>
-            <div id="vacation-popover" class="popover-menu" onclick="event.stopPropagation()">
+          <div class="input-field-container">
+            <label class="field-micro-label">GUESTS ALLOCATION</label>
+            <div class="field-input-box" onclick="toggleDropdown('pop-vacay')" style="cursor:pointer;">
+              <span id="label-vacay-guests">${state.vacations.adults + state.vacations.children} Guests • $${((state.vacations.adults * 2150) + (state.vacations.children * 1290)).toLocaleString()}</span>
+              <span style="font-size:10px; color:#64748B;">▼</span>
+            </div>
+
+            <div class="popover-dropdown" id="pop-vacay" onclick="event.stopPropagation()">
               <div class="stepper-row">
-                <div class="stepper-info"><h4>Adults (18+)</h4><p>$2,150 / guest</p></div>
-                <div class="stepper-controls">
-                  <button type="button" class="stepper-btn" onclick="updateVacationGuests('adults', -1)">-</button>
-                  <span class="stepper-val" id="val-vac-adults">${portalState.vacations.adults}</span>
-                  <button type="button" class="stepper-btn" onclick="updateVacationGuests('adults', 1)">+</button>
+                <div class="stepper-desc"><h5>Adults (18+)</h5><p>$2,150 / guest</p></div>
+                <div class="stepper-actions">
+                  <button type="button" class="btn-counter" onclick="updateVacayCounter('adults', -1)">-</button>
+                  <span class="stepper-num" id="val-vc-adults">${state.vacations.adults}</span>
+                  <button type="button" class="btn-counter" onclick="updateVacayCounter('adults', 1)">+</button>
                 </div>
               </div>
               <div class="stepper-row">
-                <div class="stepper-info"><h4>Children (3-17)</h4><p>$1,290 / guest</p></div>
-                <div class="stepper-controls">
-                  <button type="button" class="stepper-btn" onclick="updateVacationGuests('children', -1)">-</button>
-                  <span class="stepper-val" id="val-vac-children">${portalState.vacations.children}</span>
-                  <button type="button" class="stepper-btn" onclick="updateVacationGuests('children', 1)">+</button>
+                <div class="stepper-desc"><h5>Children (3–17)</h5><p>$1,290 / guest</p></div>
+                <div class="stepper-actions">
+                  <button type="button" class="btn-counter" onclick="updateVacayCounter('children', -1)">-</button>
+                  <span class="stepper-num" id="val-vc-children">${state.vacations.children}</span>
+                  <button type="button" class="btn-counter" onclick="updateVacayCounter('children', 1)">+</button>
                 </div>
               </div>
-              <div class="popover-footer">
-                <div>
-                  <span style="font-size: 0.72rem; color: #94A3B8; display:block;">Estimated Total:</span>
-                  <span id="vac-total-price" style="color: #FF6D00; font-weight: 700; font-size: 1.05rem;">$${((portalState.vacations.adults * 2150) + (portalState.vacations.children * 1290)).toLocaleString()}.00</span>
-                </div>
-                <button type="button" class="btn-popover-done" onclick="closeAllPopovers()">Done</button>
+              <div style="margin-top: 10px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.8rem; font-weight:700; color:#FF6D00;" id="vacay-subtotal-disp">$${((state.vacations.adults * 2150) + (state.vacations.children * 1290)).toLocaleString()}</span>
+                <button type="button" class="btn-header-secondary" onclick="closeAllDropdowns()">Done</button>
               </div>
             </div>
           </div>
-          <button type="button" class="cta-btn" onclick="triggerToast('Vacations')">Search Packages ➔</button>
+        </div>
+
+        <div class="form-bottom-row">
+          <div style="font-size:0.85rem; color:#64748B;">
+            All-inclusive: 5-star lodging, resort transfers, guided excursions.
+          </div>
+          <button type="button" class="btn-search-availability" onclick="triggerSearch('Vacations')">
+            Search Packages ➔
+          </button>
         </div>
       `,
 
       jets: () => `
-        <div class="jet-progress">
-          <div class="jet-step ${portalState.jets.step >= 1 ? 'active' : ''}">1. Routing</div>
-          <div class="jet-line"></div>
-          <div class="jet-step ${portalState.jets.step >= 2 ? 'active' : ''}">2. Aircraft</div>
-          <div class="jet-line"></div>
-          <div class="jet-step ${portalState.jets.step >= 3 ? 'active' : ''}">3. VIP Concierge</div>
+        <div class="card-header-block">
+          <h2 class="card-title">Bespoke Private Charter Jets & Empty Legs</h2>
+          <p class="card-subtitle">On-demand heavy, midsize, and light jet availability with private VIP FBO handling.</p>
         </div>
 
-        ${portalState.jets.step === 1 ? `
-          <div class="card-header-row">
-            <div>
-              <h2 class="section-heading">Step 1: Mission Routing & Schedule</h2>
-              <p class="section-subheading">On-demand heavy, midsize, and light jet availability with private VIP FBO handling.</p>
+        <div style="display:flex; gap:12px; margin-bottom:20px; font-size:0.8rem; font-weight:700; color:#475569;">
+          <span style="color:#0B1E36; border-bottom:2px solid #FF6D00; padding-bottom:4px;">1. Routing & Schedule</span>
+          <span>➔ 2. Aircraft Fleet</span>
+          <span>➔ 3. VIP Concierge</span>
+        </div>
+
+        <div class="form-grid-row">
+          <div class="input-field-container">
+            <label class="field-micro-label">DEPARTURE FBO *</label>
+            <div class="field-input-box">
+              <input type="text" value="New Delhi (DEL - VIP Terminal)" />
+              <span style="font-size:10px; color:#94A3B8;">🛩️</span>
             </div>
-            <div class="social-proof-badge">★ 5.0 <span>(VIP Concierge)</span></div>
           </div>
-          <div class="input-strip">
-            <div class="input-group">
-              <label class="micro-label">DEPARTURE FBO *</label>
-              <input type="text" class="strip-input" value="New Delhi (DEL)" />
+          <div class="input-field-container">
+            <label class="field-micro-label">DESTINATION FBO *</label>
+            <div class="field-input-box">
+              <input type="text" value="Dubai (DXB - Al Maktoum FBO)" />
+              <span style="font-size:10px; color:#94A3B8;">🛩️</span>
             </div>
-            <div class="divider"></div>
-            <div class="input-group">
-              <label class="micro-label">DESTINATION FBO *</label>
-              <input type="text" class="strip-input" value="Dubai (DXB)" />
-            </div>
-            <div class="divider"></div>
-            <div class="input-group">
-              <label class="micro-label">DEPARTURE DATE *</label>
-              <input type="date" class="strip-input" value="${getFutureDate(4)}" />
-            </div>
-            <div class="divider"></div>
-            <div class="input-group popover-container">
-              <label class="micro-label">ESTIMATED PASSENGERS</label>
-              <button type="button" class="strip-input" onclick="togglePopover('jet-popover', event)" style="display:flex; justify-content:space-between; align-items:center;">
-                <span id="jet-btn-label">${portalState.jets.passengers} VIP Passengers</span> <span style="font-size: 10px; color: #94A3B8;">▼</span>
-              </button>
-              <div id="jet-popover" class="popover-menu" onclick="event.stopPropagation()">
-                <div class="stepper-row">
-                  <div class="stepper-info"><h4>Charter Passengers</h4><p>Max capacity: 18</p></div>
-                  <div class="stepper-controls">
-                    <button type="button" class="stepper-btn" onclick="updateJetPassengers(-1)">-</button>
-                    <span class="stepper-val" id="val-jet-passengers">${portalState.jets.passengers}</span>
-                    <button type="button" class="stepper-btn" onclick="updateJetPassengers(1)">+</button>
-                  </div>
-                </div>
-                <div class="popover-footer">
-                  <span style="font-size:0.75rem; color:#94A3B8;">Cabin manifest</span>
-                  <button type="button" class="btn-popover-done" onclick="closeAllPopovers()">Done</button>
-                </div>
-              </div>
-            </div>
-            <button type="button" class="cta-btn" onclick="setJetStep(2)">Continue ➔</button>
           </div>
-        ` : portalState.jets.step === 2 ? `
-          <div class="card-header-row">
-            <div>
-              <h2 class="section-heading">Step 2: Aircraft Fleet Class</h2>
-              <p class="section-subheading">Select your aircraft category, luggage tier, and onboard cabin preferences.</p>
+          <div class="input-field-container">
+            <label class="field-micro-label">DEPARTURE DATE *</label>
+            <div class="field-input-box">
+              <input type="date" value="${getFutureDate(4)}" min="${getFutureDate(0)}" />
             </div>
-            <div class="social-proof-badge">★ 5.0 <span>(VIP Concierge)</span></div>
           </div>
-          <div class="input-strip">
-            <div class="input-group" style="flex: 2;">
-              <label class="micro-label">AIRCRAFT SPECIFICATION & RANGE</label>
-              <select class="strip-input">
-                <option value="heavy" selected>Heavy Jet (Challenger 650 / 12 Pax)</option>
-                <option value="ultra-long">Ultra Long Range (Gulfstream G650ER / 14 Pax)</option>
-                <option value="super-mid">Super Midsize (Citation X+ / 8 Pax)</option>
+          <div class="input-field-container">
+            <label class="field-micro-label">ESTIMATED PASSENGERS</label>
+            <div class="field-input-box">
+              <select style="background:transparent; border:none; width:100%; font-family:inherit; font-weight:600; outline:none;">
+                <option>4 VIP Passengers</option>
+                <option>6 VIP Passengers</option>
+                <option>8 VIP Passengers</option>
+                <option>12+ Heavy Jet</option>
               </select>
             </div>
-            <div class="divider"></div>
-            <div class="input-group">
-              <label class="micro-label">CATERING & AMENITIES</label>
-              <select class="strip-input">
-                <option value="standard" selected>Standard Premium Bar</option>
-                <option value="michelin">Michelin Fine Dining</option>
-              </select>
-            </div>
-            <button type="button" class="cta-btn" style="background:#334155; border-radius:0;" onclick="setJetStep(1)">Back</button>
-            <button type="button" class="cta-btn" onclick="setJetStep(3)">VIP Details ➔</button>
           </div>
-        ` : `
-          <div class="card-header-row">
-            <div>
-              <h2 class="section-heading">Step 3: VIP Manifest & Booking Request</h2>
-              <p class="section-subheading">Instant charter quote confirmation delivered to your primary contact.</p>
-            </div>
-            <div class="social-proof-badge">★ 5.0 <span>(VIP Concierge)</span></div>
+        </div>
+
+        <div class="form-bottom-row">
+          <div style="font-size:0.85rem; color:#64748B;">
+            ARGUS Platinum & Wyvern Wingman certified air carriers.
           </div>
-          <div class="input-strip">
-            <div class="input-group">
-              <label class="micro-label">PRIMARY PASSENGER *</label>
-              <input type="text" class="strip-input" value="Alexander Vance" />
-            </div>
-            <div class="divider"></div>
-            <div class="input-group">
-              <label class="micro-label">SECURE VIP EMAIL *</label>
-              <input type="email" class="strip-input" value="alexander.vance@flyboro.com" />
-            </div>
-            <div class="divider"></div>
-            <div class="input-group">
-              <label class="micro-label">PHONE / SIGNAL *</label>
-              <input type="tel" class="strip-input" value="+1 (555) 234-8890" />
-            </div>
-            <button type="button" class="cta-btn" style="background:#334155; border-radius:0;" onclick="setJetStep(2)">Back</button>
-            <button type="button" class="cta-btn" onclick="triggerToast('Private Jet Charter')">Request Charter ➔</button>
-          </div>
-        `}
+          <button type="button" class="btn-search-availability" onclick="triggerSearch('Private Jet Charter')">
+            Continue to Fleet ➔
+          </button>
+        </div>
       `
     };
 
-    function renderTab(tabId) {
-      portalState.activeTab = tabId;
-      const container = document.getElementById('dynamic-content');
-      container.innerHTML = tabTemplates[tabId]();
+    function switchProduct(productKey) {
+      state.product = productKey;
+      document.querySelectorAll('.tab-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === productKey);
+      });
+
+      const meta = METADATA[productKey];
+      const modeText = document.getElementById('mode-text');
+      if (modeText && meta) modeText.innerText = meta.mode;
+
+      const container = document.getElementById('dynamic-product-content');
+      container.innerHTML = TEMPLATES[productKey]();
     }
 
-    function switchTab(clickedBtn, tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      clickedBtn.classList.add('active');
-      updateTabIndicator(clickedBtn);
+    function setTripType(type) {
+      state.tripType = type;
+      switchProduct('flights');
+    }
 
-      document.querySelectorAll('.bg-layer').forEach(layer => layer.classList.remove('active'));
-      const targetBg = document.getElementById(`bg-${tabId}`);
-      if (targetBg) targetBg.classList.add('active');
+    function toggleDropdown(id) {
+      closeAllDropdowns(id);
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('is-open');
+    }
 
-      renderTab(tabId);
+    function closeAllDropdowns(exceptId) {
+      document.querySelectorAll('.popover-dropdown, .autocomplete-menu').forEach(el => {
+        if (el.id !== exceptId) el.classList.remove('is-open');
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.input-field-container')) {
+        closeAllDropdowns();
+      }
+    });
+
+    function selectAirport(inputId, val, dropdownId) {
+      const inp = document.getElementById(inputId);
+      if (inp) inp.value = val;
+      const dd = document.getElementById(dropdownId);
+      if (dd) dd.classList.remove('is-open');
+    }
+
+    function updateFlightCounter(type, delta) {
+      state.flights[type] = Math.max(type === 'adults' ? 1 : 0, state.flights[type] + delta);
+      const valEl = document.getElementById(`val-fl-${type}`);
+      if (valEl) valEl.innerText = state.flights[type];
+      const total = state.flights.adults + state.flights.children + state.flights.infants;
+      const label = document.getElementById('label-flight-passengers');
+      if (label) label.innerText = `${total} Traveler${total > 1 ? 's' : ''}, ${state.flights.cabin}`;
+    }
+
+    function setFlightCabin(cabin) {
+      state.flights.cabin = cabin;
+      const total = state.flights.adults + state.flights.children + state.flights.infants;
+      const label = document.getElementById('label-flight-passengers');
+      if (label) label.innerText = `${total} Traveler${total > 1 ? 's' : ''}, ${cabin}`;
+    }
+
+    function updateHotelCounter(type, delta) {
+      state.hotels[type] = Math.max(type === 'children' ? 0 : 1, state.hotels[type] + delta);
+      const valEl = document.getElementById(`val-ht-${type}`);
+      if (valEl) valEl.innerText = state.hotels[type];
+      const label = document.getElementById('label-hotel-guests');
+      if (label) label.innerText = `${state.hotels.adults + state.hotels.children} Guests, ${state.hotels.rooms} Room${state.hotels.rooms > 1 ? 's' : ''}`;
+    }
+
+    function updateVacayCounter(type, delta) {
+      state.vacations[type] = Math.max(type === 'children' ? 0 : 1, state.vacations[type] + delta);
+      const valEl = document.getElementById(`val-vc-${type}`);
+      if (valEl) valEl.innerText = state.vacations[type];
+      const total = (state.vacations.adults * 2150) + (state.vacations.children * 1290);
+      const label = document.getElementById('label-vacay-guests');
+      if (label) label.innerText = `${state.vacations.adults + state.vacations.children} Guests • $${total.toLocaleString()}`;
+      const sub = document.getElementById('vacay-subtotal-disp');
+      if (sub) sub.innerText = `$${total.toLocaleString()}`;
+    }
+
+    function syncReturnMin(depDate, returnInputId) {
+      const retInput = document.getElementById(returnInputId);
+      if (retInput && depDate) {
+        retInput.min = depDate;
+        if (retInput.value < depDate) {
+          const d = new Date(depDate);
+          d.setDate(d.getDate() + 7);
+          retInput.value = d.toISOString().split('T')[0];
+        }
+      }
+    }
+
+    function triggerSearch(product) {
+      const toast = document.getElementById('toastMsg');
+      toast.innerText = `🔍 Dispatched ${product} query to /api/search`;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2800);
     }
 
     function setMode(mode) {
-      const wrapper = document.getElementById('heroWrapper');
+      const container = document.getElementById('pageContainer');
       const btnD = document.getElementById('btn-desktop');
       const btnM = document.getElementById('btn-mobile');
       if (mode === 'mobile') {
-        wrapper.classList.add('mobile-mode');
+        container.classList.add('mobile-mode');
         btnM.classList.add('active');
         btnD.classList.remove('active');
       } else {
-        wrapper.classList.remove('mobile-mode');
+        container.classList.remove('mobile-mode');
         btnD.classList.add('active');
         btnM.classList.remove('active');
       }
-      setTimeout(() => {
-        const activeBtn = document.querySelector('.tab-btn.active');
-        updateTabIndicator(activeBtn);
-      }, 350);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const defaultBtn = document.querySelector('.tab-btn.active');
-      updateTabIndicator(defaultBtn);
-      renderTab('cars');
-    });
-
-    window.addEventListener('resize', () => {
-      const activeBtn = document.querySelector('.tab-btn.active');
-      updateTabIndicator(activeBtn);
+      switchProduct('flights');
     });
   </script>
 </body>
